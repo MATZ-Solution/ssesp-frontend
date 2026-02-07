@@ -93,7 +93,7 @@ export const validationSchema = yup.object().shape({
   // Photo Upload
   photo: yup
     .mixed()
-    .required('Student photo is required')
+    .required('Student photo is required.')
     .test('fileSize', 'File size must not exceed 5MB', (value) => {
       if (!value || !value[0]) return false;
       return value[0].size <= 5 * 1024 * 1024; // 5MB in bytes
