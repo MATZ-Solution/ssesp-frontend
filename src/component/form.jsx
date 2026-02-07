@@ -15,6 +15,7 @@ const AdmissionForm = () => {
   const [selectedProvince, setSelectedProvince] = useState(null);
   const [selectedDistrict, setSelectedDistrict] = useState(null);
   const [photoPreview, setPhotoPreview] = useState(null);
+  const [showPhotoModal, setShowPhotoModal] = useState(false);
   
   const {
     handleSubmit,
@@ -28,9 +29,7 @@ const AdmissionForm = () => {
       studentName: '',
       gender: '',
       studentBForm: '',
-      dobDay: '',
-      dobMonth: '',
-      dobYear: '',
+      dob: '',
       religion: null,
       fatherName: '',
       fatherCNIC: '',
@@ -46,7 +45,7 @@ const AdmissionForm = () => {
       schoolName: '',
       schoolCategory: '',
       schoolSemisCode: '',
-      studyingInClass: '',
+      studyingInClass: null,
       enrollmentYear: '',
       schoolGRNo: '',
       headmasterName: '',
@@ -57,11 +56,6 @@ const AdmissionForm = () => {
       acknowledgment: false,
     },
   });
-
-  const months = [
-    'January', 'February', 'March', 'April', 'May', 'June',
-    'July', 'August', 'September', 'October', 'November', 'December'
-  ];
 
   // Religion options
   const religionOptions = [
@@ -90,6 +84,20 @@ const AdmissionForm = () => {
     { value: 'Sindhi', label: 'Sindhi' },
     { value: 'Urdu', label: 'Urdu' },
     { value: 'English', label: 'English' },
+  ];
+
+  // Class options
+  const classOptions = [
+    { value: 'Class 1', label: 'Class 1' },
+    { value: 'Class 2', label: 'Class 2' },
+    { value: 'Class 3', label: 'Class 3' },
+    { value: 'Class 4', label: 'Class 4' },
+    { value: 'Class 5', label: 'Class 5' },
+    { value: 'Class 6', label: 'Class 6' },
+    { value: 'Class 7', label: 'Class 7' },
+    { value: 'Class 8', label: 'Class 8' },
+    { value: 'Class 9', label: 'Class 9' },
+    { value: 'Class 10', label: 'Class 10' },
   ];
 
   // Province options
@@ -155,6 +163,7 @@ const AdmissionForm = () => {
         province: data.province?.value,
         district: data.district?.value,
         city: data.city?.value,
+        studyingInClass: data.studyingInClass?.value,
         photo: data.photo?.[0], // Get the actual file
       };
       
@@ -172,17 +181,18 @@ const AdmissionForm = () => {
       }
       
       setSubmitSuccess(true);
+      
+      // Reset form after 3 seconds
+      setTimeout(() => {
+        setSubmitSuccess(false);
+        reset();
+        setSelectedProvince(null);
+        setSelectedDistrict(null);
+        setPhotoPreview(null);
+      }, 3000);
     } catch (error) {
       console.error('Submission error:', error);
     }
-  };
-
-  const handleCloseModal = () => {
-    setSubmitSuccess(false);
-    reset();
-    setSelectedProvince(null);
-    setSelectedDistrict(null);
-    setPhotoPreview(null);
   };
 
   return (
@@ -208,57 +218,14 @@ const AdmissionForm = () => {
           onSubmit={handleSubmit(onSubmit)}
           className="bg-white rounded-b-2xl shadow-xl p-6 sm:p-8 lg:p-10"
         >
-          {/* Success Modal */}
+          {/* Success Message */}
           {submitSuccess && (
-            <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
-              <div className="bg-white rounded-2xl shadow-2xl max-w-md w-full p-8 transform animate-bounce-in">
-                <div className="text-center">
-                  {/* Success Icon */}
-                  <div className="mx-auto flex items-center justify-center h-20 w-20 rounded-full bg-green-100 mb-4">
-                    <svg
-                      className="h-12 w-12 text-green-600"
-                      fill="none"
-                      stroke="currentColor"
-                      viewBox="0 0 24 24"
-                    >
-                      <path
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                        strokeWidth="2"
-                        d="M5 13l4 4L19 7"
-                      />
-                    </svg>
-                  </div>
-                  
-                  {/* Success Message */}
-                  <h3 className="text-2xl font-bold text-gray-900 mb-2">
-                    Application Submitted!
-                  </h3>
-                  <p className="text-gray-600 mb-6">
-                    Your application has been submitted successfully. You will receive a confirmation email shortly.
-                  </p>
-                  
-                  {/* Action Buttons */}
-                  <div className="flex flex-col sm:flex-row gap-3">
-                    <button
-                      type="button"
-                      onClick={handleCloseModal}
-                      className="flex-1 px-6 py-3 bg-gradient-to-r from-green-800 to-green-600 text-white font-semibold rounded-lg hover:from-green-700 hover:to-green-500 transition-all duration-200 shadow-lg hover:shadow-xl"
-                    >
-                      Submit Another
-                    </button>
-                    <button
-                      type="button"
-                      onClick={() => setSubmitSuccess(false)}
-                      className="flex-1 px-6 py-3 bg-gray-200 text-gray-700 font-semibold rounded-lg hover:bg-gray-300 transition-all duration-200"
-                    >
-                      Close
-                    </button>
-                  </div>
-                </div>
-              </div>
+            <div className="mb-6 bg-green-100 border-l-4 border-green-500 text-green-700 p-4 rounded-r-lg animate-pulse">
+              <p className="font-bold">Success!</p>
+              <p>Your application has been submitted successfully.</p>
             </div>
           )}
+
 
           {/* Section 1: Student Information */}
           <div className="mb-8">
@@ -273,7 +240,7 @@ const AdmissionForm = () => {
                 </p>
               </div>
 
-              {/* Student Info with Photo on Right */}
+              {/* Photo Upload Section - Now with side-by-side layout */}
               <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
                 {/* Left side - Form fields (2/3 width) */}
                 <div className="lg:col-span-2 space-y-5">
@@ -312,48 +279,25 @@ const AdmissionForm = () => {
                     <label className="text-sm font-semibold text-gray-700 mb-1.5 block">
                       Date of Birth <span className="text-red-500">*</span>
                     </label>
-                    <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-                      <ControlledInputField
-                        name="dobDay"
-                        control={control}
-                        type="number"
-                        placeholder="Day (1-31)"
-                        errors={errors}
-                      />
-                      
-                      <div className="flex flex-col">
-                        <Controller
-                          name="dobMonth"
-                          control={control}
-                          render={({ field }) => (
-                            <select
-                              {...field}
-                              className={`px-4 py-2.5 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none ${
-                                errors.dobMonth ? 'border-red-500 bg-red-50' : 'border-gray-300'
-                              }`}
-                            >
-                              <option value="">Select Month</option>
-                              {months.map((month) => (
-                                <option key={month} value={month}>
-                                  {month}
-                                </option>
-                              ))}
-                            </select>
-                          )}
+                    <Controller
+                      name="dob"
+                      control={control}
+                      render={({ field }) => (
+                        <input
+                          {...field}
+                          type="date"
+                          min="2012-01-01"
+                          max="2018-12-31"
+                          className={`w-full px-4 py-2.5 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none ${
+                            errors.dob ? 'border-red-500 bg-red-50' : 'border-gray-300'
+                          }`}
                         />
-                        {errors.dobMonth && (
-                          <span className="text-red-500 text-xs mt-1">{errors.dobMonth.message}</span>
-                        )}
-                      </div>
-                      
-                      <ControlledInputField
-                        name="dobYear"
-                        control={control}
-                        type="number"
-                        placeholder="Year (2012-2018)"
-                        errors={errors}
-                      />
-                    </div>
+                      )}
+                    />
+                    {errors.dob && (
+                      <span className="text-red-500 text-xs mt-1">{errors.dob.message}</span>
+                    )}
+                    <p className="text-xs text-gray-500 mt-1">Select date between 2012-2018</p>
                   </div>
 
                   <div className="flex flex-col">
@@ -398,13 +342,17 @@ const AdmissionForm = () => {
                               ? 'border-green-500 bg-green-50 hover:bg-green-100'
                               : 'border-gray-300 bg-gray-50 hover:bg-gray-100'
                           }`}>
-                            <div className="flex flex-col items-center justify-center p-4 w-full h-full">
+                            <div className="flex flex-col items-center justify-center p-4">
                               {photoPreview ? (
-                                <div className="relative w-full h-full">
+                                <div className="relative w-full h-full flex items-center justify-center">
                                   <img
                                     src={photoPreview}
                                     alt="Student preview"
-                                    className="w-full h-full object-cover rounded-lg"
+                                    className="max-w-full max-h-full object-contain rounded-lg shadow-md cursor-pointer"
+                                    onClick={(e) => {
+                                      e.preventDefault();
+                                      setShowPhotoModal(true);
+                                    }}
                                   />
                                   <button
                                     type="button"
@@ -438,9 +386,9 @@ const AdmissionForm = () => {
                                   <p className="mb-2 text-xs text-center text-gray-500">
                                     <span className="font-semibold">Click to upload</span>
                                   </p>
-                                  <p className="text-xs text-center text-gray-500">JPG, JPEG or PNG</p>
-                                  <p className="text-xs text-center text-gray-500">(MAX. 5MB)</p>
-                                  <p className="text-xs text-blue-600 mt-2 font-semibold text-center">Blue Background Required</p>
+                                  <p className="text-xs text-gray-500 text-center">JPG, JPEG, PNG</p>
+                                  <p className="text-xs text-gray-500 text-center">(MAX. 5MB)</p>
+                                  <p className="text-xs text-blue-600 mt-2 font-semibold">Blue Background</p>
                                 </>
                               )}
                             </div>
@@ -482,32 +430,28 @@ const AdmissionForm = () => {
                         {photoPreview && (
                           <div className="bg-green-50 border border-green-200 rounded-lg p-2">
                             <p className="text-xs text-green-700 flex items-center">
-                              <svg className="w-4 h-4 mr-1.5" fill="currentColor" viewBox="0 0 20 20">
+                              <svg className="w-4 h-4 mr-1" fill="currentColor" viewBox="0 0 20 20">
                                 <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
                               </svg>
                               Photo uploaded
                             </p>
                           </div>
                         )}
+
+                        <div className="bg-blue-50 border border-blue-200 rounded-lg p-3">
+                          <p className="text-xs text-blue-800 font-semibold mb-1">Requirements:</p>
+                          <ul className="text-xs text-blue-700 space-y-0.5">
+                            <li>• Passport size</li>
+                            <li>• Blue background</li>
+                            <li>• Clear & recent</li>
+                          </ul>
+                        </div>
                       </div>
                     )}
                   />
                   {errors.photo && (
                     <span className="text-red-500 text-xs mt-1 block">{errors.photo.message}</span>
                   )}
-                  
-                  {/* Photo Requirements */}
-                  <div className="mt-4 bg-blue-50 border border-blue-200 p-3 rounded-lg">
-                    <p className="text-xs text-blue-800 font-semibold mb-1">
-                      Photo Requirements:
-                    </p>
-                    <ul className="text-xs text-blue-700 space-y-0.5">
-                      <li>• Passport size</li>
-                      <li>• Blue background</li>
-                      <li>• Clear, high-quality</li>
-                      <li>• Face clearly visible</li>
-                    </ul>
-                  </div>
                 </div>
               </div>
             </div>
@@ -736,22 +680,45 @@ const AdmissionForm = () => {
               </div>
 
               <div className="grid grid-cols-1 sm:grid-cols-3 gap-5">
-                <ControlledInputField
-                  name="studyingInClass"
-                  control={control}
-                  label="Currently Studying in Class"
-                  placeholder="e.g., Class 5"
-                  required
-                  errors={errors}
-                />
+                <div className="flex flex-col">
+                  <label className="text-sm font-semibold text-gray-700 mb-1.5">
+                    Currently Studying in Class <span className="text-red-500">*</span>
+                  </label>
+                  <Controller
+                    name="studyingInClass"
+                    control={control}
+                    render={({ field }) => (
+                      <Select
+                        {...field}
+                        options={classOptions}
+                        styles={customSelectStyles}
+                        placeholder="Select class"
+                        isClearable
+                      />
+                    )}
+                  />
+                  {errors.studyingInClass && (
+                    <span className="text-red-500 text-xs mt-1">{errors.studyingInClass.message}</span>
+                  )}
+                </div>
 
-                <ControlledInputField
+                {/* <ControlledInputField
                   name="enrollmentYear"
                   control={control}
                   label="Year of Enrollment"
                   type="number"
-                  placeholder="2020"
+                  placeholder="2026"
+                  maxLength={4}
                   required
+                  errors={errors}
+                /> */}
+                   <ControlledInputField
+                  name="enrollmentYear"
+                  control={control}
+                  label="Year of Enrollment"
+                  type="tel"
+                  placeholder="2026"
+                  maxLength={4}
                   errors={errors}
                 />
 
@@ -956,6 +923,31 @@ const AdmissionForm = () => {
           </div>
         </form>
       </div>
+
+      {/* Photo Modal */}
+      {showPhotoModal && photoPreview && (
+        <div 
+          className="fixed inset-0 bg-black bg-opacity-75 flex items-center justify-center z-50 p-4"
+          onClick={() => setShowPhotoModal(false)}
+        >
+          <div className="relative max-w-4xl max-h-full">
+            <button
+              onClick={() => setShowPhotoModal(false)}
+              className="absolute -top-4 -right-4 bg-white text-gray-800 rounded-full p-2 hover:bg-gray-100 shadow-lg z-10"
+            >
+              <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M6 18L18 6M6 6l12 12" />
+              </svg>
+            </button>
+            <img
+              src={photoPreview}
+              alt="Student photo enlarged"
+              className="max-w-full max-h-[90vh] rounded-lg shadow-2xl"
+              onClick={(e) => e.stopPropagation()}
+            />
+          </div>
+        </div>
+      )}
     </div>
   );
 };
