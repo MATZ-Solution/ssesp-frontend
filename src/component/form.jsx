@@ -1,15 +1,14 @@
 import React, { useState, useMemo } from 'react';
 import { useForm, Controller } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
-import * as yup from 'yup';
 import Select from 'react-select';
+import { validationSchema } from './form-schema';
 import { citiesData } from '../../data/city-data';
 import { ControlledInputField } from './InputField';
 import { ControlledRadioGroup } from './Radio-button';
 import { ControlledCheckbox } from './ControlledCheckbox';
-import { validationSchema } from './form-schema';
 
-
+// Main Form Component
 const AdmissionForm = () => {
   const [submitSuccess, setSubmitSuccess] = useState(false);
   const [selectedProvince, setSelectedProvince] = useState(null);
@@ -57,7 +56,6 @@ const AdmissionForm = () => {
     },
   });
 
-  // Religion options
   const religionOptions = [
     { value: 'Islam', label: 'Islam' },
     { value: 'Christianity', label: 'Christianity' },
@@ -67,26 +65,22 @@ const AdmissionForm = () => {
     { value: 'Other', label: 'Other' },
   ];
 
-  // Gender options
   const genderOptions = [
     { value: 'Male', label: 'Male' },
     { value: 'Female', label: 'Female' },
   ];
 
-  // School category options
   const schoolCategoryOptions = [
     { value: 'Government School', label: 'Government School' },
     { value: 'SEF School', label: 'SEF School' },
   ];
 
-  // Test medium options
   const testMediumOptions = [
     { value: 'Sindhi', label: 'Sindhi' },
     { value: 'Urdu', label: 'Urdu' },
     { value: 'English', label: 'English' },
   ];
 
-  // Class options
   const classOptions = [
     { value: 'Class 1', label: 'Class 1' },
     { value: 'Class 2', label: 'Class 2' },
@@ -100,7 +94,6 @@ const AdmissionForm = () => {
     { value: 'Class 10', label: 'Class 10' },
   ];
 
-  // Province options
   const provinceOptions = useMemo(() => {
     return citiesData.provinces.map(province => ({
       value: province.name,
@@ -108,7 +101,6 @@ const AdmissionForm = () => {
     }));
   }, []);
 
-  // District options based on selected province
   const districtOptions = useMemo(() => {
     if (!selectedProvince) return [];
     const province = citiesData.provinces.find(p => p.name === selectedProvince.value);
@@ -119,7 +111,6 @@ const AdmissionForm = () => {
     }));
   }, [selectedProvince]);
 
-  // City options based on selected district
   const cityOptions = useMemo(() => {
     if (!selectedProvince || !selectedDistrict) return [];
     const province = citiesData.provinces.find(p => p.name === selectedProvince.value);
@@ -156,7 +147,6 @@ const AdmissionForm = () => {
 
   const onSubmit = async (data) => {
     try {
-      // Convert react-select objects to values and handle file
       const formData = {
         ...data,
         religion: data.religion?.value,
@@ -164,14 +154,12 @@ const AdmissionForm = () => {
         district: data.district?.value,
         city: data.city?.value,
         studyingInClass: data.studyingInClass?.value,
-        photo: data.photo?.[0], // Get the actual file
+        photo: data.photo?.[0],
       };
       
-      // Simulate form submission
       await new Promise((resolve) => setTimeout(resolve, 1500));
       console.log('Form Data:', formData);
       
-      // In production, you would upload the photo to a server here
       if (formData.photo) {
         console.log('Photo details:', {
           name: formData.photo.name,
@@ -182,7 +170,6 @@ const AdmissionForm = () => {
       
       setSubmitSuccess(true);
       
-      // Reset form after 3 seconds
       setTimeout(() => {
         setSubmitSuccess(false);
         reset();
@@ -226,7 +213,6 @@ const AdmissionForm = () => {
             </div>
           )}
 
-
           {/* Section 1: Student Information */}
           <div className="mb-8">
             <h2 className="text-xl sm:text-2xl font-bold text-gray-800 mb-6 pb-2 border-b-2 border-blue-500">
@@ -240,9 +226,9 @@ const AdmissionForm = () => {
                 </p>
               </div>
 
-              {/* Photo Upload Section - Now with side-by-side layout */}
+              {/* Photo Upload Section */}
               <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-                {/* Left side - Form fields (2/3 width) */}
+                {/* Left side - Form fields */}
                 <div className="lg:col-span-2 space-y-5">
                   <ControlledInputField
                     name="studentName"
@@ -323,7 +309,7 @@ const AdmissionForm = () => {
                   </div>
                 </div>
 
-                {/* Right side - Square Photo Upload (1/3 width) */}
+                {/* Right side - Square Photo Upload */}
                 <div className="lg:col-span-1">
                   <label className="text-sm font-semibold text-gray-700 mb-1.5 block">
                     Upload Student Photo <span className="text-red-500">*</span>
@@ -400,26 +386,22 @@ const AdmissionForm = () => {
                               onChange={(e) => {
                                 const file = e.target.files?.[0];
                                 if (file) {
-                                  // Validate file size
                                   if (file.size > 5 * 1024 * 1024) {
                                     alert('File size must not exceed 5MB');
                                     return;
                                   }
                                   
-                                  // Validate file type
                                   if (!['image/jpeg', 'image/jpg', 'image/png'].includes(file.type)) {
                                     alert('Only JPG, JPEG, and PNG files are allowed');
                                     return;
                                   }
                                   
-                                  // Create preview
                                   const reader = new FileReader();
                                   reader.onloadend = () => {
                                     setPhotoPreview(reader.result);
                                   };
                                   reader.readAsDataURL(file);
                                   
-                                  // Update form value
                                   onChange(e.target.files);
                                 }
                               }}
@@ -702,23 +684,14 @@ const AdmissionForm = () => {
                   )}
                 </div>
 
-                {/* <ControlledInputField
-                  name="enrollmentYear"
-                  control={control}
-                  label="Year of Enrollment"
-                  type="number"
-                  placeholder="2026"
-                  maxLength={4}
-                  required
-                  errors={errors}
-                /> */}
-                   <ControlledInputField
+                <ControlledInputField
                   name="enrollmentYear"
                   control={control}
                   label="Year of Enrollment"
                   type="tel"
-                  placeholder="2026"
+                  placeholder="2023"
                   maxLength={4}
+                  required
                   errors={errors}
                 />
 
