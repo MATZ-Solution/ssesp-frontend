@@ -1,4 +1,4 @@
-const cities = {
+export const citiesData = {
     "provinces": [
       {
         "name": "Punjab",

@@ -1,99 +1,59 @@
-import React, { useState } from 'react';
+import React, { useState, useMemo } from 'react';
 import { useForm, Controller } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
 import * as yup from 'yup';
+import Select from 'react-select';
+import { citiesData } from '../../data/city-data';
+import { ControlledInputField } from './InputField';
+import { ControlledRadioGroup } from './Radio-button';
+import { ControlledCheckbox } from './ControlledCheckbox';
+import { validationSchema } from './form-schema';
 
-// Validation Schema
-const validationSchema = yup.object().shape({
-  // Student Information
-  studentName: yup
-    .string()
-    .required('Student name is required')
-    .matches(/^[A-Z\s]+$/, 'Name must be in CAPITAL LETTERS only'),
-  gender: yup.string().required('Gender is required'),
-  studentBForm: yup
-    .string()
-    .required('Student B-Form is required')
-    .matches(/^\d{5}-\d{7}-\d{1}$/, 'B-Form must be in format: 00000-0000000-0'),
-  dobDay: yup
-    .number()
-    .required('Day is required')
-    .min(1, 'Invalid day')
-    .max(31, 'Invalid day'),
-  dobMonth: yup.string().required('Month is required'),
-  dobYear: yup
-    .number()
-    .required('Year is required')
-    .min(2012, 'Age should not exceed eleven years')
-    .max(2018, 'Invalid year'),
-  religion: yup.string().required('Religion is required'),
-  
-  // Father/Guardian Information
-  fatherName: yup.string().required("Father's name is required"),
-  fatherCNIC: yup
-    .string()
-    .required("Father's CNIC is required")
-    .matches(/^\d{5}-\d{7}-\d{1}$/, 'CNIC must be in format: 00000-0000000-0'),
-  domicileDistrict: yup.string().required('District of Domicile is required'),
-  guardianName: yup.string(),
-  guardianContact: yup
-    .string()
-    .matches(/^(\+92|0)?3\d{9}$/, 'Invalid contact number'),
-  contact1: yup
-    .string()
-    .required('At least one contact number is required')
-    .matches(/^(\+92|0)?3\d{9}$/, 'Invalid contact number'),
-  contact2: yup
-    .string()
-    .matches(/^(\+92|0)?3\d{9}$/, 'Invalid contact number'),
-  
-  // Address Information
-  postalAddress: yup.string().required('Postal address is required'),
-  city: yup.string().required('City is required'),
-  district: yup.string().required('District is required'),
-  
-  // Previous School Information
-  schoolName: yup.string().required('School name is required'),
-  schoolCategory: yup.string().required('School category is required'),
-  schoolSemisCode: yup.string().required('School SEMIS/Code is required'),
-  studyingInClass: yup.string().required('Current class is required'),
-  enrollmentYear: yup
-    .number()
-    .required('Year of enrollment is required')
-    .min(2018, 'Invalid year')
-    .max(2024, 'Invalid year'),
-  schoolGRNo: yup.string().required('School GR No is required'),
-  headmasterName: yup.string().required('Headmaster/Headmistress name is required'),
-  headmasterContact: yup
-    .string()
-    .required('Headmaster contact is required')
-    .matches(/^(\+92|0)?3\d{9}$/, 'Invalid contact number'),
-  
-  // Entry Test Preference
-  testMedium: yup.string().required('Medium of instruction is required'),
-  division: yup.string().required('Division is required'),
-  
-  // Acknowledgment
-  acknowledgment: yup
-    .boolean()
-    .oneOf([true], 'You must acknowledge the terms and conditions'),
-});
 
 const AdmissionForm = () => {
   const [submitSuccess, setSubmitSuccess] = useState(false);
+  const [selectedProvince, setSelectedProvince] = useState(null);
+  const [selectedDistrict, setSelectedDistrict] = useState(null);
+  const [photoPreview, setPhotoPreview] = useState(null);
   
   const {
-    register,
     handleSubmit,
     control,
     formState: { errors, isSubmitting },
     reset,
+    setValue,
   } = useForm({
     resolver: yupResolver(validationSchema),
     defaultValues: {
+      studentName: '',
       gender: '',
+      studentBForm: '',
+      dobDay: '',
+      dobMonth: '',
+      dobYear: '',
+      religion: null,
+      fatherName: '',
+      fatherCNIC: '',
+      domicileDistrict: '',
+      guardianName: '',
+      guardianContact: '',
+      contact1: '',
+      contact2: '',
+      postalAddress: '',
+      province: null,
+      district: null,
+      city: null,
+      schoolName: '',
       schoolCategory: '',
+      schoolSemisCode: '',
+      studyingInClass: '',
+      enrollmentYear: '',
+      schoolGRNo: '',
+      headmasterName: '',
+      headmasterContact: '',
       testMedium: '',
+      division: '',
+      photo: null,
       acknowledgment: false,
     },
   });
@@ -103,48 +63,133 @@ const AdmissionForm = () => {
     'July', 'August', 'September', 'October', 'November', 'December'
   ];
 
+  // Religion options
+  const religionOptions = [
+    { value: 'Islam', label: 'Islam' },
+    { value: 'Christianity', label: 'Christianity' },
+    { value: 'Hinduism', label: 'Hinduism' },
+    { value: 'Sikhism', label: 'Sikhism' },
+    { value: 'Buddhism', label: 'Buddhism' },
+    { value: 'Other', label: 'Other' },
+  ];
+
+  // Gender options
+  const genderOptions = [
+    { value: 'Male', label: 'Male' },
+    { value: 'Female', label: 'Female' },
+  ];
+
+  // School category options
+  const schoolCategoryOptions = [
+    { value: 'Government School', label: 'Government School' },
+    { value: 'SEF School', label: 'SEF School' },
+  ];
+
+  // Test medium options
+  const testMediumOptions = [
+    { value: 'Sindhi', label: 'Sindhi' },
+    { value: 'Urdu', label: 'Urdu' },
+    { value: 'English', label: 'English' },
+  ];
+
+  // Province options
+  const provinceOptions = useMemo(() => {
+    return citiesData.provinces.map(province => ({
+      value: province.name,
+      label: province.name
+    }));
+  }, []);
+
+  // District options based on selected province
+  const districtOptions = useMemo(() => {
+    if (!selectedProvince) return [];
+    const province = citiesData.provinces.find(p => p.name === selectedProvince.value);
+    if (!province) return [];
+    return province.districts.map(district => ({
+      value: district.name,
+      label: district.name
+    }));
+  }, [selectedProvince]);
+
+  // City options based on selected district
+  const cityOptions = useMemo(() => {
+    if (!selectedProvince || !selectedDistrict) return [];
+    const province = citiesData.provinces.find(p => p.name === selectedProvince.value);
+    if (!province) return [];
+    const district = province.districts.find(d => d.name === selectedDistrict.value);
+    if (!district) return [];
+    return district.cities.map(city => ({
+      value: city,
+      label: city
+    }));
+  }, [selectedProvince, selectedDistrict]);
+
+  const customSelectStyles = {
+    control: (base, state) => ({
+      ...base,
+      padding: '0.375rem 0.5rem',
+      borderRadius: '0.5rem',
+      borderColor: state.isFocused ? '#3B82F6' : errors[state.selectProps.name] ? '#EF4444' : '#D1D5DB',
+      backgroundColor: errors[state.selectProps.name] ? '#FEF2F2' : 'white',
+      boxShadow: state.isFocused ? '0 0 0 2px rgba(59, 130, 246, 0.5)' : 'none',
+      '&:hover': {
+        borderColor: state.isFocused ? '#3B82F6' : '#9CA3AF',
+      },
+    }),
+    option: (base, state) => ({
+      ...base,
+      backgroundColor: state.isSelected ? '#3B82F6' : state.isFocused ? '#DBEAFE' : 'white',
+      color: state.isSelected ? 'white' : '#1F2937',
+      '&:active': {
+        backgroundColor: '#3B82F6',
+      },
+    }),
+  };
+
   const onSubmit = async (data) => {
     try {
+      // Convert react-select objects to values and handle file
+      const formData = {
+        ...data,
+        religion: data.religion?.value,
+        province: data.province?.value,
+        district: data.district?.value,
+        city: data.city?.value,
+        photo: data.photo?.[0], // Get the actual file
+      };
+      
       // Simulate form submission
       await new Promise((resolve) => setTimeout(resolve, 1500));
-      console.log('Form Data:', data);
-      setSubmitSuccess(true);
+      console.log('Form Data:', formData);
       
-      // Reset form after 3 seconds
-      setTimeout(() => {
-        setSubmitSuccess(false);
-        reset();
-      }, 3000);
+      // In production, you would upload the photo to a server here
+      if (formData.photo) {
+        console.log('Photo details:', {
+          name: formData.photo.name,
+          size: formData.photo.size,
+          type: formData.photo.type
+        });
+      }
+      
+      setSubmitSuccess(true);
     } catch (error) {
       console.error('Submission error:', error);
     }
   };
 
-  const InputField = ({ label, name, type = 'text', placeholder, required = false, pattern }) => (
-    <div className="flex flex-col">
-      <label className="text-sm font-semibold text-gray-700 mb-1.5">
-        {label} {required && <span className="text-red-500">*</span>}
-      </label>
-      <input
-        type={type}
-        {...register(name)}
-        placeholder={placeholder}
-        pattern={pattern}
-        className={`px-4 py-2.5 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none transition-all ${
-          errors[name] ? 'border-red-500 bg-red-50' : 'border-gray-300'
-        }`}
-      />
-      {errors[name] && (
-        <span className="text-red-500 text-xs mt-1">{errors[name].message}</span>
-      )}
-    </div>
-  );
+  const handleCloseModal = () => {
+    setSubmitSuccess(false);
+    reset();
+    setSelectedProvince(null);
+    setSelectedDistrict(null);
+    setPhotoPreview(null);
+  };
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-green-50 py-8 px-4 sm:px-6 lg:px-8">
       <div className="max-w-5xl mx-auto">
         {/* Header */}
-        <div className="bg-gradient-to-r from-green-600 to-blue-600 rounded-t-2xl shadow-lg p-6 sm:p-8 text-white">
+        <div className="bg-gradient-to-r from-green-800 to-green-600 rounded-t-2xl shadow-lg p-6 sm:p-8 text-white">
           <div className="text-center">
             <h1 className="text-2xl sm:text-3xl lg:text-4xl font-bold mb-2">
               Sindh School Education Scholarship Program (SSESP)
@@ -163,11 +208,55 @@ const AdmissionForm = () => {
           onSubmit={handleSubmit(onSubmit)}
           className="bg-white rounded-b-2xl shadow-xl p-6 sm:p-8 lg:p-10"
         >
-          {/* Success Message */}
+          {/* Success Modal */}
           {submitSuccess && (
-            <div className="mb-6 bg-green-100 border-l-4 border-green-500 text-green-700 p-4 rounded-r-lg animate-pulse">
-              <p className="font-bold">Success!</p>
-              <p>Your application has been submitted successfully.</p>
+            <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
+              <div className="bg-white rounded-2xl shadow-2xl max-w-md w-full p-8 transform animate-bounce-in">
+                <div className="text-center">
+                  {/* Success Icon */}
+                  <div className="mx-auto flex items-center justify-center h-20 w-20 rounded-full bg-green-100 mb-4">
+                    <svg
+                      className="h-12 w-12 text-green-600"
+                      fill="none"
+                      stroke="currentColor"
+                      viewBox="0 0 24 24"
+                    >
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        strokeWidth="2"
+                        d="M5 13l4 4L19 7"
+                      />
+                    </svg>
+                  </div>
+                  
+                  {/* Success Message */}
+                  <h3 className="text-2xl font-bold text-gray-900 mb-2">
+                    Application Submitted!
+                  </h3>
+                  <p className="text-gray-600 mb-6">
+                    Your application has been submitted successfully. You will receive a confirmation email shortly.
+                  </p>
+                  
+                  {/* Action Buttons */}
+                  <div className="flex flex-col sm:flex-row gap-3">
+                    <button
+                      type="button"
+                      onClick={handleCloseModal}
+                      className="flex-1 px-6 py-3 bg-gradient-to-r from-green-800 to-green-600 text-white font-semibold rounded-lg hover:from-green-700 hover:to-green-500 transition-all duration-200 shadow-lg hover:shadow-xl"
+                    >
+                      Submit Another
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => setSubmitSuccess(false)}
+                      className="flex-1 px-6 py-3 bg-gray-200 text-gray-700 font-semibold rounded-lg hover:bg-gray-300 transition-all duration-200"
+                    >
+                      Close
+                    </button>
+                  </div>
+                </div>
+              </div>
             </div>
           )}
 
@@ -184,115 +273,243 @@ const AdmissionForm = () => {
                 </p>
               </div>
 
-              <InputField
-                label="Student Name (As per NADRA B-Form)"
-                name="studentName"
-                placeholder="ENTER NAME IN CAPITAL LETTERS"
-                required
-              />
+              {/* Student Info with Photo on Right */}
+              <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                {/* Left side - Form fields (2/3 width) */}
+                <div className="lg:col-span-2 space-y-5">
+                  <ControlledInputField
+                    name="studentName"
+                    control={control}
+                    label="Student Name (As per NADRA B-Form)"
+                    placeholder="ENTER NAME IN CAPITAL LETTERS"
+                    required
+                    errors={errors}
+                  />
 
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
-                <div className="flex flex-col">
-                  <label className="text-sm font-semibold text-gray-700 mb-1.5">
-                    Gender <span className="text-red-500">*</span>
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
+                    <ControlledRadioGroup
+                      name="gender"
+                      control={control}
+                      label="Gender"
+                      options={genderOptions}
+                      required
+                      errors={errors}
+                    />
+
+                    <ControlledInputField
+                      name="studentBForm"
+                      control={control}
+                      label="Student B-Form"
+                      placeholder="12345-1234567-1"
+                      maxLength={15}
+                      required
+                      errors={errors}
+                      helpText="Format: 12345-1234567-1"
+                    />
+                  </div>
+
+                  <div>
+                    <label className="text-sm font-semibold text-gray-700 mb-1.5 block">
+                      Date of Birth <span className="text-red-500">*</span>
+                    </label>
+                    <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                      <ControlledInputField
+                        name="dobDay"
+                        control={control}
+                        type="number"
+                        placeholder="Day (1-31)"
+                        errors={errors}
+                      />
+                      
+                      <div className="flex flex-col">
+                        <Controller
+                          name="dobMonth"
+                          control={control}
+                          render={({ field }) => (
+                            <select
+                              {...field}
+                              className={`px-4 py-2.5 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none ${
+                                errors.dobMonth ? 'border-red-500 bg-red-50' : 'border-gray-300'
+                              }`}
+                            >
+                              <option value="">Select Month</option>
+                              {months.map((month) => (
+                                <option key={month} value={month}>
+                                  {month}
+                                </option>
+                              ))}
+                            </select>
+                          )}
+                        />
+                        {errors.dobMonth && (
+                          <span className="text-red-500 text-xs mt-1">{errors.dobMonth.message}</span>
+                        )}
+                      </div>
+                      
+                      <ControlledInputField
+                        name="dobYear"
+                        control={control}
+                        type="number"
+                        placeholder="Year (2012-2018)"
+                        errors={errors}
+                      />
+                    </div>
+                  </div>
+
+                  <div className="flex flex-col">
+                    <label className="text-sm font-semibold text-gray-700 mb-1.5">
+                      Religion <span className="text-red-500">*</span>
+                    </label>
+                    <Controller
+                      name="religion"
+                      control={control}
+                      render={({ field }) => (
+                        <Select
+                          {...field}
+                          options={religionOptions}
+                          styles={customSelectStyles}
+                          placeholder="Select religion"
+                          isClearable
+                        />
+                      )}
+                    />
+                    {errors.religion && (
+                      <span className="text-red-500 text-xs mt-1">{errors.religion.message}</span>
+                    )}
+                  </div>
+                </div>
+
+                {/* Right side - Square Photo Upload (1/3 width) */}
+                <div className="lg:col-span-1">
+                  <label className="text-sm font-semibold text-gray-700 mb-1.5 block">
+                    Upload Student Photo <span className="text-red-500">*</span>
                   </label>
-                  <div className="flex gap-6 pt-2">
-                    <label className="flex items-center cursor-pointer">
-                      <input
-                        type="radio"
-                        {...register('gender')}
-                        value="Male"
-                        className="w-4 h-4 text-blue-600 focus:ring-2 focus:ring-blue-500"
-                      />
-                      <span className="ml-2 text-gray-700">Male</span>
-                    </label>
-                    <label className="flex items-center cursor-pointer">
-                      <input
-                        type="radio"
-                        {...register('gender')}
-                        value="Female"
-                        className="w-4 h-4 text-blue-600 focus:ring-2 focus:ring-blue-500"
-                      />
-                      <span className="ml-2 text-gray-700">Female</span>
-                    </label>
-                  </div>
-                  {errors.gender && (
-                    <span className="text-red-500 text-xs mt-1">{errors.gender.message}</span>
+                  
+                  <Controller
+                    name="photo"
+                    control={control}
+                    render={({ field: { onChange, value, ...field } }) => (
+                      <div className="space-y-3">
+                        <div className="flex items-center justify-center w-full">
+                          <label className={`flex flex-col items-center justify-center w-full aspect-square border-2 border-dashed rounded-lg cursor-pointer transition-all ${
+                            errors.photo 
+                              ? 'border-red-500 bg-red-50 hover:bg-red-100' 
+                              : photoPreview 
+                              ? 'border-green-500 bg-green-50 hover:bg-green-100'
+                              : 'border-gray-300 bg-gray-50 hover:bg-gray-100'
+                          }`}>
+                            <div className="flex flex-col items-center justify-center p-4 w-full h-full">
+                              {photoPreview ? (
+                                <div className="relative w-full h-full">
+                                  <img
+                                    src={photoPreview}
+                                    alt="Student preview"
+                                    className="w-full h-full object-cover rounded-lg"
+                                  />
+                                  <button
+                                    type="button"
+                                    onClick={(e) => {
+                                      e.preventDefault();
+                                      setPhotoPreview(null);
+                                      onChange(null);
+                                    }}
+                                    className="absolute -top-2 -right-2 bg-red-500 text-white rounded-full p-1.5 hover:bg-red-600 shadow-lg"
+                                  >
+                                    <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M6 18L18 6M6 6l12 12" />
+                                    </svg>
+                                  </button>
+                                </div>
+                              ) : (
+                                <>
+                                  <svg
+                                    className="w-12 h-12 mb-3 text-gray-400"
+                                    fill="none"
+                                    stroke="currentColor"
+                                    viewBox="0 0 24 24"
+                                  >
+                                    <path
+                                      strokeLinecap="round"
+                                      strokeLinejoin="round"
+                                      strokeWidth="2"
+                                      d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"
+                                    />
+                                  </svg>
+                                  <p className="mb-2 text-xs text-center text-gray-500">
+                                    <span className="font-semibold">Click to upload</span>
+                                  </p>
+                                  <p className="text-xs text-center text-gray-500">JPG, JPEG or PNG</p>
+                                  <p className="text-xs text-center text-gray-500">(MAX. 5MB)</p>
+                                  <p className="text-xs text-blue-600 mt-2 font-semibold text-center">Blue Background Required</p>
+                                </>
+                              )}
+                            </div>
+                            <input
+                              {...field}
+                              type="file"
+                              accept="image/jpeg,image/jpg,image/png"
+                              className="hidden"
+                              onChange={(e) => {
+                                const file = e.target.files?.[0];
+                                if (file) {
+                                  // Validate file size
+                                  if (file.size > 5 * 1024 * 1024) {
+                                    alert('File size must not exceed 5MB');
+                                    return;
+                                  }
+                                  
+                                  // Validate file type
+                                  if (!['image/jpeg', 'image/jpg', 'image/png'].includes(file.type)) {
+                                    alert('Only JPG, JPEG, and PNG files are allowed');
+                                    return;
+                                  }
+                                  
+                                  // Create preview
+                                  const reader = new FileReader();
+                                  reader.onloadend = () => {
+                                    setPhotoPreview(reader.result);
+                                  };
+                                  reader.readAsDataURL(file);
+                                  
+                                  // Update form value
+                                  onChange(e.target.files);
+                                }
+                              }}
+                            />
+                          </label>
+                        </div>
+                        
+                        {photoPreview && (
+                          <div className="bg-green-50 border border-green-200 rounded-lg p-2">
+                            <p className="text-xs text-green-700 flex items-center">
+                              <svg className="w-4 h-4 mr-1.5" fill="currentColor" viewBox="0 0 20 20">
+                                <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
+                              </svg>
+                              Photo uploaded
+                            </p>
+                          </div>
+                        )}
+                      </div>
+                    )}
+                  />
+                  {errors.photo && (
+                    <span className="text-red-500 text-xs mt-1 block">{errors.photo.message}</span>
                   )}
-                </div>
-
-                <InputField
-                  label="Student B-Form"
-                  name="studentBForm"
-                  placeholder="00000-0000000-0"
-                  required
-                />
-              </div>
-
-              <div>
-                <label className="text-sm font-semibold text-gray-700 mb-1.5 block">
-                  Date of Birth <span className="text-red-500">*</span>
-                </label>
-                <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-                  <div className="flex flex-col">
-                    <input
-                      type="number"
-                      {...register('dobDay')}
-                      placeholder="Day"
-                      min="1"
-                      max="31"
-                      className={`px-4 py-2.5 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none ${
-                        errors.dobDay ? 'border-red-500 bg-red-50' : 'border-gray-300'
-                      }`}
-                    />
-                    {errors.dobDay && (
-                      <span className="text-red-500 text-xs mt-1">{errors.dobDay.message}</span>
-                    )}
-                  </div>
                   
-                  <div className="flex flex-col">
-                    <select
-                      {...register('dobMonth')}
-                      className={`px-4 py-2.5 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none ${
-                        errors.dobMonth ? 'border-red-500 bg-red-50' : 'border-gray-300'
-                      }`}
-                    >
-                      <option value="">Month</option>
-                      {months.map((month) => (
-                        <option key={month} value={month}>
-                          {month}
-                        </option>
-                      ))}
-                    </select>
-                    {errors.dobMonth && (
-                      <span className="text-red-500 text-xs mt-1">{errors.dobMonth.message}</span>
-                    )}
-                  </div>
-                  
-                  <div className="flex flex-col">
-                    <input
-                      type="number"
-                      {...register('dobYear')}
-                      placeholder="Year"
-                      min="2012"
-                      max="2018"
-                      className={`px-4 py-2.5 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none ${
-                        errors.dobYear ? 'border-red-500 bg-red-50' : 'border-gray-300'
-                      }`}
-                    />
-                    {errors.dobYear && (
-                      <span className="text-red-500 text-xs mt-1">{errors.dobYear.message}</span>
-                    )}
+                  {/* Photo Requirements */}
+                  <div className="mt-4 bg-blue-50 border border-blue-200 p-3 rounded-lg">
+                    <p className="text-xs text-blue-800 font-semibold mb-1">
+                      Photo Requirements:
+                    </p>
+                    <ul className="text-xs text-blue-700 space-y-0.5">
+                      <li>• Passport size</li>
+                      <li>• Blue background</li>
+                      <li>• Clear, high-quality</li>
+                      <li>• Face clearly visible</li>
+                    </ul>
                   </div>
                 </div>
               </div>
-
-              <InputField
-                label="Religion"
-                name="religion"
-                placeholder="Enter religion"
-                required
-              />
             </div>
           </div>
 
@@ -303,58 +520,80 @@ const AdmissionForm = () => {
             </h2>
             
             <div className="grid grid-cols-1 gap-5">
-              <InputField
-                label="Father's Name"
+              <ControlledInputField
                 name="fatherName"
+                control={control}
+                label="Father's Name"
                 placeholder="Enter father's name"
                 required
+                errors={errors}
               />
 
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
-                <InputField
-                  label="Father's CNIC"
+                <ControlledInputField
                   name="fatherCNIC"
-                  placeholder="00000-0000000-0"
+                  control={control}
+                  label="Father's CNIC"
+                  placeholder="12345-1234567-1"
+                  maxLength={15}
                   required
+                  errors={errors}
+                  helpText="Format: 12345-1234567-1"
                 />
 
-                <InputField
-                  label="District of Domicile (Father)"
+                <ControlledInputField
                   name="domicileDistrict"
+                  control={control}
+                  label="District of Domicile (Father)"
                   placeholder="Enter district"
                   required
+                  errors={errors}
                 />
               </div>
 
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
-                <InputField
-                  label="Guardian's Name"
+                <ControlledInputField
                   name="guardianName"
+                  control={control}
+                  label="Guardian's Name"
                   placeholder="Enter guardian's name (if applicable)"
+                  errors={errors}
                 />
 
-                <InputField
-                  label="Guardian's Contact"
+                <ControlledInputField
                   name="guardianContact"
-                  placeholder="03001234567"
+                  control={control}
+                  label="Guardian's Contact"
                   type="tel"
+                  placeholder="03001234567"
+                  maxLength={11}
+                  errors={errors}
+                  helpText="Must start with 03"
                 />
               </div>
 
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
-                <InputField
-                  label="Contact Number 1"
+                <ControlledInputField
                   name="contact1"
-                  placeholder="03001234567"
+                  control={control}
+                  label="Contact Number 1"
                   type="tel"
+                  placeholder="03001234567"
+                  maxLength={11}
                   required
+                  errors={errors}
+                  helpText="Must start with 03"
                 />
 
-                <InputField
-                  label="Contact Number 2"
+                <ControlledInputField
                   name="contact2"
-                  placeholder="03001234567"
+                  control={control}
+                  label="Contact Number 2"
                   type="tel"
+                  placeholder="03001234567"
+                  maxLength={11}
+                  errors={errors}
+                  helpText="Must start with 03"
                 />
               </div>
             </div>
@@ -367,27 +606,95 @@ const AdmissionForm = () => {
             </h2>
             
             <div className="grid grid-cols-1 gap-5">
-              <InputField
-                label="Postal Address"
+              <ControlledInputField
                 name="postalAddress"
+                control={control}
+                label="Postal Address"
                 placeholder="Enter complete postal address"
                 required
+                errors={errors}
               />
 
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
-                <InputField
-                  label="City"
-                  name="city"
-                  placeholder="Enter city"
-                  required
-                />
+              <div className="grid grid-cols-1 sm:grid-cols-3 gap-5">
+                <div className="flex flex-col">
+                  <label className="text-sm font-semibold text-gray-700 mb-1.5">
+                    Province <span className="text-red-500">*</span>
+                  </label>
+                  <Controller
+                    name="province"
+                    control={control}
+                    render={({ field }) => (
+                      <Select
+                        {...field}
+                        options={provinceOptions}
+                        styles={customSelectStyles}
+                        placeholder="Select province"
+                        isClearable
+                        onChange={(value) => {
+                          field.onChange(value);
+                          setSelectedProvince(value);
+                          setSelectedDistrict(null);
+                          setValue('district', null);
+                          setValue('city', null);
+                        }}
+                      />
+                    )}
+                  />
+                  {errors.province && (
+                    <span className="text-red-500 text-xs mt-1">{errors.province.message}</span>
+                  )}
+                </div>
 
-                <InputField
-                  label="District"
-                  name="district"
-                  placeholder="Enter district"
-                  required
-                />
+                <div className="flex flex-col">
+                  <label className="text-sm font-semibold text-gray-700 mb-1.5">
+                    District <span className="text-red-500">*</span>
+                  </label>
+                  <Controller
+                    name="district"
+                    control={control}
+                    render={({ field }) => (
+                      <Select
+                        {...field}
+                        options={districtOptions}
+                        styles={customSelectStyles}
+                        placeholder="Select district"
+                        isClearable
+                        isDisabled={!selectedProvince}
+                        onChange={(value) => {
+                          field.onChange(value);
+                          setSelectedDistrict(value);
+                          setValue('city', null);
+                        }}
+                      />
+                    )}
+                  />
+                  {errors.district && (
+                    <span className="text-red-500 text-xs mt-1">{errors.district.message}</span>
+                  )}
+                </div>
+
+                <div className="flex flex-col">
+                  <label className="text-sm font-semibold text-gray-700 mb-1.5">
+                    City <span className="text-red-500">*</span>
+                  </label>
+                  <Controller
+                    name="city"
+                    control={control}
+                    render={({ field }) => (
+                      <Select
+                        {...field}
+                        options={cityOptions}
+                        styles={customSelectStyles}
+                        placeholder="Select city"
+                        isClearable
+                        isDisabled={!selectedDistrict}
+                      />
+                    )}
+                  />
+                  {errors.city && (
+                    <span className="text-red-500 text-xs mt-1">{errors.city.message}</span>
+                  )}
+                </div>
               </div>
             </div>
           </div>
@@ -399,91 +706,85 @@ const AdmissionForm = () => {
             </h2>
             
             <div className="grid grid-cols-1 gap-5">
-              <InputField
-                label="School Name"
+              <ControlledInputField
                 name="schoolName"
+                control={control}
+                label="School Name"
                 placeholder="Enter school name"
                 required
+                errors={errors}
               />
 
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
-                <div className="flex flex-col">
-                  <label className="text-sm font-semibold text-gray-700 mb-1.5">
-                    School Category <span className="text-red-500">*</span>
-                  </label>
-                  <div className="flex flex-col sm:flex-row gap-4 pt-2">
-                    <label className="flex items-center cursor-pointer">
-                      <input
-                        type="radio"
-                        {...register('schoolCategory')}
-                        value="Government School"
-                        className="w-4 h-4 text-blue-600 focus:ring-2 focus:ring-blue-500"
-                      />
-                      <span className="ml-2 text-gray-700">Government School</span>
-                    </label>
-                    <label className="flex items-center cursor-pointer">
-                      <input
-                        type="radio"
-                        {...register('schoolCategory')}
-                        value="SEF School"
-                        className="w-4 h-4 text-blue-600 focus:ring-2 focus:ring-blue-500"
-                      />
-                      <span className="ml-2 text-gray-700">SEF School</span>
-                    </label>
-                  </div>
-                  {errors.schoolCategory && (
-                    <span className="text-red-500 text-xs mt-1">
-                      {errors.schoolCategory.message}
-                    </span>
-                  )}
-                </div>
+                <ControlledRadioGroup
+                  name="schoolCategory"
+                  control={control}
+                  label="School Category"
+                  options={schoolCategoryOptions}
+                  required
+                  errors={errors}
+                />
 
-                <InputField
-                  label="School SEMIS/Code"
+                <ControlledInputField
                   name="schoolSemisCode"
+                  control={control}
+                  label="School SEMIS/Code"
                   placeholder="Enter SEMIS/Code"
                   required
+                  errors={errors}
                 />
               </div>
 
               <div className="grid grid-cols-1 sm:grid-cols-3 gap-5">
-                <InputField
-                  label="Currently Studying in Class"
+                <ControlledInputField
                   name="studyingInClass"
+                  control={control}
+                  label="Currently Studying in Class"
                   placeholder="e.g., Class 5"
                   required
+                  errors={errors}
                 />
 
-                <InputField
-                  label="Year of Enrollment"
+                <ControlledInputField
                   name="enrollmentYear"
+                  control={control}
+                  label="Year of Enrollment"
                   type="number"
                   placeholder="2020"
                   required
+                  errors={errors}
                 />
 
-                <InputField
-                  label="School GR No"
+                <ControlledInputField
                   name="schoolGRNo"
+                  control={control}
+                  label="School GR No"
                   placeholder="Enter GR number"
                   required
+                  errors={errors}
                 />
               </div>
 
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
-                <InputField
-                  label="Headmaster/Headmistress Name"
+                <ControlledInputField
                   name="headmasterName"
+                  control={control}
+                  label="Headmaster/Headmistress Name"
                   placeholder="Enter name"
                   required
+                  errors={errors}
                 />
 
-                <InputField
-                  label="Headmaster Contact"
+                <ControlledInputField
                   name="headmasterContact"
-                  placeholder="03001234567"
+                  control={control}
+                  label="Headmaster Contact"
                   type="tel"
+                  placeholder="03001234567"
+                  maxLength={11}
                   required
+                  errors={errors}
+                  helpText="Must start with 03"
                 />
               </div>
             </div>
@@ -496,49 +797,22 @@ const AdmissionForm = () => {
             </h2>
             
             <div className="grid grid-cols-1 gap-5">
-              <div className="flex flex-col">
-                <label className="text-sm font-semibold text-gray-700 mb-1.5">
-                  Medium of Instructions for Entry Test <span className="text-red-500">*</span>
-                </label>
-                <div className="flex flex-col sm:flex-row gap-4 pt-2">
-                  <label className="flex items-center cursor-pointer">
-                    <input
-                      type="radio"
-                      {...register('testMedium')}
-                      value="Sindhi"
-                      className="w-4 h-4 text-blue-600 focus:ring-2 focus:ring-blue-500"
-                    />
-                    <span className="ml-2 text-gray-700">Sindhi</span>
-                  </label>
-                  <label className="flex items-center cursor-pointer">
-                    <input
-                      type="radio"
-                      {...register('testMedium')}
-                      value="Urdu"
-                      className="w-4 h-4 text-blue-600 focus:ring-2 focus:ring-blue-500"
-                    />
-                    <span className="ml-2 text-gray-700">Urdu</span>
-                  </label>
-                  <label className="flex items-center cursor-pointer">
-                    <input
-                      type="radio"
-                      {...register('testMedium')}
-                      value="English"
-                      className="w-4 h-4 text-blue-600 focus:ring-2 focus:ring-blue-500"
-                    />
-                    <span className="ml-2 text-gray-700">English</span>
-                  </label>
-                </div>
-                {errors.testMedium && (
-                  <span className="text-red-500 text-xs mt-1">{errors.testMedium.message}</span>
-                )}
-              </div>
+              <ControlledRadioGroup
+                name="testMedium"
+                control={control}
+                label="Medium of Instructions for Entry Test"
+                options={testMediumOptions}
+                required
+                errors={errors}
+              />
 
-              <InputField
-                label="Division"
+              <ControlledInputField
                 name="division"
+                control={control}
+                label="Division"
                 placeholder="Enter division"
                 required
+                errors={errors}
               />
             </div>
           </div>
@@ -623,32 +897,25 @@ const AdmissionForm = () => {
           </div>
 
           {/* Acknowledgment */}
-          <div className="mb-8">
-            <label className="flex items-start cursor-pointer bg-gray-50 p-4 rounded-lg border-2 border-gray-200 hover:border-blue-400 transition-colors">
-              <input
-                type="checkbox"
-                {...register('acknowledgment')}
-                className="w-5 h-5 text-blue-600 focus:ring-2 focus:ring-blue-500 mt-0.5 flex-shrink-0"
-              />
-              <span className="ml-3 text-sm text-gray-700">
+          <ControlledCheckbox
+            name="acknowledgment"
+            control={control}
+            label={
+              <>
                 I hereby declare that all the information provided above is true and correct to the best of my knowledge. 
                 I understand that admission will be subject to verification of documents and that SEF reserves the right to 
                 reject the application at any stage in case of omission or misrepresentation. <span className="text-red-500">*</span>
-              </span>
-            </label>
-            {errors.acknowledgment && (
-              <span className="text-red-500 text-xs mt-1 block">
-                {errors.acknowledgment.message}
-              </span>
-            )}
-          </div>
+              </>
+            }
+            errors={errors}
+          />
 
           {/* Submit Button */}
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
             <button
               type="submit"
               disabled={isSubmitting}
-              className={`px-8 py-4 bg-gradient-to-r from-blue-600 to-green-600 text-white font-bold rounded-lg shadow-lg hover:shadow-xl transform hover:-translate-y-0.5 transition-all duration-200 ${
+              className={`px-8 py-4 bg-gradient-to-r from-green-800 to-green-600 text-white font-bold rounded-lg shadow-lg hover:shadow-xl transform hover:-translate-y-0.5 transition-all duration-200 ${
                 isSubmitting ? 'opacity-50 cursor-not-allowed' : ''
               }`}
             >
@@ -667,7 +934,12 @@ const AdmissionForm = () => {
             
             <button
               type="button"
-              onClick={() => reset()}
+              onClick={() => {
+                reset();
+                setSelectedProvince(null);
+                setSelectedDistrict(null);
+                setPhotoPreview(null);
+              }}
               className="px-8 py-4 bg-gray-200 text-gray-700 font-bold rounded-lg shadow hover:shadow-lg hover:bg-gray-300 transform hover:-translate-y-0.5 transition-all duration-200"
             >
               Reset Form
