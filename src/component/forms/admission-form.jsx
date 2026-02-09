@@ -4,6 +4,7 @@ import { Form2 } from "./admission/form-2";
 import { Form3 } from "./admission/form-3";
 import { Form4 } from "./admission/form-4";
 import { Form5 } from "./admission/form-5";
+import FormFooter from "../footer/form-footer";
 
 const AdmissionForm = () => {
   const [currentStep, setCurrentStep] = useState(() => {
@@ -145,16 +146,7 @@ const AdmissionForm = () => {
         {renderStep()}
 
         {/* Footer Information */}
-        <div className="bg-white rounded-b-2xl shadow-lg p-6 text-center text-sm text-gray-600 space-y-1">
-          <p>For further details and updates please visit:</p>
-          <p className="font-semibold text-blue-600">
-            www.psg.edu.pk | http://sef.org.pk
-          </p>
-          <p className="mt-4 text-xs text-gray-500">
-            Public School Gadap, Karachi, 22 km of Super Highway Main Gadap,
-            Road, Gadap Town, Karachi
-          </p>
-        </div>
+        <FormFooter />
       </div>
     </div>
   );

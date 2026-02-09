@@ -7,9 +7,10 @@ import { ControlledRadioGroup } from '../../radio-button';
 import { ControlledInputField } from '../../input-field';
 import Select from 'react-select';
 import { step1Schema } from "../../schema/admission-form-schema";
-
+import FormTemplate from "../../template/form-template";
 
 export const Form1 = ({ onNext, initialData = {}, currentStep, totalSteps }) => {
+
   const [photoPreview, setPhotoPreview] = useState(null);
   const [showPhotoModal, setShowPhotoModal] = useState(false);
 
@@ -46,7 +47,8 @@ export const Form1 = ({ onNext, initialData = {}, currentStep, totalSteps }) => 
   };
 
   return (
-    <div>
+    <FormTemplate>
+      
       <form
         onSubmit={handleSubmit(onSubmit)}
         className="bg-white shadow-xl p-6 sm:p-8 lg:p-10"
@@ -370,6 +372,6 @@ export const Form1 = ({ onNext, initialData = {}, currentStep, totalSteps }) => 
           </div>
         </div>
       )}
-    </div>
+    </FormTemplate>
   );
 };

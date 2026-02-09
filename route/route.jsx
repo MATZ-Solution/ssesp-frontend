@@ -8,14 +8,40 @@ import Login4 from "../src/component/login/login4";
 import Login5 from "../src/component/login/login5";
 
 import AdmissionForm from "../src/component/forms/admission-form";
+import { Form1 } from "../src/component/forms/admission/form-1";
+import { Form2 } from "../src/component/forms/admission/form-2";
+import { Form3 } from "../src/component/forms/admission/form-3";
+import { Form4 } from "../src/component/forms/admission/form-4";
+import { Form5 } from "../src/component/forms/admission/form-5";
+
 // import Unauthorized from "../src/component/Unauthorized";
 // import PageNotFound from "../src/component/PageNotFound";
 
 export const router = createBrowserRouter([
   {
     path: "/",
-    element: <AdmissionForm />, // or redirect if you want
-    // element: <Navigate to="/login" replace />,
+    // element: <AdmissionForm />,
+    element: <Navigate to="/login" replace />,
+  },
+  {
+    path: "/form/student-info",
+    element: <Form1 />, 
+  },
+  {
+    path: "/form/guardian-info",
+    element: <Form2 />
+  },
+ {
+    path: "/form/address",
+    element: <Form3 />, 
+  },
+  {
+    path: "/form/school-info",
+    element: <Form4 />, 
+  },
+   {
+    path: "/form/test-preference",
+    element: <Form5 />,
   },
   {
     path: "/login",

@@ -6,10 +6,11 @@ import Select from 'react-select';
 import { classOptions, schoolCategoryOptions } from "../../../../data/form-data";
 import { ControlledRadioGroup } from '../../radio-button';
 import { step4Schema } from "../../schema/admission-form-schema";
+import FormTemplate from "../../template/form-template";
+import { useNavigate } from "react-router-dom";
 
-
-
-export const Form4 = ({ onNext, onPrevious, initialData, currentStep, totalSteps }) => {
+export const Form4 = () => {
+  const navigate = useNavigate()
   const {
     handleSubmit,
     control,
@@ -17,33 +18,30 @@ export const Form4 = ({ onNext, onPrevious, initialData, currentStep, totalSteps
   } = useForm({
     resolver: yupResolver(step4Schema),
     defaultValues: {
-      schoolName: initialData?.schoolName || "",
-      schoolCategory: initialData?.schoolCategory || "",
-      schoolSemisCode: initialData?.schoolSemisCode || "",
-      studyingInClass: initialData?.studyingInClass || null,
-      enrollmentYear: initialData?.enrollmentYear || "",
-      schoolGRNo: initialData?.schoolGRNo || "",
-      headmasterName: initialData?.headmasterName || "",
-      headmasterContact: initialData?.headmasterContact || "",
+      schoolName: "",
+      schoolCategory: "",
+      schoolSemisCode: "",
+      studyingInClass: null,
+      enrollmentYear: "",
+      schoolGRNo: "",
+      headmasterName: "",
+      headmasterContact: "",
     },
   });
   
   const onSubmit = (data) => {
     console.log('Step 4 - Previous School Information:', data);
     onNext(data);
+    navigate('/form/test-preference')
   };
 
   return (
-    <div>
+    <FormTemplate>
       <form
         onSubmit={handleSubmit(onSubmit)}
         className="bg-white shadow-xl p-6 sm:p-8 lg:p-10"
       >
         <div className="mb-8">
-          <h2 className="text-xl sm:text-2xl font-bold text-gray-800 mb-6 pb-2 border-b-2 border-blue-500">
-            Step {currentStep} of {totalSteps}: Previous School Information
-          </h2>
-
           <div className="grid grid-cols-1 gap-5">
             <ControlledInputField
               name="schoolName"
@@ -150,7 +148,7 @@ export const Form4 = ({ onNext, onPrevious, initialData, currentStep, totalSteps
         <div className="flex justify-between">
           <button
             type="button"
-            onClick={onPrevious}
+            onClick={()=> navigate('/form/address')}
             className="px-8 py-3 bg-gray-200 text-gray-700 font-bold rounded-lg shadow hover:shadow-lg hover:bg-gray-300 transform hover:-translate-y-0.5 transition-all duration-200"
           >
             ← Previous
@@ -163,6 +161,6 @@ export const Form4 = ({ onNext, onPrevious, initialData, currentStep, totalSteps
           </button>
         </div>
       </form>
-    </div>
+    </FormTemplate>
   );
 };

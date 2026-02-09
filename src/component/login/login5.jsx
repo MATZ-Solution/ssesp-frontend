@@ -18,10 +18,12 @@ import {
   Activity,
 } from "lucide-react";
 import { loginSchema } from "../schema/admission-form-schema";
+import { useNavigate } from "react-router-dom";
 
 const Login5 = () => {
-  const [shownumber, setShownumber] = useState(false);
 
+  const [shownumber, setShownumber] = useState(false);
+  const navigate = useNavigate()
   const {
     register,
     handleSubmit,
@@ -33,6 +35,7 @@ const Login5 = () => {
 
   const onSubmit = async (data) => {
     console.log("Login Data:", data);
+    navigate('/form/student-info')
   };
 
   const floatingElements = [

@@ -5,16 +5,12 @@ import { ControlledInputField } from "../../input-field";
 import { testMediumOptions } from "../../../../data/form-data";
 import { ControlledRadioGroup } from "../../radio-button";
 import { step5Schema } from "../../schema/admission-form-schema";
+import FormTemplate from "../../template/form-template";
+import { useNavigate } from "react-router-dom";
 
-export const Form5 = ({
-  onFinalSubmit,
-  onPrevious,
-  initialData,
-  currentStep,
-  totalSteps,
-}) => {
+export const Form5 = () => {
   const [isSubmitting, setIsSubmitting] = useState(false);
-
+  const navigate = useNavigate()
   const {
     handleSubmit,
     control,
@@ -22,8 +18,8 @@ export const Form5 = ({
   } = useForm({
     resolver: yupResolver(step5Schema),
     defaultValues: {
-      testMedium: initialData?.testMedium || "",
-      division: initialData?.division || "",
+      testMedium: "",
+      division: "",
       acknowledge: false,
     },
   });
@@ -40,16 +36,12 @@ export const Form5 = ({
   };
 
   return (
-    <div>
+    <FormTemplate>
       <form
         onSubmit={handleSubmit(onSubmit)}
         className="bg-white shadow-xl p-6 sm:p-8 lg:p-10"
       >
         <div className="mb-8">
-          <h2 className="text-xl sm:text-2xl font-bold text-gray-800 mb-6 pb-2 border-b-2 border-blue-500">
-            Step {currentStep} of {totalSteps}: Entry Test Preference
-          </h2>
-
           <div className="grid grid-cols-1 gap-5">
             <ControlledRadioGroup
               name="testMedium"
@@ -205,7 +197,7 @@ export const Form5 = ({
         <div className="flex justify-between">
           <button
             type="button"
-            onClick={onPrevious}
+            onClick={()=> navigate('/form/school-info')}
             className="px-8 py-3 bg-gray-200 text-gray-700 font-bold rounded-lg shadow hover:shadow-lg hover:bg-gray-300 transform hover:-translate-y-0.5 transition-all duration-200"
           >
             ← Previous
@@ -213,9 +205,8 @@ export const Form5 = ({
           <button
             type="submit"
             disabled={isSubmitting}
-            className={`px-8 py-3 bg-gradient-to-r from-green-800 to-green-600 text-white font-bold rounded-lg shadow-lg hover:shadow-xl transform hover:-translate-y-0.5 transition-all duration-200 ${
-              isSubmitting ? "opacity-50 cursor-not-allowed" : ""
-            }`}
+            className={`px-8 py-3 bg-gradient-to-r from-green-800 to-green-600 text-white font-bold rounded-lg shadow-lg hover:shadow-xl transform hover:-translate-y-0.5 transition-all duration-200 ${isSubmitting ? "opacity-50 cursor-not-allowed" : ""
+              }`}
           >
             {isSubmitting ? (
               <span className="flex items-center justify-center">
@@ -243,6 +234,6 @@ export const Form5 = ({
           </button>
         </div>
       </form>
-    </div>
+    </FormTemplate>
   );
 };

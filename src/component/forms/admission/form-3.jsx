@@ -6,9 +6,11 @@ import { customSelectStyles } from "../../../styles/custom-styles";
 import { citiesData } from "../../../../data/city-data";
 import Select from 'react-select';
 import { step3Schema } from "../../schema/admission-form-schema";
+import FormTemplate from "../../template/form-template";
+import { useNavigate } from "react-router-dom";
 
-
-export const Form3 = ({ onNext, onPrevious, initialData, currentStep, totalSteps }) => {
+export const Form3 = () => {
+  const navigate = useNavigate()
   const {
     handleSubmit,
     control,
@@ -18,10 +20,10 @@ export const Form3 = ({ onNext, onPrevious, initialData, currentStep, totalSteps
   } = useForm({
     resolver: yupResolver(step3Schema),
     defaultValues: {
-      postalAddress: initialData?.postalAddress || "",
-      province: initialData?.province || null,
-      district: initialData?.district || null,
-      city: initialData?.city || null,
+      postalAddress: "",
+      province: null,
+      district: null,
+      city: null,
     },
   });
 
@@ -35,18 +37,17 @@ export const Form3 = ({ onNext, onPrevious, initialData, currentStep, totalSteps
   const onSubmit = (data) => {
     console.log('Step 3 - Address Information:', data);
     onNext(data);
+    navigate('/form/school-info')
   };
 
   return (
-    <div>
+    <FormTemplate>
       <form
         onSubmit={handleSubmit(onSubmit)}
         className="bg-white shadow-xl p-6 sm:p-8 lg:p-10"
       >
         <div className="mb-8">
-          <h2 className="text-xl sm:text-2xl font-bold text-gray-800 mb-6 pb-2 border-b-2 border-blue-500">
-            Step {currentStep} of {totalSteps}: Address Information
-          </h2>
+          
 
           <div className="grid grid-cols-1 gap-5">
             <ControlledInputField
@@ -149,7 +150,7 @@ export const Form3 = ({ onNext, onPrevious, initialData, currentStep, totalSteps
         <div className="flex justify-between">
           <button
             type="button"
-            onClick={onPrevious}
+            onClick={()=> navigate('/form/guardian-info')}
             className="px-8 py-3 bg-gray-200 text-gray-700 font-bold rounded-lg shadow hover:shadow-lg hover:bg-gray-300 transform hover:-translate-y-0.5 transition-all duration-200"
           >
             ← Previous
@@ -162,6 +163,6 @@ export const Form3 = ({ onNext, onPrevious, initialData, currentStep, totalSteps
           </button>
         </div>
       </form>
-    </div>
+    </FormTemplate>
   );
 };
