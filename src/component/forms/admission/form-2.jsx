@@ -18,7 +18,7 @@ export const Form2 = () => {
       fatherCNIC:  "",
       domicileDistrict:  "",
       guardianName: "",
-      // guardianContact: initialData?.guardianContact || "",
+      guardianContact:  "",
       contact1: "",
       contact2: "",
     },
@@ -26,7 +26,7 @@ export const Form2 = () => {
 
   const onSubmit = (data) => {
     console.log('Step 2 - Father/Guardian Information:', data);
-    onNext(data);
+    // onNext(data);
     navigate('/form/address')
   };
 
@@ -78,7 +78,7 @@ export const Form2 = () => {
                 errors={errors}
               />
 
-              {/* <ControlledInputField
+              <ControlledInputField
                 name="guardianContact"
                 control={control}
                 label="Guardian's Contact"
@@ -87,7 +87,7 @@ export const Form2 = () => {
                 maxLength={11}
                 errors={errors}
                 helpText="Must start with 03"
-              /> */}
+              />
             </div>
 
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">

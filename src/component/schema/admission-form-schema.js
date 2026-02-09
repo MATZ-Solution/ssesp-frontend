@@ -67,13 +67,13 @@ fatherName: yup.string().required("Father's name is required"),
     .matches(/^\d{5}-\d{7}-\d{1}$/, 'CNIC must be in format: 12345-1234567-1'),
   domicileDistrict: yup.string().required('District of Domicile is required'),
   guardianName: yup.string(),
-  // guardianContact: yup
-  //   .string()
-  //   .test('starts-with-03', 'Contact must start with 03', function(value) {
-  //     if (!value) return true;
-  //     return value.startsWith('03');
-  //   })
-  //   .matches(/^03\d{9}$/, 'Invalid format (03XXXXXXXXX)'),
+  guardianContact: yup
+    .string()
+    .test('starts-with-03', 'Contact must start with 03', function(value) {
+      if (!value) return true;
+      return value.startsWith('03');
+    })
+    .matches(/^03\d{9}$/, 'Invalid format (03XXXXXXXXX)'),
   contact1: yup
     .string()
     .required('Contact number is required')
