@@ -1,12 +1,13 @@
-import React, { useState, useMemo } from 'react';
-import { useForm, Controller } from 'react-hook-form';
-import { yupResolver } from '@hookform/resolvers/yup';
-import Select from 'react-select';
-import { validationSchema } from './form-schema';
-import { citiesData } from '../../data/city-data';
-import { ControlledInputField } from './InputField';
-import { ControlledRadioGroup } from './Radio-button';
-import { ControlledCheckbox } from './ControlledCheckbox';
+import React, { useState, useMemo } from "react";
+import { useForm, Controller } from "react-hook-form";
+import { yupResolver } from "@hookform/resolvers/yup";
+import Select from "react-select";
+import { validationSchema } from "./form-schema";
+import { citiesData } from "../../data/city-data";
+import { ControlledInputField } from "./InputField";
+import { ControlledRadioGroup } from "./Radio-button";
+import { ControlledCheckbox } from "./ControlledCheckbox";
+import { SuccessModal } from "./SuccessModal";
 
 // Main Form Component
 const AdmissionForm = () => {
@@ -15,7 +16,7 @@ const AdmissionForm = () => {
   const [selectedDistrict, setSelectedDistrict] = useState(null);
   const [photoPreview, setPhotoPreview] = useState(null);
   const [showPhotoModal, setShowPhotoModal] = useState(false);
-  
+
   const {
     handleSubmit,
     control,
@@ -25,122 +26,136 @@ const AdmissionForm = () => {
   } = useForm({
     resolver: yupResolver(validationSchema),
     defaultValues: {
-      studentName: '',
-      gender: '',
-      studentBForm: '',
-      dob: '',
+      studentName: "",
+      gender: "",
+      studentBForm: "",
+      dob: "",
       religion: null,
-      fatherName: '',
-      fatherCNIC: '',
-      domicileDistrict: '',
-      guardianName: '',
-      guardianContact: '',
-      contact1: '',
-      contact2: '',
-      postalAddress: '',
+      fatherName: "",
+      fatherCNIC: "",
+      domicileDistrict: "",
+      guardianName: "",
+      guardianContact: "",
+      contact1: "",
+      contact2: "",
+      postalAddress: "",
       province: null,
       district: null,
       city: null,
-      schoolName: '',
-      schoolCategory: '',
-      schoolSemisCode: '',
+      schoolName: "",
+      schoolCategory: "",
+      schoolSemisCode: "",
       studyingInClass: null,
-      enrollmentYear: '',
-      schoolGRNo: '',
-      headmasterName: '',
-      headmasterContact: '',
-      testMedium: '',
-      division: '',
+      enrollmentYear: "",
+      schoolGRNo: "",
+      headmasterName: "",
+      headmasterContact: "",
+      testMedium: "",
+      division: "",
       photo: null,
       acknowledgment: false,
     },
   });
 
   const religionOptions = [
-    { value: 'Islam', label: 'Islam' },
-    { value: 'Christianity', label: 'Christianity' },
-    { value: 'Hinduism', label: 'Hinduism' },
-    { value: 'Sikhism', label: 'Sikhism' },
-    { value: 'Buddhism', label: 'Buddhism' },
-    { value: 'Other', label: 'Other' },
+    { value: "Islam", label: "Islam" },
+    { value: "Christianity", label: "Christianity" },
+    { value: "Hinduism", label: "Hinduism" },
+    { value: "Sikhism", label: "Sikhism" },
+    { value: "Buddhism", label: "Buddhism" },
+    { value: "Other", label: "Other" },
   ];
 
   const genderOptions = [
-    { value: 'Male', label: 'Male' },
-    { value: 'Female', label: 'Female' },
+    { value: "Male", label: "Male" },
+    { value: "Female", label: "Female" },
   ];
 
   const schoolCategoryOptions = [
-    { value: 'Government School', label: 'Government School' },
-    { value: 'SEF School', label: 'SEF School' },
+    { value: "Government School", label: "Government School" },
+    { value: "SEF School", label: "SEF School" },
   ];
 
   const testMediumOptions = [
-    { value: 'Sindhi', label: 'Sindhi' },
-    { value: 'Urdu', label: 'Urdu' },
-    { value: 'English', label: 'English' },
+    { value: "Sindhi", label: "Sindhi" },
+    { value: "Urdu", label: "Urdu" },
+    { value: "English", label: "English" },
   ];
 
   const classOptions = [
-    { value: 'Class 1', label: 'Class 1' },
-    { value: 'Class 2', label: 'Class 2' },
-    { value: 'Class 3', label: 'Class 3' },
-    { value: 'Class 4', label: 'Class 4' },
-    { value: 'Class 5', label: 'Class 5' },
-    { value: 'Class 6', label: 'Class 6' },
-    { value: 'Class 7', label: 'Class 7' },
-    { value: 'Class 8', label: 'Class 8' },
-    { value: 'Class 9', label: 'Class 9' },
-    { value: 'Class 10', label: 'Class 10' },
+    { value: "Class 1", label: "Class 1" },
+    { value: "Class 2", label: "Class 2" },
+    { value: "Class 3", label: "Class 3" },
+    { value: "Class 4", label: "Class 4" },
+    { value: "Class 5", label: "Class 5" },
+    { value: "Class 6", label: "Class 6" },
+    { value: "Class 7", label: "Class 7" },
+    { value: "Class 8", label: "Class 8" },
+    { value: "Class 9", label: "Class 9" },
+    { value: "Class 10", label: "Class 10" },
   ];
 
   const provinceOptions = useMemo(() => {
-    return citiesData.provinces.map(province => ({
+    return citiesData.provinces.map((province) => ({
       value: province.name,
-      label: province.name
+      label: province.name,
     }));
   }, []);
 
   const districtOptions = useMemo(() => {
     if (!selectedProvince) return [];
-    const province = citiesData.provinces.find(p => p.name === selectedProvince.value);
+    const province = citiesData.provinces.find(
+      (p) => p.name === selectedProvince.value,
+    );
     if (!province) return [];
-    return province.districts.map(district => ({
+    return province.districts.map((district) => ({
       value: district.name,
-      label: district.name
+      label: district.name,
     }));
   }, [selectedProvince]);
 
   const cityOptions = useMemo(() => {
     if (!selectedProvince || !selectedDistrict) return [];
-    const province = citiesData.provinces.find(p => p.name === selectedProvince.value);
+    const province = citiesData.provinces.find(
+      (p) => p.name === selectedProvince.value,
+    );
     if (!province) return [];
-    const district = province.districts.find(d => d.name === selectedDistrict.value);
+    const district = province.districts.find(
+      (d) => d.name === selectedDistrict.value,
+    );
     if (!district) return [];
-    return district.cities.map(city => ({
+    return district.cities.map((city) => ({
       value: city,
-      label: city
+      label: city,
     }));
   }, [selectedProvince, selectedDistrict]);
 
   const customSelectStyles = {
     control: (base, state) => ({
       ...base,
-      padding: '0.375rem 0.5rem',
-      borderRadius: '0.5rem',
-      borderColor: state.isFocused ? '#3B82F6' : errors[state.selectProps.name] ? '#EF4444' : '#D1D5DB',
-      backgroundColor: errors[state.selectProps.name] ? '#FEF2F2' : 'white',
-      boxShadow: state.isFocused ? '0 0 0 2px rgba(59, 130, 246, 0.5)' : 'none',
-      '&:hover': {
-        borderColor: state.isFocused ? '#3B82F6' : '#9CA3AF',
+      padding: "0.375rem 0.5rem",
+      borderRadius: "0.5rem",
+      borderColor: state.isFocused
+        ? "#3B82F6"
+        : errors[state.selectProps.name]
+          ? "#EF4444"
+          : "#D1D5DB",
+      backgroundColor: errors[state.selectProps.name] ? "#FEF2F2" : "white",
+      boxShadow: state.isFocused ? "0 0 0 2px rgba(59, 130, 246, 0.5)" : "none",
+      "&:hover": {
+        borderColor: state.isFocused ? "#3B82F6" : "#9CA3AF",
       },
     }),
     option: (base, state) => ({
       ...base,
-      backgroundColor: state.isSelected ? '#3B82F6' : state.isFocused ? '#DBEAFE' : 'white',
-      color: state.isSelected ? 'white' : '#1F2937',
-      '&:active': {
-        backgroundColor: '#3B82F6',
+      backgroundColor: state.isSelected
+        ? "#3B82F6"
+        : state.isFocused
+          ? "#DBEAFE"
+          : "white",
+      color: state.isSelected ? "white" : "#1F2937",
+      "&:active": {
+        backgroundColor: "#3B82F6",
       },
     }),
   };
@@ -156,20 +171,20 @@ const AdmissionForm = () => {
         studyingInClass: data.studyingInClass?.value,
         photo: data.photo?.[0],
       };
-      
+
       await new Promise((resolve) => setTimeout(resolve, 1500));
-      console.log('Form Data:', formData);
-      
+      console.log("Form Data:", formData);
+
       if (formData.photo) {
-        console.log('Photo details:', {
+        console.log("Photo details:", {
           name: formData.photo.name,
           size: formData.photo.size,
-          type: formData.photo.type
+          type: formData.photo.type,
         });
       }
-      
+
       setSubmitSuccess(true);
-      
+
       setTimeout(() => {
         setSubmitSuccess(false);
         reset();
@@ -178,7 +193,7 @@ const AdmissionForm = () => {
         setPhotoPreview(null);
       }, 3000);
     } catch (error) {
-      console.error('Submission error:', error);
+      console.error("Submission error:", error);
     }
   };
 
@@ -191,10 +206,13 @@ const AdmissionForm = () => {
             <h1 className="text-2xl sm:text-3xl lg:text-4xl font-bold mb-2">
               Sindh School Education Scholarship Program (SSESP)
             </h1>
-            <p className="text-lg sm:text-xl font-semibold">GOVERNMENT OF SINDH</p>
+            <p className="text-lg sm:text-xl font-semibold">
+              GOVERNMENT OF SINDH
+            </p>
             <p className="text-base sm:text-lg">SINDH EDUCATION FOUNDATION</p>
             <p className="mt-4 text-sm sm:text-base bg-white/20 backdrop-blur-sm rounded-lg py-2 px-4 inline-block">
-              Application Form for Students of Government and SEF Schools in Grade 6
+              Application Form for Students of Government and SEF Schools in
+              Grade 6
             </p>
             <p className="text-sm mt-2">Session 2023-24</p>
           </div>
@@ -218,11 +236,12 @@ const AdmissionForm = () => {
             <h2 className="text-xl sm:text-2xl font-bold text-gray-800 mb-6 pb-2 border-b-2 border-blue-500">
               Student Information
             </h2>
-            
+
             <div className="grid grid-cols-1 gap-5">
               <div className="bg-yellow-50 border-l-4 border-yellow-500 p-4 rounded-r-lg">
                 <p className="text-sm text-yellow-800">
-                  <strong>Note:</strong> Enter student name as per NADRA B-Form in CAPITAL LETTERS only
+                  <strong>Note:</strong> Enter student name as per NADRA B-Form
+                  in CAPITAL LETTERS only
                 </p>
               </div>
 
@@ -275,15 +294,21 @@ const AdmissionForm = () => {
                           min="2012-01-01"
                           max="2018-12-31"
                           className={`w-full px-4 py-2.5 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none ${
-                            errors.dob ? 'border-red-500 bg-red-50' : 'border-gray-300'
+                            errors.dob
+                              ? "border-red-500 bg-red-50"
+                              : "border-gray-300"
                           }`}
                         />
                       )}
                     />
                     {errors.dob && (
-                      <span className="text-red-500 text-xs mt-1">{errors.dob.message}</span>
+                      <span className="text-red-500 text-xs mt-1">
+                        {errors.dob.message}
+                      </span>
                     )}
-                    <p className="text-xs text-gray-500 mt-1">Select date between 2012-2018</p>
+                    <p className="text-xs text-gray-500 mt-1">
+                      Select date between 2012-2018
+                    </p>
                   </div>
 
                   <div className="flex flex-col">
@@ -304,7 +329,9 @@ const AdmissionForm = () => {
                       )}
                     />
                     {errors.religion && (
-                      <span className="text-red-500 text-xs mt-1">{errors.religion.message}</span>
+                      <span className="text-red-500 text-xs mt-1">
+                        {errors.religion.message}
+                      </span>
                     )}
                   </div>
                 </div>
@@ -314,20 +341,22 @@ const AdmissionForm = () => {
                   <label className="text-sm font-semibold text-gray-700 mb-1.5 block">
                     Upload Student Photo <span className="text-red-500">*</span>
                   </label>
-                  
+
                   <Controller
                     name="photo"
                     control={control}
                     render={({ field: { onChange, value, ...field } }) => (
                       <div className="space-y-3">
                         <div className="flex items-center justify-center w-full">
-                          <label className={`flex flex-col items-center justify-center w-full aspect-square border-2 border-dashed rounded-lg cursor-pointer transition-all ${
-                            errors.photo 
-                              ? 'border-red-500 bg-red-50 hover:bg-red-100' 
-                              : photoPreview 
-                              ? 'border-green-500 bg-green-50 hover:bg-green-100'
-                              : 'border-gray-300 bg-gray-50 hover:bg-gray-100'
-                          }`}>
+                          <label
+                            className={`flex flex-col items-center justify-center w-full aspect-square border-2 border-dashed rounded-lg cursor-pointer transition-all ${
+                              errors.photo
+                                ? "border-red-500 bg-red-50 hover:bg-red-100"
+                                : photoPreview
+                                  ? "border-green-500 bg-green-50 hover:bg-green-100"
+                                  : "border-gray-300 bg-gray-50 hover:bg-gray-100"
+                            }`}
+                          >
                             <div className="flex flex-col items-center justify-center p-4">
                               {photoPreview ? (
                                 <div className="relative w-full h-full flex items-center justify-center">
@@ -349,8 +378,18 @@ const AdmissionForm = () => {
                                     }}
                                     className="absolute -top-2 -right-2 bg-red-500 text-white rounded-full p-1.5 hover:bg-red-600 shadow-lg"
                                   >
-                                    <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M6 18L18 6M6 6l12 12" />
+                                    <svg
+                                      className="w-4 h-4"
+                                      fill="none"
+                                      stroke="currentColor"
+                                      viewBox="0 0 24 24"
+                                    >
+                                      <path
+                                        strokeLinecap="round"
+                                        strokeLinejoin="round"
+                                        strokeWidth="2"
+                                        d="M6 18L18 6M6 6l12 12"
+                                      />
                                     </svg>
                                   </button>
                                 </div>
@@ -370,11 +409,19 @@ const AdmissionForm = () => {
                                     />
                                   </svg>
                                   <p className="mb-2 text-xs text-center text-gray-500">
-                                    <span className="font-semibold">Click to upload</span>
+                                    <span className="font-semibold">
+                                      Click to upload
+                                    </span>
                                   </p>
-                                  <p className="text-xs text-gray-500 text-center">JPG, JPEG, PNG</p>
-                                  <p className="text-xs text-gray-500 text-center">(MAX. 5MB)</p>
-                                  <p className="text-xs text-blue-600 mt-2 font-semibold">Blue Background</p>
+                                  <p className="text-xs text-gray-500 text-center">
+                                    JPG, JPEG, PNG
+                                  </p>
+                                  <p className="text-xs text-gray-500 text-center">
+                                    (MAX. 5MB)
+                                  </p>
+                                  <p className="text-xs text-blue-600 mt-2 font-semibold">
+                                    Blue Background
+                                  </p>
                                 </>
                               )}
                             </div>
@@ -387,33 +434,49 @@ const AdmissionForm = () => {
                                 const file = e.target.files?.[0];
                                 if (file) {
                                   if (file.size > 5 * 1024 * 1024) {
-                                    alert('File size must not exceed 5MB');
+                                    alert("File size must not exceed 5MB");
                                     return;
                                   }
-                                  
-                                  if (!['image/jpeg', 'image/jpg', 'image/png'].includes(file.type)) {
-                                    alert('Only JPG, JPEG, and PNG files are allowed');
+
+                                  if (
+                                    ![
+                                      "image/jpeg",
+                                      "image/jpg",
+                                      "image/png",
+                                    ].includes(file.type)
+                                  ) {
+                                    alert(
+                                      "Only JPG, JPEG, and PNG files are allowed",
+                                    );
                                     return;
                                   }
-                                  
+
                                   const reader = new FileReader();
                                   reader.onloadend = () => {
                                     setPhotoPreview(reader.result);
                                   };
                                   reader.readAsDataURL(file);
-                                  
+
                                   onChange(e.target.files);
                                 }
                               }}
                             />
                           </label>
                         </div>
-                        
+
                         {photoPreview && (
                           <div className="bg-green-50 border border-green-200 rounded-lg p-2">
                             <p className="text-xs text-green-700 flex items-center">
-                              <svg className="w-4 h-4 mr-1" fill="currentColor" viewBox="0 0 20 20">
-                                <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
+                              <svg
+                                className="w-4 h-4 mr-1"
+                                fill="currentColor"
+                                viewBox="0 0 20 20"
+                              >
+                                <path
+                                  fillRule="evenodd"
+                                  d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"
+                                  clipRule="evenodd"
+                                />
                               </svg>
                               Photo uploaded
                             </p>
@@ -421,7 +484,9 @@ const AdmissionForm = () => {
                         )}
 
                         <div className="bg-blue-50 border border-blue-200 rounded-lg p-3">
-                          <p className="text-xs text-blue-800 font-semibold mb-1">Requirements:</p>
+                          <p className="text-xs text-blue-800 font-semibold mb-1">
+                            Requirements:
+                          </p>
                           <ul className="text-xs text-blue-700 space-y-0.5">
                             <li>• Passport size</li>
                             <li>• Blue background</li>
@@ -432,7 +497,9 @@ const AdmissionForm = () => {
                     )}
                   />
                   {errors.photo && (
-                    <span className="text-red-500 text-xs mt-1 block">{errors.photo.message}</span>
+                    <span className="text-red-500 text-xs mt-1 block">
+                      {errors.photo.message}
+                    </span>
                   )}
                 </div>
               </div>
@@ -444,7 +511,7 @@ const AdmissionForm = () => {
             <h2 className="text-xl sm:text-2xl font-bold text-gray-800 mb-6 pb-2 border-b-2 border-blue-500">
               Father/Guardian Information
             </h2>
-            
+
             <div className="grid grid-cols-1 gap-5">
               <ControlledInputField
                 name="fatherName"
@@ -530,7 +597,7 @@ const AdmissionForm = () => {
             <h2 className="text-xl sm:text-2xl font-bold text-gray-800 mb-6 pb-2 border-b-2 border-blue-500">
               Address Information
             </h2>
-            
+
             <div className="grid grid-cols-1 gap-5">
               <ControlledInputField
                 name="postalAddress"
@@ -560,14 +627,16 @@ const AdmissionForm = () => {
                           field.onChange(value);
                           setSelectedProvince(value);
                           setSelectedDistrict(null);
-                          setValue('district', null);
-                          setValue('city', null);
+                          setValue("district", null);
+                          setValue("city", null);
                         }}
                       />
                     )}
                   />
                   {errors.province && (
-                    <span className="text-red-500 text-xs mt-1">{errors.province.message}</span>
+                    <span className="text-red-500 text-xs mt-1">
+                      {errors.province.message}
+                    </span>
                   )}
                 </div>
 
@@ -589,13 +658,15 @@ const AdmissionForm = () => {
                         onChange={(value) => {
                           field.onChange(value);
                           setSelectedDistrict(value);
-                          setValue('city', null);
+                          setValue("city", null);
                         }}
                       />
                     )}
                   />
                   {errors.district && (
-                    <span className="text-red-500 text-xs mt-1">{errors.district.message}</span>
+                    <span className="text-red-500 text-xs mt-1">
+                      {errors.district.message}
+                    </span>
                   )}
                 </div>
 
@@ -618,7 +689,9 @@ const AdmissionForm = () => {
                     )}
                   />
                   {errors.city && (
-                    <span className="text-red-500 text-xs mt-1">{errors.city.message}</span>
+                    <span className="text-red-500 text-xs mt-1">
+                      {errors.city.message}
+                    </span>
                   )}
                 </div>
               </div>
@@ -630,7 +703,7 @@ const AdmissionForm = () => {
             <h2 className="text-xl sm:text-2xl font-bold text-gray-800 mb-6 pb-2 border-b-2 border-blue-500">
               Previous School Information
             </h2>
-            
+
             <div className="grid grid-cols-1 gap-5">
               <ControlledInputField
                 name="schoolName"
@@ -664,7 +737,8 @@ const AdmissionForm = () => {
               <div className="grid grid-cols-1 sm:grid-cols-3 gap-5">
                 <div className="flex flex-col">
                   <label className="text-sm font-semibold text-gray-700 mb-1.5">
-                    Currently Studying in Class <span className="text-red-500">*</span>
+                    Currently Studying in Class{" "}
+                    <span className="text-red-500">*</span>
                   </label>
                   <Controller
                     name="studyingInClass"
@@ -680,7 +754,9 @@ const AdmissionForm = () => {
                     )}
                   />
                   {errors.studyingInClass && (
-                    <span className="text-red-500 text-xs mt-1">{errors.studyingInClass.message}</span>
+                    <span className="text-red-500 text-xs mt-1">
+                      {errors.studyingInClass.message}
+                    </span>
                   )}
                 </div>
 
@@ -735,7 +811,7 @@ const AdmissionForm = () => {
             <h2 className="text-xl sm:text-2xl font-bold text-gray-800 mb-6 pb-2 border-b-2 border-blue-500">
               Entry Test Preference
             </h2>
-            
+
             <div className="grid grid-cols-1 gap-5">
               <ControlledRadioGroup
                 name="testMedium"
@@ -759,7 +835,9 @@ const AdmissionForm = () => {
 
           {/* Entry Test Criteria Information */}
           <div className="mb-8 bg-blue-50 border-l-4 border-blue-500 p-6 rounded-r-lg">
-            <h3 className="text-lg font-bold text-blue-900 mb-4">Entry Test Criteria</h3>
+            <h3 className="text-lg font-bold text-blue-900 mb-4">
+              Entry Test Criteria
+            </h3>
             <div className="overflow-x-auto">
               <table className="w-full text-sm">
                 <thead>
@@ -792,19 +870,29 @@ const AdmissionForm = () => {
 
           {/* Eligibility Criteria */}
           <div className="mb-8 bg-green-50 border-l-4 border-green-500 p-6 rounded-r-lg">
-            <h3 className="text-lg font-bold text-green-900 mb-4">Eligibility Criteria</h3>
+            <h3 className="text-lg font-bold text-green-900 mb-4">
+              Eligibility Criteria
+            </h3>
             <ul className="space-y-2 text-sm text-gray-700">
               <li className="flex items-start">
                 <span className="text-green-600 mr-2">✓</span>
-                <span>Must be currently studying in Grade V/Class 5 (bonafide) student of Government School or SEF School</span>
+                <span>
+                  Must be currently studying in Grade V/Class 5 (bonafide)
+                  student of Government School or SEF School
+                </span>
               </li>
               <li className="flex items-start">
                 <span className="text-green-600 mr-2">✓</span>
-                <span>Must have studied in any Government School or SEF School for at least last three academic years including Grade 5</span>
+                <span>
+                  Must have studied in any Government School or SEF School for
+                  at least last three academic years including Grade 5
+                </span>
               </li>
               <li className="flex items-start">
                 <span className="text-green-600 mr-2">✓</span>
-                <span>Age should not exceed eleven years as on 13th April, 2023</span>
+                <span>
+                  Age should not exceed eleven years as on 13th April, 2023
+                </span>
               </li>
               <li className="flex items-start">
                 <span className="text-green-600 mr-2">✓</span>
@@ -815,23 +903,37 @@ const AdmissionForm = () => {
 
           {/* Documents Required */}
           <div className="mb-8 bg-orange-50 border-l-4 border-orange-500 p-6 rounded-r-lg">
-            <h3 className="text-lg font-bold text-orange-900 mb-4">Documents Required</h3>
+            <h3 className="text-lg font-bold text-orange-900 mb-4">
+              Documents Required
+            </h3>
             <ul className="space-y-2 text-sm text-gray-700">
               <li className="flex items-start">
                 <span className="text-orange-600 mr-2">•</span>
-                <span>Duly filled Admission/Application Form along with 06 passport size recent photographs (with Blue background)</span>
+                <span>
+                  Duly filled Admission/Application Form along with 06 passport
+                  size recent photographs (with Blue background)
+                </span>
               </li>
               <li className="flex items-start">
                 <span className="text-orange-600 mr-2">•</span>
-                <span>Photocopy of General Register (GR) page duly attested by concerned Head Master/Head Mistress</span>
+                <span>
+                  Photocopy of General Register (GR) page duly attested by
+                  concerned Head Master/Head Mistress
+                </span>
               </li>
               <li className="flex items-start">
                 <span className="text-orange-600 mr-2">•</span>
-                <span>School leaving Certificate / Pass Certificate will be required at the time of admission</span>
+                <span>
+                  School leaving Certificate / Pass Certificate will be required
+                  at the time of admission
+                </span>
               </li>
               <li className="flex items-start">
                 <span className="text-orange-600 mr-2">•</span>
-                <span>Photocopies of Student's B-Form, Father's Domicile and Father's CNIC</span>
+                <span>
+                  Photocopies of Student's B-Form, Father's Domicile and
+                  Father's CNIC
+                </span>
               </li>
             </ul>
           </div>
@@ -842,9 +944,12 @@ const AdmissionForm = () => {
             control={control}
             label={
               <>
-                I hereby declare that all the information provided above is true and correct to the best of my knowledge. 
-                I understand that admission will be subject to verification of documents and that SEF reserves the right to 
-                reject the application at any stage in case of omission or misrepresentation. <span className="text-red-500">*</span>
+                I hereby declare that all the information provided above is true
+                and correct to the best of my knowledge. I understand that
+                admission will be subject to verification of documents and that
+                SEF reserves the right to reject the application at any stage in
+                case of omission or misrepresentation.{" "}
+                <span className="text-red-500">*</span>
               </>
             }
             errors={errors}
@@ -856,22 +961,37 @@ const AdmissionForm = () => {
               type="submit"
               disabled={isSubmitting}
               className={`px-8 py-4 bg-gradient-to-r from-green-800 to-green-600 text-white font-bold rounded-lg shadow-lg hover:shadow-xl transform hover:-translate-y-0.5 transition-all duration-200 ${
-                isSubmitting ? 'opacity-50 cursor-not-allowed' : ''
+                isSubmitting ? "opacity-50 cursor-not-allowed" : ""
               }`}
             >
               {isSubmitting ? (
                 <span className="flex items-center justify-center">
-                  <svg className="animate-spin h-5 w-5 mr-3" viewBox="0 0 24 24">
-                    <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" fill="none" />
-                    <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z" />
+                  <svg
+                    className="animate-spin h-5 w-5 mr-3"
+                    viewBox="0 0 24 24"
+                  >
+                    <circle
+                      className="opacity-25"
+                      cx="12"
+                      cy="12"
+                      r="10"
+                      stroke="currentColor"
+                      strokeWidth="4"
+                      fill="none"
+                    />
+                    <path
+                      className="opacity-75"
+                      fill="currentColor"
+                      d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
+                    />
                   </svg>
                   Submitting...
                 </span>
               ) : (
-                'Submit Application'
+                "Submit Application"
               )}
             </button>
-            
+
             <button
               type="button"
               onClick={() => {
@@ -889,17 +1009,31 @@ const AdmissionForm = () => {
           {/* Footer Information */}
           <div className="mt-8 text-center text-sm text-gray-600 space-y-1">
             <p>For further details and updates please visit:</p>
-            <p className="font-semibold text-blue-600">www.psg.edu.pk | http://sef.org.pk</p>
+            <p className="font-semibold text-blue-600">
+              www.psg.edu.pk | http://sef.org.pk
+            </p>
             <p className="mt-4 text-xs text-gray-500">
-              Public School Gadap, Karachi, 22 km of Super Highway Main Gadap, Road, Gadap Town, Karachi
+              Public School Gadap, Karachi, 22 km of Super Highway Main Gadap,
+              Road, Gadap Town, Karachi
             </p>
           </div>
         </form>
       </div>
 
+      <SuccessModal
+        open={submitSuccess}
+        onClose={() => {
+          setSubmitSuccess(false);
+          reset();
+          setSelectedProvince(null);
+          setSelectedDistrict(null);
+          setPhotoPreview(null);
+        }}
+      />
+
       {/* Photo Modal */}
       {showPhotoModal && photoPreview && (
-        <div 
+        <div
           className="fixed inset-0 bg-black bg-opacity-75 flex items-center justify-center z-50 p-4"
           onClick={() => setShowPhotoModal(false)}
         >
@@ -908,8 +1042,18 @@ const AdmissionForm = () => {
               onClick={() => setShowPhotoModal(false)}
               className="absolute -top-4 -right-4 bg-white text-gray-800 rounded-full p-2 hover:bg-gray-100 shadow-lg z-10"
             >
-              <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M6 18L18 6M6 6l12 12" />
+              <svg
+                className="w-6 h-6"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth="2"
+                  d="M6 18L18 6M6 6l12 12"
+                />
               </svg>
             </button>
             <img
