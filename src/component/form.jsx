@@ -909,10 +909,7 @@ const AdmissionForm = () => {
             <ul className="space-y-2 text-sm text-gray-700">
               <li className="flex items-start">
                 <span className="text-orange-600 mr-2">•</span>
-                <span>
-                  Duly filled Admission/Application Form along with 06 passport
-                  size recent photographs (with Blue background)
-                </span>
+                <span>Duly filled Admission/Application Form along with 1 passport size recent photographs (with Blue background)</span>
               </li>
               <li className="flex items-start">
                 <span className="text-orange-600 mr-2">•</span>
