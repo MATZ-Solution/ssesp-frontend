@@ -1,8 +1,8 @@
 import { Loader2 } from "lucide-react";
 import { memo } from "react";
-
 function Button({
-  text = "Submit",
+  children,
+  text,
   isLoading = false,
   onClick,
   type = "button",
@@ -22,7 +22,7 @@ function Button({
           Processing...
         </>
       ) : (
-        text
+        children ?? text
       )}
     </button>
   );

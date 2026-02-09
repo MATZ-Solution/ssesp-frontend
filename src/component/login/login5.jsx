@@ -1,8 +1,8 @@
-import Button from "../button";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
 import logo from "../../assets/mohid.png";
 import { yupResolver } from "@hookform/resolvers/yup";
+import * as yup from 'yup';
 import {
   Eye,
   EyeOff,
@@ -17,11 +17,20 @@ import {
   PieChart,
   Activity,
 } from "lucide-react";
-import { loginSchema } from "../schema/admission-form-schema";
 
 const Login5 = () => {
   const [shownumber, setShownumber] = useState(false);
 
+const loginSchema = yup.object().shape({
+  applicantId: yup
+    .string()
+    .required('Applicant ID is required'),
+    // Remove .email() if applicant ID isn't always an email
+  number: yup  // Add this field
+    .string()
+    .required('Phone number is required')
+    .min(10, 'Phone number must be at least 10 digits'),
+});
   const {
     register,
     handleSubmit,
@@ -168,7 +177,7 @@ const Login5 = () => {
                   </label>
                   <input
                     type="text"
-                    {...register("email")}
+                    {...register("applicantId")}
                     className="w-full px-4 py-3 bg-white/5 border border-white/10 rounded-xl text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-[#4BA54F] focus:border-transparent transition-all duration-300"
                     placeholder="Enter your applicant ID"
                   />
@@ -218,12 +227,12 @@ const Login5 = () => {
                 </div>
 
                 {/* Login Button */}
-                <Button
+                <button
                   type="submit"
                   className="w-full bg-gradient-to-r from-[#4BA54F] to-emerald-500 hover:from-emerald-600 hover:to-emerald-700 text-white font-semibold py-3 rounded-xl transition-all duration-300 transform hover:scale-[1.02] shadow-lg hover:shadow-xl"
                 >
                   Sign In
-                </Button>
+                </button>
 
                 {/* Divider */}
                 <div className="flex items-center gap-4 my-6">
