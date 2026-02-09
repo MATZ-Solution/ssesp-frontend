@@ -1,7 +1,5 @@
 import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
-import AdmissionForm from './component/form'
+import AdmissionForm from './component/forms/admission-form'
 
 function App() {
   return (

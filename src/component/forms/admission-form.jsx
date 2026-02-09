@@ -1,19 +1,19 @@
-import React, { useState, useMemo } from "react";
-import { useForm, Controller } from "react-hook-form";
-import { yupResolver } from "@hookform/resolvers/yup";
-import Select from "react-select";
-import { validationSchema } from "./form-schema";
-import { citiesData } from "../../data/city-data";
-import { ControlledInputField } from "./InputField";
-import { ControlledRadioGroup } from "./Radio-button";
-import { ControlledCheckbox } from "./ControlledCheckbox";
-import { SuccessModal } from "./SuccessModal";
+import React, { useState, useMemo } from 'react';
+import { useForm, Controller } from 'react-hook-form';
+import { yupResolver } from '@hookform/resolvers/yup';
+import Select from 'react-select';
+import { validationSchema } from '../schema/admission-form-schema';
+import { citiesData } from '../../../data/city-data';
+import { ControlledInputField } from '../input-field';
+import { ControlledRadioGroup } from '../radio-button';
+import { ControlledCheckbox } from '../check-box';
+import { religionOptions, genderOptions, schoolCategoryOptions, testMediumOptions, classOptions } from '../../../data/form-data';
+import { customSelectStyles } from '../../styles/custom-styles';
+import { useProvinceOptions, useDistrictOptions, useCityOptions } from '../../../utils/locationOption';
 
-// Main Form Component
 const AdmissionForm = () => {
+
   const [submitSuccess, setSubmitSuccess] = useState(false);
-  const [selectedProvince, setSelectedProvince] = useState(null);
-  const [selectedDistrict, setSelectedDistrict] = useState(null);
   const [photoPreview, setPhotoPreview] = useState(null);
   const [showPhotoModal, setShowPhotoModal] = useState(false);
 
@@ -22,6 +22,7 @@ const AdmissionForm = () => {
     control,
     formState: { errors, isSubmitting },
     reset,
+    watch,
     setValue,
   } = useForm({
     resolver: yupResolver(validationSchema),
@@ -57,108 +58,13 @@ const AdmissionForm = () => {
     },
   });
 
-  const religionOptions = [
-    { value: "Islam", label: "Islam" },
-    { value: "Christianity", label: "Christianity" },
-    { value: "Hinduism", label: "Hinduism" },
-    { value: "Sikhism", label: "Sikhism" },
-    { value: "Buddhism", label: "Buddhism" },
-    { value: "Other", label: "Other" },
-  ];
+  const province = watch("province")
+  const district = watch("district")
+  const city = watch("city")
 
-  const genderOptions = [
-    { value: "Male", label: "Male" },
-    { value: "Female", label: "Female" },
-  ];
-
-  const schoolCategoryOptions = [
-    { value: "Government School", label: "Government School" },
-    { value: "SEF School", label: "SEF School" },
-  ];
-
-  const testMediumOptions = [
-    { value: "Sindhi", label: "Sindhi" },
-    { value: "Urdu", label: "Urdu" },
-    { value: "English", label: "English" },
-  ];
-
-  const classOptions = [
-    { value: "Class 1", label: "Class 1" },
-    { value: "Class 2", label: "Class 2" },
-    { value: "Class 3", label: "Class 3" },
-    { value: "Class 4", label: "Class 4" },
-    { value: "Class 5", label: "Class 5" },
-    { value: "Class 6", label: "Class 6" },
-    { value: "Class 7", label: "Class 7" },
-    { value: "Class 8", label: "Class 8" },
-    { value: "Class 9", label: "Class 9" },
-    { value: "Class 10", label: "Class 10" },
-  ];
-
-  const provinceOptions = useMemo(() => {
-    return citiesData.provinces.map((province) => ({
-      value: province.name,
-      label: province.name,
-    }));
-  }, []);
-
-  const districtOptions = useMemo(() => {
-    if (!selectedProvince) return [];
-    const province = citiesData.provinces.find(
-      (p) => p.name === selectedProvince.value,
-    );
-    if (!province) return [];
-    return province.districts.map((district) => ({
-      value: district.name,
-      label: district.name,
-    }));
-  }, [selectedProvince]);
-
-  const cityOptions = useMemo(() => {
-    if (!selectedProvince || !selectedDistrict) return [];
-    const province = citiesData.provinces.find(
-      (p) => p.name === selectedProvince.value,
-    );
-    if (!province) return [];
-    const district = province.districts.find(
-      (d) => d.name === selectedDistrict.value,
-    );
-    if (!district) return [];
-    return district.cities.map((city) => ({
-      value: city,
-      label: city,
-    }));
-  }, [selectedProvince, selectedDistrict]);
-
-  const customSelectStyles = {
-    control: (base, state) => ({
-      ...base,
-      padding: "0.375rem 0.5rem",
-      borderRadius: "0.5rem",
-      borderColor: state.isFocused
-        ? "#3B82F6"
-        : errors[state.selectProps.name]
-          ? "#EF4444"
-          : "#D1D5DB",
-      backgroundColor: errors[state.selectProps.name] ? "#FEF2F2" : "white",
-      boxShadow: state.isFocused ? "0 0 0 2px rgba(59, 130, 246, 0.5)" : "none",
-      "&:hover": {
-        borderColor: state.isFocused ? "#3B82F6" : "#9CA3AF",
-      },
-    }),
-    option: (base, state) => ({
-      ...base,
-      backgroundColor: state.isSelected
-        ? "#3B82F6"
-        : state.isFocused
-          ? "#DBEAFE"
-          : "white",
-      color: state.isSelected ? "white" : "#1F2937",
-      "&:active": {
-        backgroundColor: "#3B82F6",
-      },
-    }),
-  };
+  const provinceOptions = useProvinceOptions(citiesData);
+  const districtOptions = useDistrictOptions(citiesData, province);
+  const cityOptions = useDistrictOptions(citiesData, province, district);
 
   const onSubmit = async (data) => {
     try {
@@ -173,7 +79,7 @@ const AdmissionForm = () => {
       };
 
       await new Promise((resolve) => setTimeout(resolve, 1500));
-      console.log("Form Data:", formData);
+      console.log('Form Data:', formData);
 
       if (formData.photo) {
         console.log("Photo details:", {
@@ -188,8 +94,6 @@ const AdmissionForm = () => {
       setTimeout(() => {
         setSubmitSuccess(false);
         reset();
-        setSelectedProvince(null);
-        setSelectedDistrict(null);
         setPhotoPreview(null);
       }, 3000);
     } catch (error) {
@@ -293,11 +197,8 @@ const AdmissionForm = () => {
                           type="date"
                           min="2012-01-01"
                           max="2018-12-31"
-                          className={`w-full px-4 py-2.5 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none ${
-                            errors.dob
-                              ? "border-red-500 bg-red-50"
-                              : "border-gray-300"
-                          }`}
+                          className={`w-full px-4 py-2.5 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none ${errors.dob ? 'border-red-500 bg-red-50' : 'border-gray-300'
+                            }`}
                         />
                       )}
                     />
@@ -322,7 +223,7 @@ const AdmissionForm = () => {
                         <Select
                           {...field}
                           options={religionOptions}
-                          styles={customSelectStyles}
+                          styles={customSelectStyles(errors)}
                           placeholder="Select religion"
                           isClearable
                         />
@@ -348,15 +249,12 @@ const AdmissionForm = () => {
                     render={({ field: { onChange, value, ...field } }) => (
                       <div className="space-y-3">
                         <div className="flex items-center justify-center w-full">
-                          <label
-                            className={`flex flex-col items-center justify-center w-full aspect-square border-2 border-dashed rounded-lg cursor-pointer transition-all ${
-                              errors.photo
-                                ? "border-red-500 bg-red-50 hover:bg-red-100"
-                                : photoPreview
-                                  ? "border-green-500 bg-green-50 hover:bg-green-100"
-                                  : "border-gray-300 bg-gray-50 hover:bg-gray-100"
-                            }`}
-                          >
+                          <label className={`flex flex-col items-center justify-center w-full aspect-square border-2 border-dashed rounded-lg cursor-pointer transition-all ${errors.photo
+                              ? 'border-red-500 bg-red-50 hover:bg-red-100'
+                              : photoPreview
+                                ? 'border-green-500 bg-green-50 hover:bg-green-100'
+                                : 'border-gray-300 bg-gray-50 hover:bg-gray-100'
+                            }`}>
                             <div className="flex flex-col items-center justify-center p-4">
                               {photoPreview ? (
                                 <div className="relative w-full h-full flex items-center justify-center">
@@ -438,16 +336,8 @@ const AdmissionForm = () => {
                                     return;
                                   }
 
-                                  if (
-                                    ![
-                                      "image/jpeg",
-                                      "image/jpg",
-                                      "image/png",
-                                    ].includes(file.type)
-                                  ) {
-                                    alert(
-                                      "Only JPG, JPEG, and PNG files are allowed",
-                                    );
+                                  if (!['image/jpeg', 'image/jpg', 'image/png'].includes(file.type)) {
+                                    alert('Only JPG, JPEG, and PNG files are allowed');
                                     return;
                                   }
 
@@ -620,15 +510,15 @@ const AdmissionForm = () => {
                       <Select
                         {...field}
                         options={provinceOptions}
-                        styles={customSelectStyles}
+                        styles={customSelectStyles(errors)}
                         placeholder="Select province"
                         isClearable
                         onChange={(value) => {
                           field.onChange(value);
-                          setSelectedProvince(value);
-                          setSelectedDistrict(null);
-                          setValue("district", null);
-                          setValue("city", null);
+                          // setSelectedProvince(value);
+                          // setSelectedDistrict(null);
+                          // setValue('district', null);
+                          // setValue('city', null);
                         }}
                       />
                     )}
@@ -651,14 +541,14 @@ const AdmissionForm = () => {
                       <Select
                         {...field}
                         options={districtOptions}
-                        styles={customSelectStyles}
+                        styles={customSelectStyles(errors)}
                         placeholder="Select district"
                         isClearable
-                        isDisabled={!selectedProvince}
+                        isDisabled={!province}
                         onChange={(value) => {
                           field.onChange(value);
-                          setSelectedDistrict(value);
-                          setValue("city", null);
+                          // setSelectedDistrict(value);
+                          // setValue('city', null);
                         }}
                       />
                     )}
@@ -681,10 +571,10 @@ const AdmissionForm = () => {
                       <Select
                         {...field}
                         options={cityOptions}
-                        styles={customSelectStyles}
+                        styles={customSelectStyles(errors)}
                         placeholder="Select city"
                         isClearable
-                        isDisabled={!selectedDistrict}
+                        isDisabled={!district}
                       />
                     )}
                   />
@@ -747,7 +637,7 @@ const AdmissionForm = () => {
                       <Select
                         {...field}
                         options={classOptions}
-                        styles={customSelectStyles}
+                        styles={customSelectStyles(errors)}
                         placeholder="Select class"
                         isClearable
                       />
@@ -941,12 +831,9 @@ const AdmissionForm = () => {
             control={control}
             label={
               <>
-                I hereby declare that all the information provided above is true
-                and correct to the best of my knowledge. I understand that
-                admission will be subject to verification of documents and that
-                SEF reserves the right to reject the application at any stage in
-                case of omission or misrepresentation.{" "}
-                <span className="text-red-500">*</span>
+                I hereby declare that all the information provided above is true and correct to the best of my knowledge.
+                I understand that admission will be subject to verification of documents and that SEF reserves the right to
+                reject the application at any stage in case of omission or misrepresentation. <span className="text-red-500">*</span>
               </>
             }
             errors={errors}
@@ -957,9 +844,8 @@ const AdmissionForm = () => {
             <button
               type="submit"
               disabled={isSubmitting}
-              className={`px-8 py-4 bg-gradient-to-r from-green-800 to-green-600 text-white font-bold rounded-lg shadow-lg hover:shadow-xl transform hover:-translate-y-0.5 transition-all duration-200 ${
-                isSubmitting ? "opacity-50 cursor-not-allowed" : ""
-              }`}
+              className={`px-8 py-4 bg-gradient-to-r from-green-800 to-green-600 text-white font-bold rounded-lg shadow-lg hover:shadow-xl transform hover:-translate-y-0.5 transition-all duration-200 ${isSubmitting ? 'opacity-50 cursor-not-allowed' : ''
+                }`}
             >
               {isSubmitting ? (
                 <span className="flex items-center justify-center">
@@ -993,8 +879,8 @@ const AdmissionForm = () => {
               type="button"
               onClick={() => {
                 reset();
-                setSelectedProvince(null);
-                setSelectedDistrict(null);
+                // setSelectedProvince(null);
+                // setSelectedDistrict(null);
                 setPhotoPreview(null);
               }}
               className="px-8 py-4 bg-gray-200 text-gray-700 font-bold rounded-lg shadow hover:shadow-lg hover:bg-gray-300 transform hover:-translate-y-0.5 transition-all duration-200"
