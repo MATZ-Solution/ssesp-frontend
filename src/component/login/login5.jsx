@@ -17,13 +17,26 @@ import {
   PieChart,
   Activity,
 } from "lucide-react";
-import { loginSchema } from "../schema/admission-form-schema";
-import { useNavigate } from "react-router-dom";
+import {
+  useNavigate
+
+} from "react-router-dom";
 
 const Login5 = () => {
 
   const [shownumber, setShownumber] = useState(false);
   const navigate = useNavigate()
+
+  const loginSchema = yup.object().shape({
+    applicantId: yup
+      .string()
+      .required('Applicant ID is required'),
+    // Remove .email() if applicant ID isn't always an email
+    number: yup  // Add this field
+      .string()
+      .required('Phone number is required')
+      .min(10, 'Phone number must be at least 10 digits'),
+  });
   const {
     register,
     handleSubmit,
