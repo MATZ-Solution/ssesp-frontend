@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import AdmissionForm from './component/form'
+import AdmissionForm from './component/forms/admission-form'
 
 function App() {
   return (
