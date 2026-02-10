@@ -102,6 +102,29 @@ export function useAddApplicantSchoolInfo() {
   return { addApplicantSchool, isSuccess, isPending, isError, error };
 }
 
+export function useAddApplicantTestPreference() {
+  const navigate = useNavigate();
+  const {
+    mutate: addTestPreference,
+    isSuccess,
+    isPending,
+    isError,
+    error,
+  } = useMutation({
+    mutationFn: async (data) =>
+      await api.put(`${API_ROUTE.applicant.addApplicantTestPreference}`, data),
+      onSuccess: (data) => {
+      toast.success("Success");
+      navigate("/");
+    },
+    onError: (error) => {
+      console.log("error: ", error)
+      toast.error("Failed to add details.");
+    },
+  });
+  return { addTestPreference, isSuccess, isPending, isError, error };
+}
+
 // GET
 export function useGetApplicantInfo() {
   const { data, isSuccess, isPending, isError, isLoading } = useQuery({
@@ -162,6 +185,24 @@ export function useGetApplicantSchoolInfo() {
     queryKey: [API_ROUTE.applicant.getApplicantSchoolInfo],
     queryFn: async () =>
       await api.get(`${API_ROUTE.applicant.getApplicantSchoolInfo}`),
+    // enabled: id !== undefined && id !== null,
+    staleTime: 60 * 1000 * 5, // 5 minute,
+    retry: 1,
+  });
+  return {
+    data: data?.data?.data,
+    isSuccess,
+    isPending,
+    isError,
+    isLoading,
+  };
+}
+
+export function useGetApplicantTestPreference() {
+  const { data, isSuccess, isPending, isError, isLoading } = useQuery({
+    queryKey: [API_ROUTE.applicant.getApplicantTestPreference],
+    queryFn: async () =>
+      await api.get(`${API_ROUTE.applicant.getApplicantTestPreference}`),
     // enabled: id !== undefined && id !== null,
     staleTime: 60 * 1000 * 5, // 5 minute,
     retry: 1,

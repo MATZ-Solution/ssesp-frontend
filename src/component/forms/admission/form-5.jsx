@@ -7,9 +7,14 @@ import { ControlledRadioGroup } from "../../radio-button";
 import { step5Schema } from "../../schema/admission-form-schema";
 import FormTemplate from "../../template/form-template";
 import { useNavigate } from "react-router-dom";
+import { useAddApplicantTestPreference, useGetApplicantTestPreference } from "../../../../api/client/applicant";
 
 export const Form5 = () => {
   const [isSubmitting, setIsSubmitting] = useState(false);
+
+    const { addTestPreference, isSuccess, isPending, isError, error } = useAddApplicantTestPreference()
+    const { data, isLoading } = useGetApplicantTestPreference()
+
   const navigate = useNavigate()
   const {
     handleSubmit,
@@ -20,19 +25,13 @@ export const Form5 = () => {
     defaultValues: {
       testMedium: "",
       division: "",
-      acknowledge: false,
+      acknowledgment: false,
     },
   });
 
   const onSubmit = async (data) => {
     console.log("Step 5 - Entry Test Preference:", data);
-    setIsSubmitting(true);
-
-    // Simulate API call
-    await new Promise((resolve) => setTimeout(resolve, 1500));
-
-    onFinalSubmit(data);
-    setIsSubmitting(false);
+    addTestPreference(data)
   };
 
   return (
@@ -176,7 +175,7 @@ export const Form5 = () => {
           <label className="flex items-start gap-3">
             <input
               type="checkbox"
-              {...control.register("acknowledge")}
+              {...control.register("acknowledgment")}
               className="mt-1 h-4 w-4 text-green-600 border-gray-300 rounded focus:ring-green-500"
             />
             <span className="text-sm text-gray-700">
@@ -186,9 +185,9 @@ export const Form5 = () => {
             </span>
           </label>
 
-          {errors.acknowledge && (
+          {errors.acknowledgment && (
             <p className="text-red-500 text-sm mt-1">
-              {errors.acknowledge.message}
+              {errors.acknowledgment.message}
             </p>
           )}
         </div>
