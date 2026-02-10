@@ -4,9 +4,14 @@ import { ControlledInputField } from '../../input-field';
 import { step2Schema } from "../../schema/admission-form-schema";
 import FormTemplate from "../../template/form-template";
 import { useNavigate } from "react-router-dom";
+import { useAddApplicantGuardianInfo, useGetApplicantGuardianInfo } from "../../../../api/client/applicant";
 
 export const Form2 = () => {
+
   const navigate = useNavigate()
+  const { addApplicantGuardian, isSuccess, isPending, isError, error } = useAddApplicantGuardianInfo()
+  const { data, isLoading } = useGetApplicantGuardianInfo()
+  console.log("data: ", data)
   const {
     handleSubmit,
     control,
@@ -15,10 +20,10 @@ export const Form2 = () => {
     resolver: yupResolver(step2Schema),
     defaultValues: {
       fatherName: "",
-      fatherCNIC:  "",
-      domicileDistrict:  "",
+      fatherCNIC: "",
+      domicileDistrict: "",
       guardianName: "",
-      guardianContact:  "",
+      guardianContact: "",
       contact1: "",
       contact2: "",
     },
@@ -26,8 +31,7 @@ export const Form2 = () => {
 
   const onSubmit = (data) => {
     console.log('Step 2 - Father/Guardian Information:', data);
-    // onNext(data);
-    navigate('/form/address')
+    addApplicantGuardian(data)
   };
 
   return (
@@ -121,7 +125,7 @@ export const Form2 = () => {
         <div className="flex justify-between">
           <button
             type="button"
-            onClick={()=> navigate('/form/student-info')}
+            onClick={() => navigate('/form/student-info')}
             className="px-8 py-3 bg-gray-200 text-gray-700 font-bold rounded-lg shadow hover:shadow-lg hover:bg-gray-300 transform hover:-translate-y-0.5 transition-all duration-200"
           >
             ← Previous

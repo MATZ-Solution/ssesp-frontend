@@ -8,9 +8,14 @@ import { ControlledRadioGroup } from '../../radio-button';
 import { step4Schema } from "../../schema/admission-form-schema";
 import FormTemplate from "../../template/form-template";
 import { useNavigate } from "react-router-dom";
-
+import { useAddApplicantSchoolInfo, useGetApplicantSchoolInfo } from "../../../../api/client/applicant";
 export const Form4 = () => {
+
   const navigate = useNavigate()
+
+  const { addApplicantSchool, isSuccess, isPending, isError, error } = useAddApplicantSchoolInfo()
+  const { data, isLoading } = useGetApplicantSchoolInfo()
+
   const {
     handleSubmit,
     control,
@@ -28,11 +33,11 @@ export const Form4 = () => {
       headmasterContact: "",
     },
   });
-  
+
   const onSubmit = (data) => {
     console.log('Step 4 - Previous School Information:', data);
-    onNext(data);
-    navigate('/form/test-preference')
+    // navigate('/form/test-preference')
+    // addApplicantSchool(data)
   };
 
   return (
@@ -148,7 +153,7 @@ export const Form4 = () => {
         <div className="flex justify-between">
           <button
             type="button"
-            onClick={()=> navigate('/form/address')}
+            onClick={() => navigate('/form/address')}
             className="px-8 py-3 bg-gray-200 text-gray-700 font-bold rounded-lg shadow hover:shadow-lg hover:bg-gray-300 transform hover:-translate-y-0.5 transition-all duration-200"
           >
             ← Previous

@@ -1,14 +1,23 @@
 const API_ROUTE = {
   user: {
-    login: "/api/signIn",
-    signUp: "/api/signUp",
-    sendOtp: "/api/sendOtp",
-    submitOtp: "/api/submitOtp",
-    checkapi: "/api/checkapi",
-    changePasword: "/api/changePasword",
+    login: "/api/user/signIn",
+    signUp: "/api/user/signUp",
+    sendOtp: "/api/user/sendOtp",
+    submitOtp: "/api/user/submitOtp",
+    checkapi: "/api/user/checkapi",
+    changePasword: "/api/user/changePasword",
   },
-  candidate: {
-    addCandidate: "/api/candidate/addCandidate",
+  applicant: {
+    addApplicantInfo: "/api/applicant/addApplicantInfo",
+    addApplicantGuardianInfo: "/api/applicant/addApplicantGuardianInfo",
+    addApplicantAddressInfo: "/api/applicant/addApplicantAddressInfo",
+    addApplicantSchoolInfo: "/api/applicant/addApplicantSchoolInfo",
+
+    getApplicantInfo: "/api/applicant/getApplicantInfo",
+    getApplicantGuardianInfo: "/api/applicant/getApplicantGuardianInfo",
+    getApplicantAddressInfo: "/api/applicant/getApplicantAddressInfo",
+    getApplicantSchoolInfo: "/api/applicant/getApplicantSchoolInfo",
+
   },
 };
 

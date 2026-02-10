@@ -8,11 +8,15 @@ import { ControlledInputField } from '../../input-field';
 import Select from 'react-select';
 import { step1Schema } from "../../schema/admission-form-schema";
 import FormTemplate from "../../template/form-template";
+import { useAddApplicantInfo, useGetApplicantInfo } from "../../../../api/client/applicant";
 
 export const Form1 = ({ onNext, initialData = {}, currentStep, totalSteps }) => {
 
   const [photoPreview, setPhotoPreview] = useState(null);
   const [showPhotoModal, setShowPhotoModal] = useState(false);
+
+  const { addApplicant, isSuccess, isPending, isError, error } = useAddApplicantInfo()
+  const { data, isLoading } = useGetApplicantInfo()
 
   const {
     handleSubmit,
@@ -26,7 +30,7 @@ export const Form1 = ({ onNext, initialData = {}, currentStep, totalSteps }) => 
       studentBForm: initialData.studentBForm || "",
       dob: initialData.dob || "",
       religion: initialData.religion || null,
-      photo: initialData.photo || null,
+      file: initialData.file || null,
     },
   });
 
@@ -39,24 +43,20 @@ export const Form1 = ({ onNext, initialData = {}, currentStep, totalSteps }) => 
 
   const onSubmit = (data) => {
     console.log('Step 1 - Student Information:', data);
+    const formData = new FormData()
+    const convertData = Object.entries(data).map(([key, value]) => formData.append(`${key}`, value))
+    addApplicant(formData)
     // Include photo preview in the data for persistence
-    onNext({
-      ...data,
-      photoPreview: photoPreview
-    });
   };
 
   return (
     <FormTemplate>
-      
+
       <form
         onSubmit={handleSubmit(onSubmit)}
         className="bg-white shadow-xl p-6 sm:p-8 lg:p-10"
       >
         <div className="mb-8">
-          <h2 className="text-xl sm:text-2xl font-bold text-gray-800 mb-6 pb-2 border-b-2 border-blue-500">
-            Step {currentStep} of {totalSteps}: Student Information
-          </h2>
 
           <div className="grid grid-cols-1 gap-5">
             <div className="bg-yellow-50 border-l-4 border-yellow-500 p-4 rounded-r-lg">
@@ -113,11 +113,10 @@ export const Form1 = ({ onNext, initialData = {}, currentStep, totalSteps }) => 
                         min="2012-01-01"
                         max="2018-12-31"
                         value={field.value || ""}
-                        className={`w-full px-4 py-2.5 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none ${
-                          errors.dob
-                            ? "border-red-500 bg-red-50"
-                            : "border-gray-300"
-                        }`}
+                        className={`w-full px-4 py-2.5 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none ${errors.dob
+                          ? "border-red-500 bg-red-50"
+                          : "border-gray-300"
+                          }`}
                       />
                     )}
                   />
@@ -140,15 +139,24 @@ export const Form1 = ({ onNext, initialData = {}, currentStep, totalSteps }) => 
                     control={control}
                     render={({ field }) => (
                       <Select
-                        {...field}
                         options={religionOptions}
                         styles={customSelectStyles(errors)}
                         placeholder="Select religion"
                         isClearable
-                        value={field.value || null}
+
+                        // what react-select displays
+                        value={religionOptions.find(
+                          (option) => option.value === field.value
+                        ) || null}
+
+                        // what gets stored in RHF
+                        onChange={(selected) =>
+                          field.onChange(selected ? selected.value : null)
+                        }
                       />
                     )}
                   />
+
                   {errors.religion && (
                     <span className="text-red-500 text-xs mt-1">
                       {errors.religion.message}
@@ -164,19 +172,18 @@ export const Form1 = ({ onNext, initialData = {}, currentStep, totalSteps }) => 
                 </label>
 
                 <Controller
-                  name="photo"
+                  name="file"
                   control={control}
                   render={({ field: { onChange, value, ...field } }) => (
                     <div className="space-y-3">
                       <div className="flex items-center justify-center w-full">
                         <label
-                          className={`flex flex-col items-center justify-center w-full aspect-square border-2 border-dashed rounded-lg cursor-pointer transition-all ${
-                            errors.photo
-                              ? "border-red-500 bg-red-50 hover:bg-red-100"
-                              : photoPreview
-                                ? "border-green-500 bg-green-50 hover:bg-green-100"
-                                : "border-gray-300 bg-gray-50 hover:bg-gray-100"
-                          }`}
+                          className={`flex flex-col items-center justify-center w-full aspect-square border-2 border-dashed rounded-lg cursor-pointer transition-all ${errors.file
+                            ? "border-red-500 bg-red-50 hover:bg-red-100"
+                            : photoPreview
+                              ? "border-green-500 bg-green-50 hover:bg-green-100"
+                              : "border-gray-300 bg-gray-50 hover:bg-gray-100"
+                            }`}
                         >
                           <div className="flex flex-col items-center justify-center p-4">
                             {photoPreview ? (

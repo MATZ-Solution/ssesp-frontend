@@ -5,8 +5,6 @@ import { RouterProvider } from "react-router-dom";
 function App() {
   return (
     <div>
-      {/* <AdmissionForm /> */}
-      {/* <ToastContainer position="top-center" autoClose={3000} /> */}
       <RouterProvider router={router} />
     </div>
   );

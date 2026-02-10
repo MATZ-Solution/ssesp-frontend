@@ -9,7 +9,6 @@ function FormTemplate({ children }) {
       <div className="max-w-5xl mx-auto">
         <FormHeader />
         <Steps />
-       
         {children}
         <FormFooter />
       </div>

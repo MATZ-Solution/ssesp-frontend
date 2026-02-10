@@ -1,14 +1,13 @@
 import axios from "axios";
-import { deleteToken } from "../../utils/auth";
-import { resetUserProfile } from "../../redux/slices/userProfileSlice";
-import { removeUserDetails } from "../../redux/slices/userSlice";
 import { store } from "../../redux/store";
-
+import { removeUser } from "../../redux/slices/authSlice";
+import { useSelector } from "react-redux";
 
 const api = axios.create({
   // live database
-  // baseURL: 'https://iccd.freelanceserver.matzsolutions.com/',
-  baseURL: "http://localhost:22306/",
+  // baseURL: 'https://iccdinternalsystemserver.matzsolutions.com',
+  baseURL: "http://localhost:22309/",
+  withCredentials: true,
   headers: {
     "Content-Type": "application/json",
   },
@@ -18,8 +17,8 @@ const api = axios.create({
 // Optional: Add interceptors for auth, logging, errors
 api.interceptors.request.use(
   (config) => {
-    // For example, attach auth token here
-    const token = localStorage.getItem("token");
+    // For example, attach auth token heres
+     const token = store.getState().auth.user.token;
     if (token) config.headers.Authorization = `Bearer ${token}`;
     return config;
   },
@@ -33,13 +32,11 @@ api.interceptors.request.use(
 api.interceptors.response.use(
   (response) => response,
   (error) => {
-    // console.log("error: ", error.response?.status)
+    console.log("error: ", error)
     if (error.response?.status === 401) {
       const message = error.response?.data?.message;
       if (message === "Token expired") {
-        deleteToken();
-        store.dispatch(resetUserProfile())
-        store.dispatch(removeUserDetails());
+        store.dispatch(removeUser());
         window.location.href = "/";
       }
     }

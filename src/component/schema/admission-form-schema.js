@@ -13,8 +13,8 @@ export const step1Schema = yup.object().shape({
     .required('Student B-Form is required')
     .matches(/^\d{5}-\d{7}-\d{1}$/, 'B-Form must be in format: 12345-1234567-1'),
   dob: yup.string().required('Date of birth is required'),
-  religion: yup.object().required('Religion is required').nullable(),
-    photo: yup
+  religion: yup.string().required("Religion is required"),
+    file: yup
     .mixed()
     .required('Student photo is required.')
     .test('fileSize', 'File size must not exceed 5MB', (value) => {
@@ -30,9 +30,9 @@ export const step1Schema = yup.object().shape({
 // Validation schema for Step 3 only
 export const step3Schema = yup.object().shape({  
   postalAddress: yup.string().required('Postal address is required'),
-  province: yup.object().required('Province is required').nullable(),
-  district: yup.object().required('District is required').nullable(),
-  city: yup.object().required('City is required').nullable(),
+  province: yup.string().required('Province is required').nullable(),
+  district: yup.string().required('District is required').nullable(),
+  city: yup.string().required('City is required').nullable(),
 });
 
 // Validation schema for Step 4 only

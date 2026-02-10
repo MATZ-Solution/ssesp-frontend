@@ -21,6 +21,7 @@ import {
   useNavigate
 
 } from "react-router-dom";
+import { useLogin } from "../../../api/client/user";
 
 const Login5 = () => {
 
@@ -28,11 +29,11 @@ const Login5 = () => {
   const navigate = useNavigate()
 
   const loginSchema = yup.object().shape({
-    applicantId: yup
+    applicationID: yup
       .string()
       .required('Applicant ID is required'),
     // Remove .email() if applicant ID isn't always an email
-    number: yup  // Add this field
+    phoneNumber: yup  // Add this field
       .string()
       .required('Phone number is required')
       .min(10, 'Phone number must be at least 10 digits'),
@@ -46,9 +47,9 @@ const Login5 = () => {
     mode: "onChange",
   });
 
+  const { userLogin, isSuccess, isPending, isError, reset, error, data } = useLogin()
   const onSubmit = async (data) => {
-    console.log("Login Data:", data);
-    navigate('/form/student-info')
+    userLogin(data)
   };
 
   const floatingElements = [
@@ -176,24 +177,6 @@ const Login5 = () => {
 
               {/* Login Form */}
               <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
-                {/* Applicant ID Input */}
-                <div className="space-y-2">
-                  <label className="text-sm font-medium text-gray-200 flex items-center gap-2">
-                    <Mail size={16} className="text-[#4BA54F]" />
-                    Applicant id
-                  </label>
-                  <input
-                    type="text"
-                    {...register("applicantId")}
-                    className="w-full px-4 py-3 bg-white/5 border border-white/10 rounded-xl text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-[#4BA54F] focus:border-transparent transition-all duration-300"
-                    placeholder="Enter your applicant ID"
-                  />
-                  {errors.email && (
-                    <p className="text-red-400 text-sm flex items-center gap-1">
-                      ⚠ {errors.email.message}
-                    </p>
-                  )}
-                </div>
 
                 {/* Phone Number */}
                 <div className="space-y-2">
@@ -203,25 +186,47 @@ const Login5 = () => {
                   </label>
                   <div className="relative">
                     <input
-                      type={shownumber ? "text" : "password"}
-                      {...register("number")}
+                      // type={shownumber ? "text" : "password"}
+                      type={"text"}
+                      {...register("phoneNumber")}
                       className="w-full px-4 py-3 bg-white/5 border border-white/10 rounded-xl text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-[#4BA54F] focus:border-transparent transition-all duration-300"
                       placeholder="Enter your phone number"
                     />
-                    <button
+                    {/* <button
                       type="button"
                       onClick={() => setShownumber(!shownumber)}
                       className="cursor-pointer absolute right-4 top-1/2 -translate-y-1/2 text-gray-400 hover:text-[#4BA54F] transition-colors duration-300"
                     >
                       {shownumber ? <EyeOff size={20} /> : <Eye size={20} />}
-                    </button>
+                    </button> */}
                   </div>
-                  {errors.number && (
+                  {errors.phoneNumber && (
                     <p className="text-red-400 text-sm flex items-center gap-1">
-                      ⚠ {errors.number.message}
+                      ⚠ {errors.phoneNumber.message}
                     </p>
                   )}
                 </div>
+
+                {/* Applicant ID Input */}
+                <div className="space-y-2">
+                  <label className="text-sm font-medium text-gray-200 flex items-center gap-2">
+                    <Mail size={16} className="text-[#4BA54F]" />
+                    Application ID
+                  </label>
+                  <input
+                    type="text"
+                    {...register("applicationID")}
+                    className="w-full px-4 py-3 bg-white/5 border border-white/10 rounded-xl text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-[#4BA54F] focus:border-transparent transition-all duration-300"
+                    placeholder="Enter your applicantion ID"
+                  />
+                  {errors.applicationID && (
+                    <p className="text-red-400 text-sm flex items-center gap-1">
+                      ⚠ {errors.applicationID.message}
+                    </p>
+                  )}
+                </div>
+
+
 
                 {/* Forgot number */}
                 <div className="flex justify-end">
