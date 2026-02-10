@@ -10,7 +10,7 @@ import { step1Schema } from "../../schema/admission-form-schema";
 import FormTemplate from "../../template/form-template";
 import { useAddApplicantInfo, useGetApplicantInfo } from "../../../../api/client/applicant";
 
-export const Form1 = ({ onNext, initialData = {}, currentStep, totalSteps }) => {
+export const Form1 = ({ initialData = {} }) => {
 
   const [photoPreview, setPhotoPreview] = useState(null);
   const [showPhotoModal, setShowPhotoModal] = useState(false);
