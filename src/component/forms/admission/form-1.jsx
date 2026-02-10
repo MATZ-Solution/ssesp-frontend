@@ -34,7 +34,6 @@ export const Form1 = ({ onNext, initialData = {}, currentStep, totalSteps }) => 
     },
   });
 
-  // Set photo preview if there's initial data
   useEffect(() => {
     if (initialData.photoPreview) {
       setPhotoPreview(initialData.photoPreview);
@@ -42,22 +41,8 @@ export const Form1 = ({ onNext, initialData = {}, currentStep, totalSteps }) => 
   }, [initialData.photoPreview]);
 
   const onSubmit = (data) => {
-    console.log('Step 1 - Student Information:', data);
-    console.log('File:', data.files);
-    
     const formData = new FormData();
-    
-    // Append all fields to FormData
-    Object.entries(data).forEach(([key, value]) => {
-      if (key === 'files' && value) {
-        formData.append('files', value);
-      } else if (key === 'religion' && value) {
-        formData.append(key, value);
-      } else if (value) {
-        formData.append(key, value);
-      }
-    });
-    
+    Object.entries(data).forEach(([key, value]) => formData.append(`${key}`, value));
     addApplicant(formData);
   };
 
