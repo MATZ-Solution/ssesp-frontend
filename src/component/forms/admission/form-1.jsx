@@ -43,10 +43,22 @@ export const Form1 = ({ onNext, initialData = {}, currentStep, totalSteps }) => 
 
   const onSubmit = (data) => {
     console.log('Step 1 - Student Information:', data);
-    const formData = new FormData()
-    const convertData = Object.entries(data).map(([key, value]) => formData.append(`${key}`, value))
-    addApplicant(formData)
-    // Include photo preview in the data for persistence
+    console.log('File:', data.files);
+    
+    const formData = new FormData();
+    
+    // Append all fields to FormData
+    Object.entries(data).forEach(([key, value]) => {
+      if (key === 'files' && value) {
+        formData.append('files', value);
+      } else if (key === 'religion' && value) {
+        formData.append(key, value);
+      } else if (value) {
+        formData.append(key, value);
+      }
+    });
+    
+    addApplicant(formData);
   };
 
   return (
@@ -255,14 +267,14 @@ export const Form1 = ({ onNext, initialData = {}, currentStep, totalSteps }) => 
                           </div>
                           <input
                             {...field}
-                            type="files"
+                            type="file"
                             accept="image/jpeg,image/jpg,image/png"
                             className="hidden"
                             onChange={(e) => {
-                              const files = e.target.filess?.[0];
-                              if (files) {
-                                if (files.size > 5 * 1024 * 1024) {
-                                  alert("files size must not exceed 5MB");
+                              const file = e.target.files?.[0];
+                              if (file) {
+                                if (file.size > 5 * 1024 * 1024) {
+                                  alert("File size must not exceed 5MB");
                                   return;
                                 }
 
@@ -271,21 +283,21 @@ export const Form1 = ({ onNext, initialData = {}, currentStep, totalSteps }) => 
                                     "image/jpeg",
                                     "image/jpg",
                                     "image/png",
-                                  ].includes(files.type)
+                                  ].includes(file.type)
                                 ) {
                                   alert(
-                                    "Only JPG, JPEG, and PNG filess are allowed",
+                                    "Only JPG, JPEG, and PNG files are allowed"
                                   );
                                   return;
                                 }
 
-                                const reader = new filesReader();
+                                const reader = new FileReader();
                                 reader.onloadend = () => {
                                   setPhotoPreview(reader.result);
                                 };
-                                reader.readAsDataURL(files);
+                                reader.readAsDataURL(file);
 
-                                onChange(e.target.filess);
+                                onChange(file);
                               }
                             }}
                           />
@@ -324,9 +336,9 @@ export const Form1 = ({ onNext, initialData = {}, currentStep, totalSteps }) => 
                     </div>
                   )}
                 />
-                {errors.photo && (
+                {errors.files && (
                   <span className="text-red-500 text-xs mt-1 block">
-                    {errors.photo.message}
+                    {errors.files.message}
                   </span>
                 )}
               </div>
