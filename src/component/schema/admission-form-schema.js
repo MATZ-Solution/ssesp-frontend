@@ -28,19 +28,34 @@ export const step1Schema = yup.object().shape({
 });
 
 // Validation schema for Step 3 only
-export const step3Schema = yup.object().shape({  
-  postalAddress: yup.string().required('Postal address is required'),
-  province: yup.string().required('Province is required').nullable(),
-  district: yup.string().required('District is required').nullable(),
-  city: yup.string().required('City is required').nullable(),
-});
+export const step3Schema = yup.object().shape({
+  postalAddress: yup
+    .string()
+    .required("Postal address is required"),
 
+  province: yup
+    .mixed()
+    .transform((value) => value?.label || value)
+    .required("Province is required"),
+
+  district: yup
+    .mixed()
+    .transform((value) => value?.label || value)
+    .required("District is required"),
+
+  city: yup
+    .mixed()
+    .transform((value) => value?.label || value)
+    .required("City is required"),
+});
 // Validation schema for Step 4 only
 export const step4Schema = yup.object().shape({
 schoolName: yup.string().required('School name is required'),
   schoolCategory: yup.string().required('School category is required'),
   schoolSemisCode: yup.string().required('School SEMIS/Code is required'),
-  studyingInClass: yup.object().required('Current class is required').nullable(),
+studyingInClass: yup
+  .string()
+  .required("Class is required"),
   enrollmentYear: yup
     .string()
     .required('Year of enrollment is required')

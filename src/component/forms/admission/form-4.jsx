@@ -2,19 +2,25 @@ import { yupResolver } from "@hookform/resolvers/yup";
 import { Controller, useForm } from "react-hook-form";
 import { ControlledInputField } from "../../input-field";
 import { customSelectStyles } from "../../../styles/custom-styles";
-import Select from 'react-select';
-import { classOptions, schoolCategoryOptions } from "../../../../data/form-data";
-import { ControlledRadioGroup } from '../../radio-button';
+import Select from "react-select";
+import {
+  classOptions,
+  schoolCategoryOptions,
+} from "../../../../data/form-data";
+import { ControlledRadioGroup } from "../../radio-button";
 import { step4Schema } from "../../schema/admission-form-schema";
 import FormTemplate from "../../template/form-template";
 import { useNavigate } from "react-router-dom";
-import { useAddApplicantSchoolInfo, useGetApplicantSchoolInfo } from "../../../../api/client/applicant";
+import {
+  useAddApplicantSchoolInfo,
+  useGetApplicantSchoolInfo,
+} from "../../../../api/client/applicant";
 export const Form4 = () => {
+  const navigate = useNavigate();
 
-  const navigate = useNavigate()
-
-  const { addApplicantSchool, isSuccess, isPending, isError, error } = useAddApplicantSchoolInfo()
-  const { data, isLoading } = useGetApplicantSchoolInfo()
+  const { addApplicantSchool, isSuccess, isPending, isError, error } =
+    useAddApplicantSchoolInfo();
+  const { data, isLoading } = useGetApplicantSchoolInfo();
 
   const {
     handleSubmit,
@@ -35,7 +41,7 @@ export const Form4 = () => {
   });
 
   const onSubmit = (data) => {
-    console.log('Step 4 - Previous School Information:', data);
+    console.log("Step 4 - Previous School Information:", data);
     // navigate('/form/test-preference')
     // addApplicantSchool(data)
   };
@@ -88,14 +94,21 @@ export const Form4 = () => {
                   control={control}
                   render={({ field }) => (
                     <Select
-                      {...field}
                       options={classOptions}
                       styles={customSelectStyles(errors)}
                       placeholder="Select class"
                       isClearable
+                      value={
+                        classOptions.find((opt) => opt.value === field.value) ||
+                        null
+                      }
+                      onChange={(option) =>
+                        field.onChange(option ? option.value : "")
+                      }
                     />
                   )}
                 />
+
                 {errors.studyingInClass && (
                   <span className="text-red-500 text-xs mt-1">
                     {errors.studyingInClass.message}
@@ -153,7 +166,7 @@ export const Form4 = () => {
         <div className="flex justify-between">
           <button
             type="button"
-            onClick={() => navigate('/form/address')}
+            onClick={() => navigate("/form/address")}
             className="px-8 py-3 bg-gray-200 text-gray-700 font-bold rounded-lg shadow hover:shadow-lg hover:bg-gray-300 transform hover:-translate-y-0.5 transition-all duration-200"
           >
             ← Previous

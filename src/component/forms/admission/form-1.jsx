@@ -30,7 +30,7 @@ export const Form1 = ({ onNext, initialData = {}, currentStep, totalSteps }) => 
       studentBForm: initialData.studentBForm || "",
       dob: initialData.dob || "",
       religion: initialData.religion || null,
-      file: initialData.file || null,
+      files: initialData.files || null,
     },
   });
 
@@ -172,13 +172,13 @@ export const Form1 = ({ onNext, initialData = {}, currentStep, totalSteps }) => 
                 </label>
 
                 <Controller
-                  name="file"
+                  name="files"
                   control={control}
                   render={({ field: { onChange, value, ...field } }) => (
                     <div className="space-y-3">
                       <div className="flex items-center justify-center w-full">
                         <label
-                          className={`flex flex-col items-center justify-center w-full aspect-square border-2 border-dashed rounded-lg cursor-pointer transition-all ${errors.file
+                          className={`flex flex-col items-center justify-center w-full aspect-square border-2 border-dashed rounded-lg cursor-pointer transition-all ${errors.files
                             ? "border-red-500 bg-red-50 hover:bg-red-100"
                             : photoPreview
                               ? "border-green-500 bg-green-50 hover:bg-green-100"
@@ -255,14 +255,14 @@ export const Form1 = ({ onNext, initialData = {}, currentStep, totalSteps }) => 
                           </div>
                           <input
                             {...field}
-                            type="file"
+                            type="files"
                             accept="image/jpeg,image/jpg,image/png"
                             className="hidden"
                             onChange={(e) => {
-                              const file = e.target.files?.[0];
-                              if (file) {
-                                if (file.size > 5 * 1024 * 1024) {
-                                  alert("File size must not exceed 5MB");
+                              const files = e.target.filess?.[0];
+                              if (files) {
+                                if (files.size > 5 * 1024 * 1024) {
+                                  alert("files size must not exceed 5MB");
                                   return;
                                 }
 
@@ -271,21 +271,21 @@ export const Form1 = ({ onNext, initialData = {}, currentStep, totalSteps }) => 
                                     "image/jpeg",
                                     "image/jpg",
                                     "image/png",
-                                  ].includes(file.type)
+                                  ].includes(files.type)
                                 ) {
                                   alert(
-                                    "Only JPG, JPEG, and PNG files are allowed",
+                                    "Only JPG, JPEG, and PNG filess are allowed",
                                   );
                                   return;
                                 }
 
-                                const reader = new FileReader();
+                                const reader = new filesReader();
                                 reader.onloadend = () => {
                                   setPhotoPreview(reader.result);
                                 };
-                                reader.readAsDataURL(file);
+                                reader.readAsDataURL(files);
 
-                                onChange(e.target.files);
+                                onChange(e.target.filess);
                               }
                             }}
                           />
