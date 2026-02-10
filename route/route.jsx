@@ -13,6 +13,8 @@ import { Form2 } from "../src/component/forms/admission/form-2";
 import { Form3 } from "../src/component/forms/admission/form-3";
 import { Form4 } from "../src/component/forms/admission/form-4";
 import { Form5 } from "../src/component/forms/admission/form-5";
+import Dashboard from "../src/component/Dashbaord/dashboard";
+import Signup from "../src/component/signup/signup";
 
 // import Unauthorized from "../src/component/Unauthorized";
 // import PageNotFound from "../src/component/PageNotFound";
@@ -50,6 +52,14 @@ export const router = createBrowserRouter([
   {
     path: "/admission-form",
     element: withSuspense(<AdmissionForm />),
+  },
+   {
+    path: "/dashboard",
+    element: withSuspense(<Dashboard />),
+  },
+  {
+    path: "/signup",
+    element: withSuspense(<Signup />),
   },
 //   {
 //     path: "/unauthorized",
