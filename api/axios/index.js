@@ -1,7 +1,6 @@
 import axios from "axios";
 import { store } from "../../redux/store";
 import { removeUser } from "../../redux/slices/authSlice";
-import { useSelector } from "react-redux";
 
 const api = axios.create({
   // live database
@@ -17,31 +16,31 @@ const api = axios.create({
 // Optional: Add interceptors for auth, logging, errors
 api.interceptors.request.use(
   (config) => {
-    // For example, attach auth token heres
-    const token = store.getState().auth.user.token;
+    // For example, attach auth token here
+    const token = store.getState().auth.user?.token; // Add optional chaining
     if (token) config.headers.Authorization = `Bearer ${token}`;
     return config;
   },
-
   (error) => {
-    console.log("err1: ", error)
-    Promise.reject(error);
+    console.log("Request error: ", error);
+    return Promise.reject(error); // Add return
   }
 );
 
 api.interceptors.response.use(
   (response) => response,
   (error) => {
-    console.log("error: ", error)
+    console.log("Response error: ", error);
+    
     if (error.response?.status === 401) {
-      // store.dispatch(removeUser());
-      // window.location.href = "/";
-      // const message = error.response?.data?.message;
+      const message = error.response?.data?.message; // Uncomment this line
+      
       if (message === "Token expired") {
-      store.dispatch(removeUser());
-      window.location.href = "/";
+        store.dispatch(removeUser());
+        window.location.href = "/";
       }
     }
+    
     return Promise.reject(error);
   }
 );
