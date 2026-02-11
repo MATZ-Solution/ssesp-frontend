@@ -13,38 +13,58 @@ import { Form2 } from "../src/component/forms/admission/form-2";
 import { Form3 } from "../src/component/forms/admission/form-3";
 import { Form4 } from "../src/component/forms/admission/form-4";
 import { Form5 } from "../src/component/forms/admission/form-5";
+
 import Dashboard from "../src/component/Dashbaord/dashboard";
 import Signup from "../src/component/signup/signup";
-
-// import Unauthorized from "../src/component/Unauthorized";
-// import PageNotFound from "../src/component/PageNotFound";
+import AdminTemplate from '../src/Templates/admin-template';
 
 export const router = createBrowserRouter([
   {
     path: "/",
-    // element: <AdmissionForm />,
     element: <Navigate to="/login" replace />,
   },
+
   {
     path: "/form/student-info",
-    element: <Form1 />, 
+    element: (
+      <AdminTemplate>
+        <Form1 />
+      </AdminTemplate>
+    ),
   },
   {
     path: "/form/guardian-info",
-    element: <Form2 />
+    element: (
+      <AdminTemplate>
+        <Form2 />
+      </AdminTemplate>
+    ),
   },
- {
+  {
     path: "/form/address",
-    element: <Form3 />, 
+    element: (
+      <AdminTemplate>
+        <Form3 />
+      </AdminTemplate>
+    ),
   },
   {
     path: "/form/school-info",
-    element: <Form4 />, 
+    element: (
+      <AdminTemplate>
+        <Form4 />
+      </AdminTemplate>
+    ),
   },
-   {
+  {
     path: "/form/test-preference",
-    element: <Form5 />,
+    element: (
+      <AdminTemplate>
+        <Form5 />
+      </AdminTemplate>
+    ),
   },
+
   {
     path: "/login",
     element: withSuspense(<Login5 />),
@@ -53,7 +73,7 @@ export const router = createBrowserRouter([
     path: "/admission-form",
     element: withSuspense(<AdmissionForm />),
   },
-   {
+  {
     path: "/dashboard",
     element: withSuspense(<Dashboard />),
   },
@@ -61,12 +81,4 @@ export const router = createBrowserRouter([
     path: "/signup",
     element: withSuspense(<Signup />),
   },
-//   {
-//     path: "/unauthorized",
-//     element: withSuspense(<Unauthorized />),
-//   },
-//   {
-//     path: "*",
-//     element: withSuspense(<PageNotFound />),
-//   },
 ]);
