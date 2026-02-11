@@ -3,7 +3,7 @@ import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { ControlledInputField } from "../../input-field";
 import { testMediumOptions } from "../../../../data/form-data";
-import { ControlledRadioGroup } from "../../radio-button";
+import { ControlledRadioGroup } from "../../Radio-button";
 import { step5Schema } from "../../schema/admission-form-schema";
 import FormTemplate from "../../template/form-template";
 import { useNavigate } from "react-router-dom";
