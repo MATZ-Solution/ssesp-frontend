@@ -5,8 +5,8 @@ import { useSelector } from "react-redux";
 
 const api = axios.create({
   // live database
-  // baseURL: 'https://iccdinternalsystemserver.matzsolutions.com',
-  baseURL: "http://localhost:22309/",
+  baseURL: 'https://ssespserver.matzsolutions.com/',
+  // baseURL: "http://localhost:22309/",
   withCredentials: true,
   headers: {
     "Content-Type": "application/json",
