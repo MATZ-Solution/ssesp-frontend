@@ -1,22 +1,23 @@
-// src/routes/AuthRoute.tsx
-import SomethingWentWrong from "../src/pages/SomeThingWent";
-import { useLocation, useNavigate } from "react-router-dom";
+import { Navigate } from "react-router-dom";
 
-const ProtectedRoute = ({ status, children }) => {
+const ProtectedRoute = ({ children }) => {
 
-  const location = useLocation()
-  const navigate = useNavigate()
-  const { pathname } = location
+    const status = "guardian-info/2";
 
-  const step = status.split("-")[1]
-  const route = status.split("-")[0]
+    if (status === 'incomplete') {
+        return <Navigate to="/form/student-info" replace />;
+    }
 
-  const verify_otp = localStorage.getItem("verify-otp")
-  const change_pass = localStorage.getItem("change_pass")
+    if (status === 'complete') {
+        return <Navigate to="/complete" replace />;
+    }
 
-  navigate(`/${route}`)
+    if (status.includes('/')) {
+        const [route, step] = status.split("/");
+        <Navigate to={`/form/${route}`} replace />;
+    }
+    return children;
 
-  return <>{children}</>;
 };
 
 export default ProtectedRoute;

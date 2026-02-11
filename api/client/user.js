@@ -19,9 +19,17 @@ export function useLogin() {
   } = useMutation({
     mutationFn: (data) => api.post(API_ROUTE.user.login, data),
     onSuccess: (response) => {
-      console.log("response: ", response?.data?.data)
       dispatch(setUser(response?.data?.data))
-      navigate("/form/student-info");
+      const status = response?.data?.data?.formStatus
+      if (!status || status === 'null') {
+        navigate(`/form/student-info`);
+      }
+      if (status === 'completed') {
+        navigate(`/form/complete`);
+      }
+      if (status.includes('/')) {
+        navigate(`/form/${response?.data?.data?.formStatus?.split("/")[0]}`);
+      }
     },
   });
 
@@ -36,30 +44,30 @@ export function useLogin() {
   };
 }
 
-// export function useSignUp(options = {}) {
-//   const {
-//     mutate: userSignUp,
-//     isSuccess,
-//     isPending,
-//     isError,
-//     reset,
-//     error,
-//     data,
-//   } = useMutation({
-//     mutationFn: (data) => api.post(API_ROUTE.user.signUp, data),
-//     ...options,
-//   });
+export function useSignUp(options = {}) {
+  const {
+    mutate: addSignUp,
+    isSuccess,
+    isPending,
+    isError,
+    reset,
+    error,
+    data,
+  } = useMutation({
+    mutationFn: (data) => api.post(API_ROUTE.user.signUp, data),
+    ...options,
+  });
 
-//   return {
-//     userSignUp,
-//     isSuccess,
-//     isPending,
-//     isError,
-//     reset,
-//     error: error?.response?.data?.message,
-//     data,
-//   };
-// }
+  return {
+    addSignUp,
+    isSuccess,
+    isPending,
+    isError,
+    reset,
+    error: error?.response?.data?.message,
+    data,
+  };
+}
 
 // export function useSendOtp(options = {}) {
 //   const navigate = useNavigate();

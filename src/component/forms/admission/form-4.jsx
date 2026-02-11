@@ -43,7 +43,7 @@ export const Form4 = () => {
   const onSubmit = (data) => {
     console.log("Step 4 - Previous School Information:", data);
     // navigate('/form/test-preference')
-    // addApplicantSchool(data)
+    addApplicantSchool(data)
   };
 
   return (

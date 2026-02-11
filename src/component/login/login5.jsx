@@ -2,6 +2,7 @@ import { useState } from "react";
 import { useForm } from "react-hook-form";
 import logo from "../../assets/mohid.png";
 import { yupResolver } from "@hookform/resolvers/yup";
+import { Link } from "react-router-dom";
 import * as yup from 'yup';
 import {
   Eye,
@@ -227,15 +228,33 @@ const Login5 = () => {
                 </div>
 
 
+                {isError && (
+                  <div className="bg-gradient-to-r from-red-100 to-red-200 text-red-800 px-4 py-3 rounded-lg shadow-md border border-red-300 flex items-center gap-3">
+                    <svg
+                      className="w-5 h-5 flex-shrink-0 text-red-600"
+                      fill="none"
+                      stroke="currentColor"
+                      viewBox="0 0 24 24"
+                    >
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        strokeWidth={2}
+                        d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
+                      />
+                    </svg>
+                    <span className="font-medium">{error}</span>
+                  </div>
+                )}
 
                 {/* Forgot number */}
                 <div className="flex justify-end">
-                  <a
-                    href="#"
+                  <Link
+                    to="/signup"
                     className="text-sm text-[#4BA54F] hover:text-emerald-400 transition-colors duration-300"
                   >
-                    Forgot number?
-                  </a>
+                    Sign Up
+                  </Link>
                 </div>
 
                 {/* Login Button */}

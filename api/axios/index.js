@@ -18,7 +18,7 @@ const api = axios.create({
 api.interceptors.request.use(
   (config) => {
     // For example, attach auth token heres
-     const token = store.getState().auth.user.token;
+    const token = store.getState().auth.user.token;
     if (token) config.headers.Authorization = `Bearer ${token}`;
     return config;
   },
@@ -34,13 +34,14 @@ api.interceptors.response.use(
   (error) => {
     console.log("error: ", error)
     if (error.response?.status === 401) {
-      const message = error.response?.data?.message;
-      if (message === "Token expired") {
-        store.dispatch(removeUser());
-        window.location.href = "/";
-      }
+      store.dispatch(removeUser());
+      window.location.href = "/";
+      // const message = error.response?.data?.message;
+      // if (message === "Token expired") {
+      // store.dispatch(removeUser());
+      // window.location.href = "/";
+      // }
     }
-    // window.location.href = "/login";
     return Promise.reject(error);
   }
 );

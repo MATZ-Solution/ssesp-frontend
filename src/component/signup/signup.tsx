@@ -18,6 +18,7 @@ import {
 import {
   useNavigate
 } from "react-router-dom";
+import { useSignUp } from "../../../api/client/user";
 
 const Signup = () => {
   const navigate = useNavigate();
@@ -29,10 +30,6 @@ const Signup = () => {
       .matches(/^[0-9]+$/, 'Phone number must contain only digits')
       .min(10, 'Phone number must be at least 10 digits')
       .max(11, 'Phone number must not exceed 11 digits'),
-    applicationID: yup
-      .string()
-      .required('Application ID is required')
-      .min(5, 'Application ID must be at least 5 characters'),
   });
 
   const {
@@ -44,14 +41,13 @@ const Signup = () => {
     mode: "onChange",
     defaultValues: {
       phoneNumber: "",
-      applicationID: "",
     }
   });
 
+  const { addSignUp, isSuccess, isPending, isError, error, data } = useSignUp()
+
   const onSubmit = async (data) => {
-    console.log('Signup data:', data);
-    // Add your signup API call here
-    // userSignup(data)
+    addSignUp(data)
   };
 
   const floatingElements = [
@@ -205,7 +201,7 @@ const Signup = () => {
                 </div>
 
                 {/* Application ID with Controller */}
-                <div className="space-y-2">
+                {/* <div className="space-y-2">
                   <label className="text-sm font-medium text-gray-200 flex items-center gap-2">
                     <IdCard size={16} className="text-[#4BA54F]" />
                     Application ID
@@ -227,10 +223,10 @@ const Signup = () => {
                       ⚠ {errors.applicationID.message}
                     </p>
                   )}
-                </div>
+                </div> */}
 
                 {/* Terms and Conditions */}
-                <div className="flex items-center gap-2 pt-2">
+                {/* <div className="flex items-center gap-2 pt-2">
                   <input
                     type="checkbox"
                     id="terms"
@@ -242,7 +238,7 @@ const Signup = () => {
                       Terms & Conditions
                     </a>
                   </label>
-                </div>
+                </div> */}
 
                 {/* Signup Button */}
                 <button
@@ -251,6 +247,46 @@ const Signup = () => {
                 >
                   Create Account
                 </button>
+
+                {/* Success Message */}
+                {data?.data?.message === 'User added successfully' && (
+                <div className="bg-gradient-to-r from-green-100 to-green-200 text-green-800 px-4 py-3 rounded-lg shadow-md border border-green-300 flex items-center gap-3">
+                  <svg
+                    className="w-5 h-5 flex-shrink-0 text-green-600"
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth={2}
+                      d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"
+                    />
+                  </svg>
+                  <span className="font-medium">Your application ID is: {data?.data?.applicantID}</span>
+                </div>
+                )}
+
+                {/* Error message */}
+                {isError && (
+                  <div className="bg-gradient-to-r from-red-100 to-red-200 text-red-800 px-4 py-3 rounded-lg shadow-md border border-red-300 flex items-center gap-3">
+                    <svg
+                      className="w-5 h-5 flex-shrink-0 text-red-600"
+                      fill="none"
+                      stroke="currentColor"
+                      viewBox="0 0 24 24"
+                    >
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        strokeWidth={2}
+                        d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
+                      />
+                    </svg>
+                    <span className="font-medium">{error}</span>
+                  </div>
+                )}
 
                 {/* Divider */}
                 <div className="flex items-center gap-4 my-4">
