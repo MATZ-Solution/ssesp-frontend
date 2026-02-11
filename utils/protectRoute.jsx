@@ -1,24 +1,15 @@
-// src/routes/AuthRoute.tsx
-import SomethingWentWrong from "../src/pages/SomeThingWent";
-import { useLocation } from "react-router-dom";
+import { useSelector } from "react-redux";
+import { Navigate } from "react-router-dom";
 
 const ProtectedRoute = ({ children }) => {
 
-  const location = useLocation()
-  const { pathname } = location
-
-  const verify_otp = localStorage.getItem("verify-otp")
-  const change_pass = localStorage.getItem("change_pass")
-
-  if (pathname === '/verify-otp' && !verify_otp) {
-    return <SomethingWentWrong/>
+  const user = useSelector(state => state.auth.user.id)
+  
+  if (!user) {
+    return <Navigate to="/login" replace />;
   }
 
-  if (pathname === '/change-password' && !change_pass) {
-    return <SomethingWentWrong/>
-  }
-
-  return <>{children}</>;
+  return children;
 };
 
 export default ProtectedRoute;
