@@ -2,7 +2,7 @@ import React from 'react'
 
 function FormHeader() {
     return (
-        <div className="bg-gradient-to-r from-green-800 to-green-600 rounded-t-2xl shadow-lg p-6 sm:p-8 text-white">
+        <div className="mt-8 bg-gradient-to-r from-green-800 to-green-600 rounded-t-2xl shadow-lg p-6 sm:p-8 text-white">
             <div className="text-center">
                 <h1 className="text-2xl sm:text-3xl lg:text-4xl font-bold mb-2">
                     Sindh School Education Scholarship Program (SSESP)

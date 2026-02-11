@@ -1,14 +1,18 @@
 import React, { useState } from "react";
 import { LogOut, Menu, X, GraduationCap, User } from "lucide-react";
+import { useDispatch } from "react-redux";
+import { removeUser } from "../../redux/slices/authSlice";
 
 const Navbar = () => {
+
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const dispatch = useDispatch()
 
   const handleLogout = () => {
     // Add your logout logic here
     if (window.confirm("Are you sure you want to logout?")) {
       // Clear any session data
-      localStorage.clear();
+      dispatch(removeUser())
       // Redirect to login page or home
       window.location.href = "/login"; // Adjust this to your login route
     }
