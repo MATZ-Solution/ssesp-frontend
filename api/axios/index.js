@@ -34,13 +34,13 @@ api.interceptors.response.use(
   (error) => {
     console.log("error: ", error)
     if (error.response?.status === 401) {
-      store.dispatch(removeUser());
-      window.location.href = "/";
-      // const message = error.response?.data?.message;
-      // if (message === "Token expired") {
       // store.dispatch(removeUser());
       // window.location.href = "/";
-      // }
+      // const message = error.response?.data?.message;
+      if (message === "Token expired") {
+      store.dispatch(removeUser());
+      window.location.href = "/";
+      }
     }
     return Promise.reject(error);
   }

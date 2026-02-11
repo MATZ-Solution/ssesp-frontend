@@ -3,7 +3,7 @@ import React, { useState, useEffect } from 'react';
 import { useForm, Controller } from 'react-hook-form';
 import { genderOptions, religionOptions } from "../../../../data/form-data";
 import { customSelectStyles } from "../../../styles/custom-styles";
-import { ControlledRadioGroup } from '../../radio-button';
+import { ControlledRadioGroup } from "../../Radio-button";
 import { ControlledInputField } from '../../input-field';
 import Select from 'react-select';
 import { step1Schema } from "../../schema/admission-form-schema";

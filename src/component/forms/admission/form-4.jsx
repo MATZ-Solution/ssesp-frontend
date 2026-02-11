@@ -7,7 +7,7 @@ import {
   classOptions,
   schoolCategoryOptions,
 } from "../../../../data/form-data";
-import { ControlledRadioGroup } from "../../radio-button";
+import { ControlledRadioGroup } from "../../Radio-button";
 import { step4Schema } from "../../schema/admission-form-schema";
 import FormTemplate from "../../template/form-template";
 import { useNavigate } from "react-router-dom";

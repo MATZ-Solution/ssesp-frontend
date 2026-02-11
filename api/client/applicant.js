@@ -115,7 +115,7 @@ export function useAddApplicantTestPreference() {
       await api.put(`${API_ROUTE.applicant.addApplicantTestPreference}`, data),
       onSuccess: (data) => {
       toast.success("Success");
-      navigate("/");
+      navigate("/form/complete");
     },
     onError: (error) => {
       console.log("error: ", error)

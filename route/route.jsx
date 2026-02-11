@@ -25,9 +25,9 @@ export const router = createBrowserRouter([
     path: "/form/student-info",
     element: (
       <ProtectedRoute>
-        <AdminTemplate>
+        {/* <AdminTemplate> */}
           <Form1 />
-        </AdminTemplate>
+        {/* </AdminTemplate> */}
       </ProtectedRoute>
     ),
   },
@@ -35,9 +35,9 @@ export const router = createBrowserRouter([
     path: "/form/guardian-info",
     element: (
       <ProtectedRoute>
-        <AdminTemplate>
+        {/* <AdminTemplate> */}
           <Form2 />
-        </AdminTemplate>
+        {/* </AdminTemplate> */}
       </ProtectedRoute>
     ),
   },
@@ -45,9 +45,9 @@ export const router = createBrowserRouter([
     path: "/form/address",
     element: (
       <ProtectedRoute>
-        <AdminTemplate>
+        {/* <AdminTemplate> */}
           <Form3 />
-        </AdminTemplate>
+        {/* </AdminTemplate> */}
       </ProtectedRoute>
     ),
   },
@@ -55,9 +55,9 @@ export const router = createBrowserRouter([
     path: "/form/school-info",
     element: (
       <ProtectedRoute>
-        <AdminTemplate>
+        {/* <AdminTemplate> */}
           <Form4 />
-        </AdminTemplate>
+        {/* </AdminTemplate> */}
       </ProtectedRoute>
     ),
   },
@@ -65,9 +65,9 @@ export const router = createBrowserRouter([
     path: "/form/test-preference",
     element: (
       <ProtectedRoute>
-        <AdminTemplate>
+        {/* <AdminTemplate> */}
           <Form5 />
-        </AdminTemplate>
+        {/* </AdminTemplate> */}
       </ProtectedRoute>
     ),
   },
