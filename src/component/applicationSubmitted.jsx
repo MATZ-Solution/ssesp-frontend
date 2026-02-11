@@ -8,7 +8,7 @@ const ApplicationSubmitted = () => {
     return (
         <div className='max-w-5xl mx-auto'>
             <Navbar />
-            <div className="min-h-screen  flex items-center justify-center p-4">
+            <div className="mt-10 flex items-center justify-center p-4">
 
                 <div className="max-w-2xl w-full">
                     {/* Main Card */}
@@ -54,7 +54,7 @@ const ApplicationSubmitted = () => {
                             </p>
 
                             {/* Info Box */}
-                            <div className="bg-gradient-to-r from-green-50 to-emerald-50 border border-green-200 rounded-xl p-6 mb-8">
+                            {/* <div className="bg-gradient-to-r from-green-50 to-emerald-50 border border-green-200 rounded-xl p-6 mb-8">
                                 <div className="flex items-start gap-4">
                                     <div className="flex-shrink-0">
                                         <div className="w-10 h-10 bg-gradient-to-br from-green-400 to-green-500 rounded-full flex items-center justify-center">
@@ -82,18 +82,18 @@ const ApplicationSubmitted = () => {
                                         </ul>
                                     </div>
                                 </div>
-                            </div>
+                            </div> */}
 
                             {/* Reference Number */}
-                            <div className="bg-gray-50 rounded-lg p-4 mb-8 inline-block">
+                            {/* <div className="bg-gray-50 rounded-lg p-4 mb-8 inline-block">
                                 <p className="text-sm text-gray-500 mb-1">Reference Number</p>
                                 <p className="text-xl font-mono font-bold text-gray-900">
                                     APP-{Math.random().toString(36).substring(2, 9).toUpperCase()}
                                 </p>
-                            </div>
+                            </div> */}
 
                             {/* Action Buttons */}
-                            <div className="flex flex-col sm:flex-row gap-4 justify-center">
+                            {/* <div className="flex flex-col sm:flex-row gap-4 justify-center">
                                 <button
                                     onClick={() => navigate('/dashboard')}
                                     className="px-8 py-3 bg-gradient-to-r from-green-500 to-emerald-600 hover:from-green-600 hover:to-emerald-700 text-white font-semibold rounded-lg shadow-lg transition transform hover:scale-105"
@@ -106,20 +106,20 @@ const ApplicationSubmitted = () => {
                                 >
                                     Back to Home
                                 </button>
-                            </div>
+                            </div> */}
 
                             {/* Footer Note */}
-                            <p className="text-sm text-gray-500 mt-8">
+                            {/* <p className="text-sm text-gray-500 mt-8">
                                 Need help? Contact us at{' '}
                                 <a href="mailto:support@example.com" className="text-green-600 hover:text-green-700 font-medium">
                                     support@example.com
                                 </a>
-                            </p>
+                            </p> */}
                         </div>
                     </div>
 
                     {/* Additional Info Cards */}
-                    <div className="grid md:grid-cols-3 gap-4 mt-6">
+                    {/* <div className="grid md:grid-cols-3 gap-4 mt-6">
                         <div className="bg-white rounded-lg p-4 shadow-md text-center">
                             <div className="w-12 h-12 bg-gradient-to-br from-green-100 to-green-200 rounded-full flex items-center justify-center mx-auto mb-3">
                                 <svg className="w-6 h-6 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -149,7 +149,7 @@ const ApplicationSubmitted = () => {
                             <h4 className="font-semibold text-gray-900 text-sm mb-1">Processing</h4>
                             <p className="text-xs text-gray-600">2-3 business days</p>
                         </div>
-                    </div>
+                    </div> */}
                 </div>
             </div>
         </div>
