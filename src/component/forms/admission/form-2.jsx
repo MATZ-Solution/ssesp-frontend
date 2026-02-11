@@ -6,6 +6,7 @@ import FormTemplate from "../../template/form-template";
 import { useNavigate } from "react-router-dom";
 import { useAddApplicantGuardianInfo, useGetApplicantGuardianInfo } from "../../../../api/client/applicant";
 import ProtectedRouteForm from "../../../../utils/protected-route-form";
+import Button from "../../button";
 
 export const Form2 = () => {
 
@@ -131,12 +132,14 @@ export const Form2 = () => {
             >
               ← Previous
             </button>
-            <button
-              type="submit"
+            <Button
               className="px-8 py-3 bg-gradient-to-r from-blue-600 to-blue-500 text-white font-bold rounded-lg shadow-lg hover:shadow-xl transform hover:-translate-y-0.5 transition-all duration-200"
+              type="submit"
+              isLoading={isPending}
+              
             >
               Next Step →
-            </button>
+              </Button>
           </div>
         </form>
       </FormTemplate>
