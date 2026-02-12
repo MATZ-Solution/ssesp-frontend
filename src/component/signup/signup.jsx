@@ -19,6 +19,7 @@ import {
   useNavigate
 } from "react-router-dom";
 import { useSignUp } from "../../../api/client/user";
+import Button from "../button"
 
 const Signup = () => {
   const navigate = useNavigate();
@@ -241,31 +242,30 @@ const Signup = () => {
                 </div> */}
 
                 {/* Signup Button */}
-                <button
-                  type="submit"
+                <Button isLoading={isPending} type="submit"
                   className="w-full bg-gradient-to-r from-[#4BA54F] to-emerald-500 hover:from-emerald-600 hover:to-emerald-700 text-white font-semibold py-3 rounded-xl transition-all duration-300 transform hover:scale-[1.02] shadow-lg hover:shadow-xl"
                 >
-                  Create Account
-                </button>
+                 Create Account
+                </Button>
 
                 {/* Success Message */}
                 {data?.data?.message === 'User added successfully' && (
-                <div className="bg-gradient-to-r from-green-100 to-green-200 text-green-800 px-4 py-3 rounded-lg shadow-md border border-green-300 flex items-center gap-3">
-                  <svg
-                    className="w-5 h-5 flex-shrink-0 text-green-600"
-                    fill="none"
-                    stroke="currentColor"
-                    viewBox="0 0 24 24"
-                  >
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      strokeWidth={2}
-                      d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"
-                    />
-                  </svg>
-                  <span className="font-medium">Your application ID is: {data?.data?.applicantID}</span>
-                </div>
+                  <div className="bg-gradient-to-r from-green-100 to-green-200 text-green-800 px-4 py-3 rounded-lg shadow-md border border-green-300 flex items-center gap-3">
+                    <svg
+                      className="w-5 h-5 flex-shrink-0 text-green-600"
+                      fill="none"
+                      stroke="currentColor"
+                      viewBox="0 0 24 24"
+                    >
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        strokeWidth={2}
+                        d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"
+                      />
+                    </svg>
+                    <span className="font-medium">Your application ID is: {data?.data?.applicantID}</span>
+                  </div>
                 )}
 
                 {/* Error message */}

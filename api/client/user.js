@@ -22,13 +22,13 @@ export function useLogin() {
       dispatch(setUser(response?.data?.data))
       const status = response?.data?.data?.formStatus
       if (!status || status === 'null') {
-        navigate(`/form/student-info`);
+        navigate(`/form/student-info-1`);
       }
       if (status === 'completed') {
         navigate(`/form/complete`);
       }
-      if (status.includes('/')) {
-        navigate(`/form/${response?.data?.data?.formStatus?.split("/")[0]}`);
+      if (status.includes('-')) {
+        navigate(`/form/${status}`);
       }
     },
   });

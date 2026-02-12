@@ -1,5 +1,6 @@
 import { Loader2 } from "lucide-react";
 import { memo } from "react";
+
 function Button({
   children,
   text,
@@ -19,7 +20,7 @@ function Button({
       {isLoading ? (
         <>
           <Loader2 className="w-5 h-5 animate-spin" />
-          Processing...
+          Loading...
         </>
       ) : (
         children ?? text

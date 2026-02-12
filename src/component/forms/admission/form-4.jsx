@@ -15,6 +15,8 @@ import {
   useAddApplicantSchoolInfo,
   useGetApplicantSchoolInfo,
 } from "../../../../api/client/applicant";
+import Button from "../../button";
+
 export const Form4 = () => {
   const navigate = useNavigate();
 
@@ -171,12 +173,11 @@ export const Form4 = () => {
           >
             ← Previous
           </button>
-          <button
-            type="submit"
+          <Button isLoading={isPending} type="submit"
             className="px-8 py-3 bg-gradient-to-r from-blue-600 to-blue-500 text-white font-bold rounded-lg shadow-lg hover:shadow-xl transform hover:-translate-y-0.5 transition-all duration-200"
           >
             Next Step →
-          </button>
+          </Button>
         </div>
       </form>
     </FormTemplate>

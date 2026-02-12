@@ -1,23 +1,30 @@
+import { useSelector } from "react-redux";
 import { Navigate } from "react-router-dom";
+import { useLocation } from "react-router-dom";
 
-const ProtectedRoute = ({ children }) => {
+const ProtectedRouteForm = ({ children }) => {
 
-    const status = "guardian-info/2";
+    const location = useLocation().pathname
+    const formPath = location.split("/")[2];
+    const formNumber = formPath.split("-")[2];
 
-    if (status === 'incomplete') {
-        return <Navigate to="/form/student-info" replace />;
+    const currentStepName = useSelector(state => state.auth.user.formStatus)
+    const state = useSelector(state => state.auth.user.formStatus)
+
+    const currentStepNumber = formPath.split("-")[2];
+
+    if (!currentStepName) {
+        if (formPath !== "student-info-1") {
+            return <Navigate to={`/form/student-info-1`} replace />
+        }
+        return children;
     }
 
-    if (status === 'complete') {
-        return <Navigate to="/complete" replace />;
+    if (currentStepName && (Number(formNumber) <= Number(currentStepNumber))) {
+        return children;
     }
 
-    if (status.includes('/')) {
-        const [route, step] = status.split("/");
-        <Navigate to={`/form/${route}`} replace />;
-    }
-    return children;
-
+    return <Navigate to={`/form/${currentStepName}`} replace />;
 };
 
-export default ProtectedRoute;
+export default ProtectedRouteForm;

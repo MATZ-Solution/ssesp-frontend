@@ -1,238 +1,412 @@
 import { yupResolver } from "@hookform/resolvers/yup";
-import { useState } from "react";
-import { useForm } from "react-hook-form";
-import { ControlledInputField } from "../../input-field";
-import { testMediumOptions } from "../../../../data/form-data";
-import { ControlledRadioGroup } from "../../Radio-button";
-import { step5Schema } from "../../schema/admission-form-schema";
+import React, { useState, useEffect } from 'react';
+import { useForm, Controller } from 'react-hook-form';
+import * as yup from 'yup';
 import FormTemplate from "../../template/form-template";
-import { useNavigate } from "react-router-dom";
-import { useAddApplicantTestPreference, useGetApplicantTestPreference } from "../../../../api/client/applicant";
 
-export const Form5 = () => {
-  const [isSubmitting, setIsSubmitting] = useState(false);
+const documentUploadSchema = yup.object().shape({
+    document1: yup
+        .mixed()
+        .required("Document 1 is required")
+        .test("fileSize", "File size must not exceed 5MB", (value) => {
+            if (!value) return true;
+            return value.size <= 5 * 1024 * 1024;
+        })
+        .test("fileType", "Only PDF, JPG, JPEG, and PNG files are allowed", (value) => {
+            if (!value) return true;
+            return ["application/pdf", "image/jpeg", "image/jpg", "image/png"].includes(value.type);
+        }),
+    document2: yup
+        .mixed()
+        .required("Document 2 is required")
+        .test("fileSize", "File size must not exceed 5MB", (value) => {
+            if (!value) return true;
+            return value.size <= 5 * 1024 * 1024;
+        })
+        .test("fileType", "Only PDF, JPG, JPEG, and PNG files are allowed", (value) => {
+            if (!value) return true;
+            return ["application/pdf", "image/jpeg", "image/jpg", "image/png"].includes(value.type);
+        }),
+    document3: yup
+        .mixed()
+        .required("Document 3 is required")
+        .test("fileSize", "File size must not exceed 5MB", (value) => {
+            if (!value) return true;
+            return value.size <= 5 * 1024 * 1024;
+        })
+        .test("fileType", "Only PDF, JPG, JPEG, and PNG files are allowed", (value) => {
+            if (!value) return true;
+            return ["application/pdf", "image/jpeg", "image/jpg", "image/png"].includes(value.type);
+        }),
+    document4: yup
+        .mixed()
+        .required("Document 4 is required")
+        .test("fileSize", "File size must not exceed 5MB", (value) => {
+            if (!value) return true;
+            return value.size <= 5 * 1024 * 1024;
+        })
+        .test("fileType", "Only PDF, JPG, JPEG, and PNG files are allowed", (value) => {
+            if (!value) return true;
+            return ["application/pdf", "image/jpeg", "image/jpg", "image/png"].includes(value.type);
+        }),
+});
 
-    const { addTestPreference, isSuccess, isPending, isError, error } = useAddApplicantTestPreference()
-    const { data, isLoading } = useGetApplicantTestPreference()
-
-  const navigate = useNavigate()
-  const {
-    handleSubmit,
+const DocumentUploadItem = ({
+    name,
+    label,
     control,
-    formState: { errors },
-  } = useForm({
-    resolver: yupResolver(step5Schema),
-    defaultValues: {
-      testMedium: "",
-      division: "",
-      acknowledgment: false,
-    },
-  });
+    errors,
+    preview,
+    setPreview,
+    description
+}) => {
+    const [showModal, setShowModal] = useState(false);
 
-  const onSubmit = async (data) => {
-    console.log("Step 5 - Entry Test Preference:", data);
-    addTestPreference(data)
-  };
+    return (
+        <div className="bg-white border border-gray-200 rounded-lg p-5 shadow-sm hover:shadow-md transition-shadow">
+            <label className="text-sm font-semibold text-gray-700 mb-2 block">
+                {label} <span className="text-red-500">*</span>
+            </label>
 
-  return (
-    <FormTemplate>
-      <form
-        onSubmit={handleSubmit(onSubmit)}
-        className="bg-white shadow-xl p-6 sm:p-8 lg:p-10"
-      >
-        <div className="mb-8">
-          <div className="grid grid-cols-1 gap-5">
-            <ControlledRadioGroup
-              name="testMedium"
-              control={control}
-              label="Medium of Instructions for Entry Test"
-              options={testMediumOptions}
-              required
-              errors={errors}
-            />
-
-            <ControlledInputField
-              name="division"
-              control={control}
-              label="Division"
-              placeholder="Enter division"
-              required
-              errors={errors}
-            />
-          </div>
-        </div>
-
-        {/* Important Information Sections */}
-        <div className="space-y-6 mb-8">
-          {/* Entry Test Criteria */}
-          <div className="bg-blue-50 border-l-4 border-blue-500 p-6 rounded-r-lg">
-            <h3 className="text-lg font-bold text-blue-900 mb-4">
-              Entry Test Criteria
-            </h3>
-            <div className="overflow-x-auto">
-              <table className="w-full text-sm">
-                <thead>
-                  <tr className="bg-blue-100">
-                    <th className="px-4 py-2 text-left">Subject</th>
-                    <th className="px-4 py-2 text-left">Required Percentage</th>
-                  </tr>
-                </thead>
-                <tbody className="divide-y divide-blue-200">
-                  <tr>
-                    <td className="px-4 py-2">English</td>
-                    <td className="px-4 py-2">Minimum 60% (weightage 30%)</td>
-                  </tr>
-                  <tr>
-                    <td className="px-4 py-2">Maths</td>
-                    <td className="px-4 py-2">Minimum 60% (weightage 30%)</td>
-                  </tr>
-                  <tr>
-                    <td className="px-4 py-2">Sindhi/Urdu</td>
-                    <td className="px-4 py-2">Minimum 60% (weightage 20%)</td>
-                  </tr>
-                  <tr>
-                    <td className="px-4 py-2">Interview</td>
-                    <td className="px-4 py-2">Weightage 20%</td>
-                  </tr>
-                </tbody>
-              </table>
-            </div>
-          </div>
-
-          {/* Eligibility Criteria */}
-          <div className="bg-green-50 border-l-4 border-green-500 p-6 rounded-r-lg">
-            <h3 className="text-lg font-bold text-green-900 mb-4">
-              Eligibility Criteria
-            </h3>
-            <ul className="space-y-2 text-sm text-gray-700">
-              <li className="flex items-start">
-                <span className="text-green-600 mr-2">✓</span>
-                <span>
-                  Must be currently studying in Grade V/Class 5 (bonafide)
-                  student of Government School or SEF School
-                </span>
-              </li>
-              <li className="flex items-start">
-                <span className="text-green-600 mr-2">✓</span>
-                <span>
-                  Must have studied in any Government School or SEF School for
-                  at least last three academic years including Grade 5 , 6 , 7 ,
-                  8 , 9
-                </span>
-              </li>
-              <li className="flex items-start">
-                <span className="text-green-600 mr-2">✓</span>
-                <span>
-                  Age should not exceed eleven years as on 13th April, 2023
-                </span>
-              </li>
-              <li className="flex items-start">
-                <span className="text-green-600 mr-2">✓</span>
-                <span>Must be a resident of the Karachi Division</span>
-              </li>
-            </ul>
-          </div>
-
-          {/* Documents Required */}
-          <div className="bg-orange-50 border-l-4 border-orange-500 p-6 rounded-r-lg">
-            <h3 className="text-lg font-bold text-orange-900 mb-4">
-              Documents Required
-            </h3>
-            <ul className="space-y-2 text-sm text-gray-700">
-              <li className="flex items-start">
-                <span className="text-orange-600 mr-2">•</span>
-                <span>
-                  Duly filled Admission/Application Form along with 1 passport
-                  size recent photographs (with Blue background)
-                </span>
-              </li>
-              <li className="flex items-start">
-                <span className="text-orange-600 mr-2">•</span>
-                <span>
-                  Photocopy of General Register (GR) page duly attested by
-                  concerned Head Master/Head Mistress
-                </span>
-              </li>
-              <li className="flex items-start">
-                <span className="text-orange-600 mr-2">•</span>
-                <span>
-                  School leaving Certificate / Pass Certificate will be required
-                  at the time of admission
-                </span>
-              </li>
-              <li className="flex items-start">
-                <span className="text-orange-600 mr-2">•</span>
-                <span>
-                  Photocopies of Student's B-Form, Father's Domicile and
-                  Father's CNIC
-                </span>
-              </li>
-            </ul>
-          </div>
-        </div>
-
-        <div className="mb-6">
-          <label className="flex items-start gap-3">
-            <input
-              type="checkbox"
-              {...control.register("acknowledgment")}
-              className="mt-1 h-4 w-4 text-green-600 border-gray-300 rounded focus:ring-green-500"
-            />
-            <span className="text-sm text-gray-700">
-              I hereby confirm that all the information provided above is true
-              and correct to the best of my knowledge. I understand that any
-              false information may result in rejection of the application.
-            </span>
-          </label>
-
-          {errors.acknowledgment && (
-            <p className="text-red-500 text-sm mt-1">
-              {errors.acknowledgment.message}
-            </p>
-          )}
-        </div>
-
-        {/* Navigation Buttons */}
-        <div className="flex justify-between">
-          <button
-            type="button"
-            onClick={()=> navigate('/form/school-info')}
-            className="px-8 py-3 bg-gray-200 text-gray-700 font-bold rounded-lg shadow hover:shadow-lg hover:bg-gray-300 transform hover:-translate-y-0.5 transition-all duration-200"
-          >
-            ← Previous
-          </button>
-          <button
-            type="submit"
-            disabled={isSubmitting}
-            className={`px-8 py-3 bg-gradient-to-r from-green-800 to-green-600 text-white font-bold rounded-lg shadow-lg hover:shadow-xl transform hover:-translate-y-0.5 transition-all duration-200 ${isSubmitting ? "opacity-50 cursor-not-allowed" : ""
-              }`}
-          >
-            {isSubmitting ? (
-              <span className="flex items-center justify-center">
-                <svg className="animate-spin h-5 w-5 mr-3" viewBox="0 0 24 24">
-                  <circle
-                    className="opacity-25"
-                    cx="12"
-                    cy="12"
-                    r="10"
-                    stroke="currentColor"
-                    strokeWidth="4"
-                    fill="none"
-                  />
-                  <path
-                    className="opacity-75"
-                    fill="currentColor"
-                    d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
-                  />
-                </svg>
-                Submitting...
-              </span>
-            ) : (
-              "Submit Application ✓"
+            {description && (
+                <p className="text-xs text-gray-600 mb-3">{description}</p>
             )}
-          </button>
+
+            <Controller
+                name={name}
+                control={control}
+                render={({ field: { onChange, value, ...field } }) => (
+                    <div className="space-y-3">
+                        <div className="flex items-center justify-center w-full">
+                            <label
+                                className={`flex flex-col items-center justify-center w-full h-48 border-2 border-dashed rounded-lg cursor-pointer transition-all ${errors[name]
+                                        ? "border-red-500 bg-red-50 hover:bg-red-100"
+                                        : preview
+                                            ? "border-green-500 bg-green-50 hover:bg-green-100"
+                                            : "border-gray-300 bg-gray-50 hover:bg-gray-100"
+                                    }`}
+                            >
+                                <div className="flex flex-col items-center justify-center p-4 w-full h-full">
+                                    {preview ? (
+                                        <div className="relative w-full h-full flex items-center justify-center">
+                                            {preview.type === 'pdf' ? (
+                                                <div className="flex flex-col items-center justify-center">
+                                                    <svg
+                                                        className="w-16 h-16 text-red-500 mb-2"
+                                                        fill="currentColor"
+                                                        viewBox="0 0 20 20"
+                                                    >
+                                                        <path
+                                                            fillRule="evenodd"
+                                                            d="M4 4a2 2 0 012-2h4.586A2 2 0 0112 2.586L15.414 6A2 2 0 0116 7.414V16a2 2 0 01-2 2H6a2 2 0 01-2-2V4zm2 6a1 1 0 011-1h6a1 1 0 110 2H7a1 1 0 01-1-1zm1 3a1 1 0 100 2h6a1 1 0 100-2H7z"
+                                                            clipRule="evenodd"
+                                                        />
+                                                    </svg>
+                                                    <p className="text-sm font-medium text-gray-700 text-center">
+                                                        {preview.name}
+                                                    </p>
+                                                    <p className="text-xs text-gray-500 mt-1">PDF Document</p>
+                                                </div>
+                                            ) : (
+                                                <img
+                                                    src={preview.url}
+                                                    alt={`${label} preview`}
+                                                    className="max-w-full max-h-full object-contain rounded-lg shadow-md cursor-pointer"
+                                                    onClick={(e) => {
+                                                        e.preventDefault();
+                                                        setShowModal(true);
+                                                    }}
+                                                />
+                                            )}
+                                            <button
+                                                type="button"
+                                                onClick={(e) => {
+                                                    e.preventDefault();
+                                                    setPreview(null);
+                                                    onChange(null);
+                                                }}
+                                                className="absolute -top-2 -right-2 bg-red-500 text-white rounded-full p-1.5 hover:bg-red-600 shadow-lg"
+                                            >
+                                                <svg
+                                                    className="w-4 h-4"
+                                                    fill="none"
+                                                    stroke="currentColor"
+                                                    viewBox="0 0 24 24"
+                                                >
+                                                    <path
+                                                        strokeLinecap="round"
+                                                        strokeLinejoin="round"
+                                                        strokeWidth="2"
+                                                        d="M6 18L18 6M6 6l12 12"
+                                                    />
+                                                </svg>
+                                            </button>
+                                        </div>
+                                    ) : (
+                                        <>
+                                            <svg
+                                                className="w-12 h-12 mb-3 text-gray-400"
+                                                fill="none"
+                                                stroke="currentColor"
+                                                viewBox="0 0 24 24"
+                                            >
+                                                <path
+                                                    strokeLinecap="round"
+                                                    strokeLinejoin="round"
+                                                    strokeWidth="2"
+                                                    d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"
+                                                />
+                                            </svg>
+                                            <p className="mb-2 text-sm text-center text-gray-500">
+                                                <span className="font-semibold">Click to upload</span>
+                                            </p>
+                                            <p className="text-xs text-gray-500 text-center">
+                                                PDF, JPG, JPEG, PNG
+                                            </p>
+                                            <p className="text-xs text-gray-500 text-center">
+                                                (MAX. 5MB)
+                                            </p>
+                                        </>
+                                    )}
+                                </div>
+                                <input
+                                    {...field}
+                                    type="file"
+                                    accept="application/pdf,image/jpeg,image/jpg,image/png"
+                                    className="hidden"
+                                    onChange={(e) => {
+                                        const file = e.target.files?.[0];
+                                        if (file) {
+                                            if (file.size > 5 * 1024 * 1024) {
+                                                alert("File size must not exceed 5MB");
+                                                return;
+                                            }
+
+                                            if (
+                                                ![
+                                                    "application/pdf",
+                                                    "image/jpeg",
+                                                    "image/jpg",
+                                                    "image/png",
+                                                ].includes(file.type)
+                                            ) {
+                                                alert("Only PDF, JPG, JPEG, and PNG files are allowed");
+                                                return;
+                                            }
+
+                                            if (file.type === "application/pdf") {
+                                                setPreview({ type: 'pdf', name: file.name });
+                                            } else {
+                                                const reader = new FileReader();
+                                                reader.onloadend = () => {
+                                                    setPreview({ type: 'image', url: reader.result, name: file.name });
+                                                };
+                                                reader.readAsDataURL(file);
+                                            }
+
+                                            onChange(file);
+                                        }
+                                    }}
+                                />
+                            </label>
+                        </div>
+
+                        {preview && (
+                            <div className="bg-green-50 border border-green-200 rounded-lg p-2">
+                                <p className="text-xs text-green-700 flex items-center">
+                                    <svg
+                                        className="w-4 h-4 mr-1"
+                                        fill="currentColor"
+                                        viewBox="0 0 20 20"
+                                    >
+                                        <path
+                                            fillRule="evenodd"
+                                            d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"
+                                            clipRule="evenodd"
+                                        />
+                                    </svg>
+                                    Document uploaded
+                                </p>
+                            </div>
+                        )}
+                    </div>
+                )}
+            />
+            {errors[name] && (
+                <span className="text-red-500 text-xs mt-1 block">
+                    {errors[name].message}
+                </span>
+            )}
+
+            {/* Image Modal */}
+            {showModal && preview && preview.type === 'image' && (
+                <div
+                    className="fixed inset-0 bg-black bg-opacity-75 flex items-center justify-center z-50 p-4"
+                    onClick={() => setShowModal(false)}
+                >
+                    <div className="relative max-w-4xl max-h-full">
+                        <button
+                            onClick={() => setShowModal(false)}
+                            className="absolute -top-4 -right-4 bg-white text-gray-800 rounded-full p-2 hover:bg-gray-100 shadow-lg z-10"
+                        >
+                            <svg
+                                className="w-6 h-6"
+                                fill="none"
+                                stroke="currentColor"
+                                viewBox="0 0 24 24"
+                            >
+                                <path
+                                    strokeLinecap="round"
+                                    strokeLinejoin="round"
+                                    strokeWidth="2"
+                                    d="M6 18L18 6M6 6l12 12"
+                                />
+                            </svg>
+                        </button>
+                        <img
+                            src={preview.url}
+                            alt={`${label} enlarged`}
+                            className="max-w-full max-h-[90vh] rounded-lg shadow-2xl"
+                            onClick={(e) => e.stopPropagation()}
+                        />
+                    </div>
+                </div>
+            )}
         </div>
-      </form>
-    </FormTemplate>
-  );
+    );
 };
+
+const Form5 = ({ initialData = {} }) => {
+    const [doc1Preview, setDoc1Preview] = useState(null);
+    const [doc2Preview, setDoc2Preview] = useState(null);
+    const [doc3Preview, setDoc3Preview] = useState(null);
+    const [doc4Preview, setDoc4Preview] = useState(null);
+
+    const {
+        handleSubmit,
+        control,
+        formState: { errors },
+    } = useForm({
+        resolver: yupResolver(documentUploadSchema),
+        defaultValues: {
+            document1: initialData.document1 || null,
+            document2: initialData.document2 || null,
+            document3: initialData.document3 || null,
+            document4: initialData.document4 || null,
+        },
+    });
+
+    useEffect(() => {
+        if (initialData.doc1Preview) setDoc1Preview(initialData.doc1Preview);
+        if (initialData.doc2Preview) setDoc2Preview(initialData.doc2Preview);
+        if (initialData.doc3Preview) setDoc3Preview(initialData.doc3Preview);
+        if (initialData.doc4Preview) setDoc4Preview(initialData.doc4Preview);
+    }, [initialData]);
+
+    const onSubmit = (data) => {
+        const formData = new FormData();
+        Object.entries(data).forEach(([key, value]) => {
+            if (value) {
+                formData.append(key, value);
+            }
+        });
+
+        console.log("Form submitted with documents:", data);
+        // Your submission logic here
+        // addDocuments(formData);
+    };
+
+    const documents = [
+        {
+            name: "document1",
+            label: "Birth Certificate (B-Form)",
+            description: "Upload student's NADRA B-Form or Birth Certificate",
+            preview: doc1Preview,
+            setPreview: setDoc1Preview,
+        },
+        {
+            name: "document2",
+            label: "Previous School Leaving Certificate",
+            description: "Upload leaving certificate from previous institution",
+            preview: doc2Preview,
+            setPreview: setDoc2Preview,
+        },
+        {
+            name: "document3",
+            label: "Parent/Guardian CNIC",
+            description: "Upload copy of parent or guardian's CNIC (front & back)",
+            preview: doc3Preview,
+            setPreview: setDoc3Preview,
+        },
+        {
+            name: "document4",
+            label: "Previous Academic Record",
+            description: "Upload report card or academic transcript",
+            preview: doc4Preview,
+            setPreview: setDoc4Preview,
+        },
+    ];
+
+    return (
+        <FormTemplate>
+            <div className="min-h-screen bg-gray-50 py-8 px-4">
+                <div className="max-w-6xl mx-auto">
+                    <form
+                        onSubmit={handleSubmit(onSubmit)}
+                        className="bg-white shadow-xl rounded-lg p-6 sm:p-8 lg:p-10"
+                    >
+                        <div className="mb-8">
+                            <h2 className="text-2xl font-bold text-gray-800 mb-2">
+                                Document Upload
+                            </h2>
+                            <p className="text-sm text-gray-600">
+                                Please upload all required documents in PDF, JPG, JPEG, or PNG format
+                            </p>
+                        </div>
+
+                        <div className="mb-8">
+                            <div className="bg-blue-50 border-l-4 border-blue-500 p-4 rounded-r-lg mb-6">
+                                <p className="text-sm text-blue-800">
+                                    <strong>Important:</strong> All documents must be clear, legible, and not exceed 5MB in size
+                                </p>
+                            </div>
+
+                            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                                {documents.map((doc) => (
+                                    <DocumentUploadItem
+                                        key={doc.name}
+                                        name={doc.name}
+                                        label={doc.label}
+                                        description={doc.description}
+                                        control={control}
+                                        errors={errors}
+                                        preview={doc.preview}
+                                        setPreview={doc.setPreview}
+                                    />
+                                ))}
+                            </div>
+                        </div>
+
+                        {/* Navigation Buttons */}
+                        <div className="flex justify-between border-t pt-6">
+                            <button
+                                type="button"
+                                className="px-8 py-3 bg-gray-200 text-gray-700 font-bold rounded-lg shadow hover:bg-gray-300 transition-all duration-200"
+                            >
+                                ← Previous Step
+                            </button>
+                            <button
+                                type="submit"
+                                className="px-8 py-3 bg-gradient-to-r from-blue-600 to-blue-500 text-white font-bold rounded-lg shadow-lg hover:shadow-xl transform hover:-translate-y-0.5 transition-all duration-200"
+                            >
+                                Submit Documents →
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </FormTemplate>
+    );
+};
+
+export default Form5;
