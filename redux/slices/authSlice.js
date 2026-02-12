@@ -14,8 +14,11 @@ export const authSlice = createSlice({
     removeUser: (state) => {
       state.user = {};
     },
+    setFormStatus: (state, action) => {
+      state.user = {...state.user, ...action.payload}
+    }
   },
 });
 
-export const { setUser, removeUser } = authSlice.actions;
+export const { setUser, removeUser, setFormStatus } = authSlice.actions;
 export default authSlice.reducer;

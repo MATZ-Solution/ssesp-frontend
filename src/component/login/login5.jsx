@@ -22,6 +22,7 @@ import {
   useNavigate
 
 } from "react-router-dom";
+import Button from "../button"
 import { useLogin } from "../../../api/client/user";
 
 const Login5 = () => {
@@ -258,12 +259,11 @@ const Login5 = () => {
                 </div>
 
                 {/* Login Button */}
-                <button
-                  type="submit"
+                <Button isLoading={isPending} type="submit"
                   className="w-full bg-gradient-to-r from-[#4BA54F] to-emerald-500 hover:from-emerald-600 hover:to-emerald-700 text-white font-semibold py-3 rounded-xl transition-all duration-300 transform hover:scale-[1.02] shadow-lg hover:shadow-xl"
                 >
                   Sign In
-                </button>
+                </Button>
 
                 {/* Divider */}
                 <div className="flex items-center gap-4 my-6">

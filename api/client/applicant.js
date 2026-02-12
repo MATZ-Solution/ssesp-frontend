@@ -3,10 +3,13 @@ import api from "../axios";
 import API_ROUTE from "../endPoints";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useNavigate } from "react-router-dom";
+import { useDispatch } from "react-redux";
+import { setFormStatus } from "../../redux/slices/authSlice";
 
 // POST
 export function useAddApplicantInfo() {
   const navigate = useNavigate();
+  const dispatch = useDispatch()
   const {
     mutate: addApplicant,
     isSuccess,
@@ -24,7 +27,8 @@ export function useAddApplicantInfo() {
       }),
     onSuccess: (data) => {
       toast.success("Success");
-      navigate("/form/guardian-info");
+      dispatch(setFormStatus({formStatus: 'guardian-info-2'}))
+      navigate("/form/guardian-info-2");
     },
     onError: (error) => {
       toast.error("Failed to add details.");
@@ -35,6 +39,8 @@ export function useAddApplicantInfo() {
 
 export function useAddApplicantGuardianInfo() {
   const navigate = useNavigate();
+  const dispatch = useDispatch()
+
   const {
     mutate: addApplicantGuardian,
     isSuccess,
@@ -46,7 +52,8 @@ export function useAddApplicantGuardianInfo() {
       await api.put(`${API_ROUTE.applicant.addApplicantGuardianInfo}`, data),
       onSuccess: (data) => {
       toast.success("Success");
-      navigate("/form/address");
+      dispatch(setFormStatus({formStatus: 'address-3'}))
+      navigate("/form/address-3");
     },
     onError: (error) => {
       console.log("error: ", error)
@@ -58,6 +65,8 @@ export function useAddApplicantGuardianInfo() {
 
 export function useAddApplicantAddressInfo() {
   const navigate = useNavigate();
+  const dispatch = useDispatch()
+
   const {
     mutate: addApplicantAddress,
     isSuccess,
@@ -69,7 +78,8 @@ export function useAddApplicantAddressInfo() {
       await api.put(`${API_ROUTE.applicant.addApplicantAddressInfo}`, data),
       onSuccess: (data) => {
       toast.success("Success");
-      navigate("/form/school-info");
+      dispatch(setFormStatus({formStatus: 'school-info-4'}))
+      navigate("/form/school-info-4");
     },
     onError: (error) => {
       console.log("error: ", error)
@@ -81,6 +91,8 @@ export function useAddApplicantAddressInfo() {
 
 export function useAddApplicantSchoolInfo() {
   const navigate = useNavigate();
+  const dispatch = useDispatch()
+
   const {
     mutate: addApplicantSchool,
     isSuccess,
@@ -92,7 +104,8 @@ export function useAddApplicantSchoolInfo() {
       await api.put(`${API_ROUTE.applicant.addApplicantSchoolInfo}`, data),
       onSuccess: (data) => {
       toast.success("Success");
-      navigate("/form/test-preference");
+      dispatch(setFormStatus({formStatus: 'document-upload-5'}))
+      navigate("/form/document-upload-5");
     },
     onError: (error) => {
       console.log("error: ", error)
@@ -104,6 +117,8 @@ export function useAddApplicantSchoolInfo() {
 
 export function useAddApplicantTestPreference() {
   const navigate = useNavigate();
+  const dispatch = useDispatch()
+
   const {
     mutate: addTestPreference,
     isSuccess,
@@ -115,6 +130,7 @@ export function useAddApplicantTestPreference() {
       await api.put(`${API_ROUTE.applicant.addApplicantTestPreference}`, data),
       onSuccess: (data) => {
       toast.success("Success");
+      dispatch(setFormStatus({formStatus: 'completed'}))
       navigate("/form/complete");
     },
     onError: (error) => {

@@ -2,17 +2,17 @@ import { createBrowserRouter, Navigate } from "react-router-dom";
 import { withSuspense } from "../utils/withSuspense";
 
 import Login5 from "../src/component/login/login5";
-import AdmissionForm from "../src/component/forms/admission-form";
 import { Form1 } from "../src/component/forms/admission/form-1";
 import { Form2 } from "../src/component/forms/admission/form-2";
 import { Form3 } from "../src/component/forms/admission/form-3";
 import { Form4 } from "../src/component/forms/admission/form-4";
-import { Form5 } from "../src/component/forms/admission/form-5";
+import Form5 from "../src/component/forms/admission/form-5";
+import Form6 from "../src/component/forms/admission/form-6";
 
 import Dashboard from "../src/component/Dashbaord/dashboard";
 import Signup from "../src/component/signup/signup";
-import AdminTemplate from "../src/Templates/admin-template";
 import ProtectedRoute from "../utils/protectRoute";
+import ProtectedRouteForm from "../utils/protected-route-form";
 import ApplicationSubmitted from "../src/component/applicationSubmitted";
 
 export const router = createBrowserRouter([
@@ -22,52 +22,56 @@ export const router = createBrowserRouter([
   },
 
   {
-    path: "/form/student-info",
+    path: "/form/student-info-1",
     element: (
       <ProtectedRoute>
-        {/* <AdminTemplate> */}
+        <ProtectedRouteForm>
           <Form1 />
-        {/* </AdminTemplate> */}
+        </ProtectedRouteForm>
       </ProtectedRoute>
     ),
   },
   {
-    path: "/form/guardian-info",
+    path: "/form/guardian-info-2",
     element: (
       <ProtectedRoute>
-        {/* <AdminTemplate> */}
+        <ProtectedRouteForm>
           <Form2 />
-        {/* </AdminTemplate> */}
+        </ProtectedRouteForm>
       </ProtectedRoute>
     ),
   },
   {
-    path: "/form/address",
+    path: "/form/address-3",
     element: (
       <ProtectedRoute>
-        {/* <AdminTemplate> */}
+        <ProtectedRouteForm>
           <Form3 />
-        {/* </AdminTemplate> */}
+        </ProtectedRouteForm>
       </ProtectedRoute>
     ),
   },
   {
-    path: "/form/school-info",
+    path: "/form/school-info-4",
     element: (
       <ProtectedRoute>
-        {/* <AdminTemplate> */}
-          <Form4 />
-        {/* </AdminTemplate> */}
+        <Form4 />
       </ProtectedRoute>
     ),
   },
   {
-    path: "/form/test-preference",
+    path: "/form/document-upload-5",
     element: (
       <ProtectedRoute>
-        {/* <AdminTemplate> */}
-          <Form5 />
-        {/* </AdminTemplate> */}
+        <Form5 />
+      </ProtectedRoute>
+    ),
+  },
+  {
+    path: "/form/test-preference-6",
+    element: (
+      <ProtectedRoute>
+        <Form6 />
       </ProtectedRoute>
     ),
   },
@@ -85,10 +89,7 @@ export const router = createBrowserRouter([
     path: "/login",
     element: withSuspense(<Login5 />),
   },
-  {
-    path: "/admission-form",
-    element: withSuspense(<AdmissionForm />),
-  },
+
   {
     path: "/dashboard",
     element: withSuspense(
