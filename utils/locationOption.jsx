@@ -1,57 +1,33 @@
-import { useMemo } from 'react';
+import { useMemo } from "react";
 
 /**
- * Province options
+ * Division Options
  */
-export const useProvinceOptions = (citiesData) =>
+export const useDivisionOptions = (citiesData) =>
   useMemo(() => {
-    return citiesData?.provinces?.map((province) => ({
-      value: province.name,
-      label: province.name,
-    })) || [];
+    if (!citiesData?.division) return [];
+
+    return citiesData.division.map((division) => ({
+      value: division.name,
+      label: division.name,
+    }));
   }, [citiesData]);
 
 /**
- * District options (depends on province)
+ * District Options (depends on selected division)
  */
-export const useDistrictOptions = (citiesData, selectedProvince) =>
+export const useDistrictOptions = (citiesData, selectedDivision) =>
   useMemo(() => {
-    if (!selectedProvince) return [];
+    if (!selectedDivision || !citiesData?.division) return [];
 
-    const province = citiesData.provinces.find(
-      (p) => p.name === selectedProvince.value
+    const division = citiesData.division.find(
+      (d) => d.name === selectedDivision.value
     );
-    if (!province) return [];
 
-    return province.districts.map((district) => ({
+    if (!division) return [];
+
+    return division.districts.map((district) => ({
       value: district.name,
       label: district.name,
     }));
-  }, [citiesData, selectedProvince]);
-
-/**
- * City options (depends on province + district)
- */
-export const useCityOptions = (
-  citiesData,
-  selectedProvince,
-  selectedDistrict
-) =>
-  useMemo(() => {
-    if (!selectedProvince || !selectedDistrict) return [];
-
-    const province = citiesData.provinces.find(
-      (p) => p.name === selectedProvince.value
-    );
-    if (!province) return [];
-
-    const district = province.districts.find(
-      (d) => d.name === selectedDistrict.value
-    );
-    if (!district) return [];
-
-    return district.cities.map((city) => ({
-      value: city,
-      label: city,
-    }));
-  }, [citiesData, selectedProvince, selectedDistrict]);
+  }, [citiesData, selectedDivision]);

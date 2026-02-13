@@ -7,6 +7,7 @@ import { useNavigate } from "react-router-dom";
 import { useAddApplicantGuardianInfo, useGetApplicantGuardianInfo } from "../../../../api/client/applicant";
 import ProtectedRouteForm from "../../../../utils/protected-route-form";
 import Button from "../../button";
+import { divisionData } from "../../../../data/schools_grouped_by_division_updated_gender";
 
 export const Form2 = () => {
 

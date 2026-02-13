@@ -1,5 +1,5 @@
 import { yupResolver } from "@hookform/resolvers/yup";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { ControlledInputField } from "../../input-field";
 import { testMediumOptions } from "../../../../data/form-data";
@@ -9,12 +9,13 @@ import FormTemplate from "../../template/form-template";
 import { useNavigate } from "react-router-dom";
 import { useAddApplicantTestPreference, useGetApplicantTestPreference } from "../../../../api/client/applicant";
 import Button from "../../button";
+import { divisionData } from "../../../../data/schools_grouped_by_division_updated_gender";
 
 export const Form6 = () => {
-  const [isSubmitting, setIsSubmitting] = useState(false);
 
-    const { addTestPreference, isSuccess, isPending, isError, error } = useAddApplicantTestPreference()
-    const { data, isLoading } = useGetApplicantTestPreference()
+  let [school, setSchool] = useState()
+  const { addTestPreference, isSuccess, isPending, isError, error } = useAddApplicantTestPreference()
+  const { data, isLoading } = useGetApplicantTestPreference()
 
   const navigate = useNavigate()
   const {
@@ -32,8 +33,31 @@ export const Form6 = () => {
 
   const onSubmit = async (data) => {
     console.log("Step 5 - Entry Test Preference:", data);
-    addTestPreference(data)
+    // addTestPreference(data)
   };
+
+  useEffect(() => {
+
+    // const division = divisionData?.find(
+    //   item => item.division === data?.[0]?.division
+    // );
+
+    const district = divisionData
+      .flatMap(division => division.districts)
+      .find(district => district.district === data?.[0]?.domicileDistrict);
+
+
+    const schoolData = district?.schools?.filter(
+      item => item.gender === data?.[0]?.gender
+    );
+
+    const schools = schoolData?.map(item => ({ value: item.school_name, lable: item.school_name })) || [];
+    setSchool(schools)
+
+  }, [data]);
+
+  console.log("school: ", school)
+
 
   return (
     <FormTemplate>
@@ -197,7 +221,7 @@ export const Form6 = () => {
         <div className="flex justify-between">
           <button
             type="button"
-            onClick={()=> navigate('/form/school-info')}
+            onClick={() => navigate('/form/school-info')}
             className="px-8 py-3 bg-gray-200 text-gray-700 font-bold rounded-lg shadow hover:shadow-lg hover:bg-gray-300 transform hover:-translate-y-0.5 transition-all duration-200"
           >
             ← Previous

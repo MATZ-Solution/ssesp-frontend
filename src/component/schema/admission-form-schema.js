@@ -35,22 +35,18 @@ export const step1Schema = yup.object().shape({
 export const step3Schema = yup.object().shape({
   postalAddress: yup
     .string()
+    .trim()
     .required("Postal address is required"),
 
-  province: yup
+  division: yup
     .mixed()
     .transform((value) => value?.label || value)
-    .required("Province is required"),
+    .required("Division is required"),
 
   district: yup
     .mixed()
     .transform((value) => value?.label || value)
     .required("District is required"),
-
-  city: yup
-    .mixed()
-    .transform((value) => value?.label || value)
-    .required("City is required"),
 });
 // Validation schema for Step 4 only
 export const step4Schema = yup.object().shape({

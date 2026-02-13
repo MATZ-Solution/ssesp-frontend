@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { useForm } from "react-hook-form";
-import logo from "../../assets/mohid.png";
+import logo from "../../assets/govt-log.jpeg";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { Link } from "react-router-dom";
 import * as yup from 'yup';
@@ -98,7 +98,7 @@ const Login5 = () => {
           {/* Logo/Brand Section */}
           <div className="space-y-2">
             <div className="flex items-center gap-3 mb-8">
-              <img src={logo} alt="Logo" className="w-40 h-22 rounded-lg" />
+              <img src={logo} alt="Logo" className="w-24 h-22 rounded-lg" />
               <div>
                 <h3 className="text-sm font-semibold text-emerald-400">
                   Sindh School Education Scholarship Program (SSESP) Portal
