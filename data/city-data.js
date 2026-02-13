@@ -1,5 +1,5 @@
 export const citiesData = {
-    "provinces": [
+    "division": [
       {
         "name": "Punjab",
         "districts": [
