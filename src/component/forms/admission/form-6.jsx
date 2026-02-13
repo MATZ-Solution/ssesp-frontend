@@ -4,7 +4,7 @@ import { useForm } from "react-hook-form";
 import { ControlledInputField } from "../../input-field";
 import { testMediumOptions } from "../../../../data/form-data";
 import { ControlledRadioGroup } from "../../Radio-button";
-import { step5Schema } from "../../schema/admission-form-schema";
+// import { step5Schema } from "../../schema/admission-form-schema";
 import FormTemplate from "../../template/form-template";
 import { useNavigate } from "react-router-dom";
 import { useAddApplicantTestPreference, useGetApplicantTestPreference } from "../../../../api/client/applicant";
@@ -17,18 +17,18 @@ export const Form6 = () => {
     const { data, isLoading } = useGetApplicantTestPreference()
 
   const navigate = useNavigate()
-  const {
-    handleSubmit,
-    control,
-    formState: { errors },
-  } = useForm({
-    resolver: yupResolver(step5Schema),
-    defaultValues: {
-      testMedium: "",
-      division: "",
-      acknowledgment: false,
-    },
-  });
+  // const {
+  //   handleSubmit,
+  //   control,
+  //   formState: { errors },
+  // } = useForm({
+  //   resolver: yupResolver(step5Schema),
+  //   defaultValues: {
+  //     testMedium: "",
+  //     division: "",
+  //     acknowledgment: false,
+  //   },
+  // });
 
   const onSubmit = async (data) => {
     console.log("Step 5 - Entry Test Preference:", data);
@@ -41,7 +41,7 @@ export const Form6 = () => {
         onSubmit={handleSubmit(onSubmit)}
         className="bg-white shadow-xl p-6 sm:p-8 lg:p-10"
       >
-        <div className="mb-8">
+        {/* <div className="mb-8">
           <div className="grid grid-cols-1 gap-5">
             <ControlledRadioGroup
               name="testMedium"
@@ -61,7 +61,7 @@ export const Form6 = () => {
               errors={errors}
             />
           </div>
-        </div>
+        </div> */}
 
         {/* Important Information Sections */}
         <div className="space-y-6 mb-8">

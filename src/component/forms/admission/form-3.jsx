@@ -1,9 +1,7 @@
 import { yupResolver } from "@hookform/resolvers/yup";
 import { Controller, useForm } from "react-hook-form";
 import { ControlledInputField } from "../../input-field";
-import { useDistrictOptions, useDivisionOptions } from "../../../../utils/locationOption";
 import { customSelectStyles } from "../../../styles/custom-styles";
-import { citiesData } from "../../../../data/city-data";
 import Select from "react-select";
 import { step3Schema } from "../../schema/admission-form-schema";
 import FormTemplate from "../../template/form-template";
@@ -13,20 +11,24 @@ import {
   useGetApplicantAddressInfo,
 } from "../../../../api/client/applicant";
 import Button from "../../button";
+import { useState, useEffect } from "react";
+import { divisionData } from '../../../../data/schools_grouped_by_division_updated_gender';
+import { useDivisionDistricts } from '../../../../utils/locationOption';
 
+
+
+// --- Form Component ---
 export const Form3 = () => {
   const navigate = useNavigate();
-
-  const { addApplicantAddress, isPending } =
-    useAddApplicantAddressInfo();
+  const { addApplicantAddress, isPending } = useAddApplicantAddressInfo();
   const { data } = useGetApplicantAddressInfo();
 
   const {
     handleSubmit,
     control,
     formState: { errors },
-    watch,
     setValue,
+    watch,
   } = useForm({
     resolver: yupResolver(step3Schema),
     defaultValues: {
@@ -36,10 +38,8 @@ export const Form3 = () => {
     },
   });
 
-  const division = watch("division");
-
-  const divisionOptions = useDivisionOptions(citiesData);
-  const districtOptions = useDistrictOptions(citiesData, division);
+  const { selectedDivision, setSelectedDivision, divisionOptions, districtOptions } =
+    useDivisionDistricts(divisionData);
 
   const onSubmit = (formData) => {
     console.log("Step 3 - Address Information:", formData);
@@ -77,13 +77,15 @@ export const Form3 = () => {
                   render={({ field }) => (
                     <Select
                       {...field}
+                      value={selectedDivision}
                       options={divisionOptions}
                       styles={customSelectStyles(errors)}
                       placeholder="Select division"
                       isClearable
                       onChange={(value) => {
                         field.onChange(value);
-                        setValue("district", null);
+                        setValue("district", null); // reset district
+                        setSelectedDivision(value); // update hook state
                       }}
                     />
                   )}
@@ -112,7 +114,7 @@ export const Form3 = () => {
                       styles={customSelectStyles(errors)}
                       placeholder="Select district"
                       isClearable
-                      isDisabled={!division}
+                      isDisabled={!selectedDivision}
                     />
                   )}
                 />

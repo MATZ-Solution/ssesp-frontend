@@ -1,4 +1,6 @@
 import { useMemo } from "react";
+ import { useState, useEffect } from "react";
+import { divisionData } from '../data/schools_grouped_by_division_updated_gender';
 
 /**
  * Division Options
@@ -31,3 +33,22 @@ export const useDistrictOptions = (citiesData, selectedDivision) =>
       label: district.name,
     }));
   }, [citiesData, selectedDivision]);
+
+
+export const useDivisionDistricts = (divisionData) => {
+  const [selectedDivision, setSelectedDivision] = useState(null);
+
+  const divisionOptions = divisionData.map((div) => ({
+    label: div.division,
+    value: div.division,
+  }));
+
+  // Derive districtOptions from selectedDivision instead of storing in state
+  const districtOptions = selectedDivision
+    ? divisionData
+        .find((div) => div.division === selectedDivision.value)
+        ?.districts.map((d) => ({ label: d.district, value: d.district })) || []
+    : [];
+
+  return { selectedDivision, setSelectedDivision, divisionOptions, districtOptions };
+};

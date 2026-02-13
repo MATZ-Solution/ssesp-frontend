@@ -1,5 +1,5 @@
 import { yupResolver } from "@hookform/resolvers/yup";
-import { useForm } from 'react-hook-form';
+import { useForm, Controller } from 'react-hook-form';
 import { ControlledInputField } from '../../input-field';
 import { step2Schema } from "../../schema/admission-form-schema";
 import FormTemplate from "../../template/form-template";
@@ -7,9 +7,16 @@ import { useNavigate } from "react-router-dom";
 import { useAddApplicantGuardianInfo, useGetApplicantGuardianInfo } from "../../../../api/client/applicant";
 import ProtectedRouteForm from "../../../../utils/protected-route-form";
 import Button from "../../button";
+import { divisionData } from "../../../../data/schools_grouped_by_division_updated_gender";
+import { customSelectStyles } from "../../../styles/custom-styles";
+import Select from "react-select";
 
 export const Form2 = () => {
+const districtOptions = divisionData
+  .flatMap(d => d.districts)
+  .map(d => ({ label: d.district, value: d.district }));
 
+ 
   const navigate = useNavigate()
   const { addApplicantGuardian, isSuccess, isPending, isError, error } = useAddApplicantGuardianInfo()
   const { data, isLoading } = useGetApplicantGuardianInfo()
@@ -28,6 +35,7 @@ export const Form2 = () => {
       guardianContact: "",
       contact1: "",
       contact2: "",
+      guatdianRelation: "",
     },
   });
 
@@ -65,14 +73,38 @@ export const Form2 = () => {
                 helpText="Format: 12345-1234567-1"
               />
 
-              <ControlledInputField
+              {/* <ControlledInputField
                 name="domicileDistrict"
                 control={control}
                 label="District of Domicile (Father)"
                 placeholder="Enter district"
                 required
                 errors={errors}
-              />
+              /> */}
+            
+            <div>
+                <label className="block text-sm font-semibold text-gray-700 mb-1.5">
+                  District of Domicile (Father) <span className="text-red-500">*</span>
+                </label>
+                 <Controller
+                  name="domicileDistrict"
+                  control={control}
+                  render={({ field }) => (
+                    <Select
+                      {...field}
+                      options={districtOptions}
+                      styles={customSelectStyles(errors)}
+                      placeholder="District of Domicile (Father)"
+                      isClearable
+                      menuPortalTarget={document.body}
+                      menuPosition="fixed"
+                      value={districtOptions.find(opt => opt.value === field.value) || null}
+                      onChange={(option) => field.onChange(option ? option.value : "")}
+                    />
+                  )}
+                />
+            </div>
+               
             </div>
 
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
@@ -81,6 +113,14 @@ export const Form2 = () => {
                 control={control}
                 label="Guardian's Name"
                 placeholder="Enter guardian's name (if applicable)"
+                errors={errors}
+              />
+
+                 <ControlledInputField
+                name="guardianRelation"
+                control={control}
+                label="Guardian's Relation"
+                placeholder="Enter guardian's relation (if applicable)"
                 errors={errors}
               />
 
@@ -100,7 +140,7 @@ export const Form2 = () => {
               <ControlledInputField
                 name="contact1"
                 control={control}
-                label="Contact Number 1"
+                label="Phone Number "
                 type="tel"
                 placeholder="03001234567"
                 maxLength={11}
@@ -112,7 +152,7 @@ export const Form2 = () => {
               <ControlledInputField
                 name="contact2"
                 control={control}
-                label="Contact Number 2"
+                label="WhatsApp Number "
                 type="tel"
                 placeholder="03001234567"
                 maxLength={11}

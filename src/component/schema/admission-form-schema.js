@@ -52,7 +52,10 @@ export const step3Schema = yup.object().shape({
 export const step4Schema = yup.object().shape({
   schoolName: yup.string().required('School name is required'),
   schoolCategory: yup.string().required('School category is required'),
-  schoolSemisCode: yup.string().required('School SEMIS/Code is required'),
+schoolSemisCode: yup
+  .string()
+  .required('School SEMIS/Code is required')
+  .matches(/^\d{9}$/, 'School SEMIS/Code must be exactly 9 digits'),
   studyingInClass: yup
     .string()
     .required("Class is required"),
@@ -65,53 +68,54 @@ export const step4Schema = yup.object().shape({
       return year >= 2018 && year <= 2024;
     }),
   schoolGRNo: yup.string().required('School GR No is required'),
-  headmasterName: yup.string().required('Headmaster name is required'),
-  headmasterContact: yup
-    .string()
-    .required('Headmaster contact is required')
-    .test('starts-with-03', 'Contact must start with 03', (value) => value?.startsWith('03'))
-    .matches(/^03\d{9}$/, 'Invalid format (03XXXXXXXXX)'),
+  headmasterName: yup.string().required('Name is required'),
+ 
 });
 
 // Validation schema for Step 2 only
-export const step2Schema = yup.object().shape({
-  fatherName: yup.string().required("Father's name is required"),
-  fatherCNIC: yup
-    .string()
-    .required("Father's CNIC is required")
-    .matches(/^\d{5}-\d{7}-\d{1}$/, 'CNIC must be in format: 12345-1234567-1'),
-  domicileDistrict: yup.string().required('District of Domicile is required'),
-  guardianName: yup.string(),
-  guardianContact: yup
-    .string()
-    .test('starts-with-03', 'Contact must start with 03', function (value) {
-      if (!value) return true;
-      return value.startsWith('03');
-    })
-    .matches(/^03\d{9}$/, 'Invalid format (03XXXXXXXXX)'),
-  contact1: yup
-    .string()
-    .required('Contact number is required')
-    .test('starts-with-03', 'Contact must start with 03', (value) => value?.startsWith('03'))
-    .matches(/^03\d{9}$/, 'Invalid format (03XXXXXXXXX)'),
-  contact2: yup
-    .string()
-    .test('starts-with-03', 'Contact must start with 03', function (value) {
-      if (!value) return true;
-      return value.startsWith('03');
-    })
-    .matches(/^03\d{9}$/, 'Invalid format (03XXXXXXXXX)'),
-});
+ export const step2Schema = yup.object().shape({
+    fatherName: yup.string().required("Father's name is required"),
+    fatherCNIC: yup
+      .string()
+      .required("Father's CNIC is required")
+      .matches(/^\d{5}-\d{7}-\d{1}$/, 'CNIC must be in format: 12345-1234567-1'),
+    domicileDistrict: yup.string().required('District of Domicile is required'),
+    guardianName: yup.string(),
+    guardianRelation: yup.string().when('guardianName', {
+      is: (val) => val && val.length > 0,
+      then: yup.string().required('Guardian relation is required when guardian name is provided'),
+      otherwise: yup.string(),
+    }),
+    guardianContact: yup
+      .string()
+      .test('starts-with-03', 'Contact must start with 03', function (value) {
+        if (!value) return true;
+        return value.startsWith('03');
+      })
+      .matches(/^03\d{9}$/, 'Invalid format (03XXXXXXXXX)'),
+    contact1: yup
+      .string()
+      .required('Contact number is required')
+      .test('starts-with-03', 'Contact must start with 03', (value) => value?.startsWith('03'))
+      .matches(/^03\d{9}$/, 'Invalid format (03XXXXXXXXX)'),
+    contact2: yup
+      .string()
+      .test('starts-with-03', 'Contact must start with 03', function (value) {
+        if (!value) return true;
+        return value.startsWith('03');
+      })
+      .matches(/^03\d{9}$/, 'Invalid format (03XXXXXXXXX)'),
+  });
 
 // Validation schema for Step 5 only
-export const step5Schema = yup.object().shape({
+// export const step5Schema = yup.object().shape({
 
-  testMedium: yup.string().required('Test medium is required'),
-  division: yup.string().required('Division is required'),
-  acknowledgment: yup
-    .boolean()
-    .oneOf([true], 'You must acknowledge the terms'),
-});
+//   testMedium: yup.string().required('Test medium is required'),
+//   division: yup.string().required('Division is required'),
+//   acknowledgment: yup
+//     .boolean()
+//     .oneOf([true], 'You must acknowledge the terms'),
+// });
 
 
 export const loginSchema = yup.object().shape({

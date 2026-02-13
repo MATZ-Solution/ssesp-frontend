@@ -1,29 +1,30 @@
 import { yupResolver } from "@hookform/resolvers/yup";
-import React, { useState, useEffect } from 'react';
-import { useForm, Controller } from 'react-hook-form';
+import React, { useState, useEffect } from "react";
+import { useForm, Controller } from "react-hook-form";
+import Select from "react-select";
 import { genderOptions, religionOptions } from "../../../../data/form-data";
 import { customSelectStyles } from "../../../styles/custom-styles";
 import { ControlledRadioGroup } from "../../Radio-button";
-import { ControlledInputField } from '../../input-field';
-import Select from 'react-select';
+import { ControlledInputField } from "../../input-field";
 import { step1Schema } from "../../schema/admission-form-schema";
 import FormTemplate from "../../template/form-template";
 import { useAddApplicantInfo, useGetApplicantInfo } from "../../../../api/client/applicant";
-import ProtectedRouteForm from "../../../../utils/protected-route-form";
 import Button from "../../button";
+import { BFormField } from "../../BFormField";
 
 export const Form1 = ({ initialData = {} }) => {
-
   const [photoPreview, setPhotoPreview] = useState(null);
   const [showPhotoModal, setShowPhotoModal] = useState(false);
 
-  const { addApplicant, isSuccess, isPending, isError, error } = useAddApplicantInfo()
-  const { data, isLoading } = useGetApplicantInfo()
+  const { addApplicant, isSuccess, isPending, isError, error } = useAddApplicantInfo();
+  const { data, isLoading } = useGetApplicantInfo();
 
   const {
     handleSubmit,
     control,
     formState: { errors },
+    watch,
+    setValue,
   } = useForm({
     resolver: yupResolver(step1Schema),
     defaultValues: {
@@ -33,8 +34,18 @@ export const Form1 = ({ initialData = {} }) => {
       dob: initialData.dob || "",
       religion: initialData.religion || null,
       files: initialData.files || null,
+      noBForm: initialData.noBForm || false,
     },
   });
+
+  const watchNoBForm = watch("noBForm");
+
+  // Clear B-Form field when "No B-Form" is checked
+  useEffect(() => {
+    if (watchNoBForm) {
+      setValue("studentBForm", "");
+    }
+  }, [watchNoBForm, setValue]);
 
   useEffect(() => {
     if (initialData.photoPreview) {
@@ -42,29 +53,28 @@ export const Form1 = ({ initialData = {} }) => {
     }
   }, [initialData.photoPreview]);
 
-  const onSubmit = (data) => {
-    const formData = new FormData();
-    Object.entries(data).forEach(([key, value]) => formData.append(`${key}`, value));
-    addApplicant(formData);
+  const onSubmit = (formData) => {
+    const dataToSend = new FormData();
+    Object.entries(formData).forEach(([key, value]) => {
+      dataToSend.append(key, value);
+    });
+    addApplicant(dataToSend);
   };
 
   return (
     <FormTemplate>
-      <form
-        onSubmit={handleSubmit(onSubmit)}
-        className="bg-white shadow-xl p-6 sm:p-8 lg:p-10"
-      >
+      <form onSubmit={handleSubmit(onSubmit)} className="bg-white shadow-xl p-6 sm:p-8 lg:p-10">
         <div className="mb-8">
-
           <div className="grid grid-cols-1 gap-5">
+            {/* Note */}
             <div className="bg-yellow-50 border-l-4 border-yellow-500 p-4 rounded-r-lg">
               <p className="text-sm text-yellow-800">
-                <strong>Note:</strong> Enter student name as per NADRA B-Form
-                in CAPITAL LETTERS only
+                <strong>Note:</strong> Enter student name as per NADRA B-Form in CAPITAL LETTERS only
               </p>
             </div>
 
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+              {/* Left Form Fields */}
               <div className="lg:col-span-2 space-y-5">
                 <ControlledInputField
                   name="studentName"
@@ -85,18 +95,14 @@ export const Form1 = ({ initialData = {} }) => {
                     errors={errors}
                   />
 
-                  <ControlledInputField
-                    name="studentBForm"
+                  <BFormField
                     control={control}
-                    label="Student B-Form"
-                    placeholder="12345-1234567-1"
-                    maxLength={15}
-                    required
                     errors={errors}
-                    helpText="Format: 12345-1234567-1"
+                    watchNoBForm={watchNoBForm}
                   />
                 </div>
 
+                {/* Date of Birth */}
                 <div>
                   <label className="text-sm font-semibold text-gray-700 mb-1.5 block">
                     Date of Birth <span className="text-red-500">*</span>
@@ -110,24 +116,17 @@ export const Form1 = ({ initialData = {} }) => {
                         type="date"
                         min="2012-01-01"
                         max="2018-12-31"
-                        value={field.value || ""}
-                        className={`w-full px-4 py-2.5 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none ${errors.dob
-                          ? "border-red-500 bg-red-50"
-                          : "border-gray-300"
-                          }`}
+                        className={`w-full px-4 py-2.5 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none ${
+                          errors.dob ? "border-red-500 bg-red-50" : "border-gray-300"
+                        }`}
                       />
                     )}
                   />
-                  {errors.dob && (
-                    <span className="text-red-500 text-xs mt-1">
-                      {errors.dob.message}
-                    </span>
-                  )}
-                  <p className="text-xs text-gray-500 mt-1">
-                    Select date between 2012-2018
-                  </p>
+                  {errors.dob && <span className="text-red-500 text-xs mt-1">{errors.dob.message}</span>}
+                  <p className="text-xs text-gray-500 mt-1">Select date between 2012-2018</p>
                 </div>
 
+                {/* Religion */}
                 <div className="flex flex-col">
                   <label className="text-sm font-semibold text-gray-700 mb-1.5">
                     Religion <span className="text-red-500">*</span>
@@ -141,25 +140,12 @@ export const Form1 = ({ initialData = {} }) => {
                         styles={customSelectStyles(errors)}
                         placeholder="Select religion"
                         isClearable
-
-                        // what react-select displays
-                        value={religionOptions.find(
-                          (option) => option.value === field.value
-                        ) || null}
-
-                        // what gets stored in RHF
-                        onChange={(selected) =>
-                          field.onChange(selected ? selected.value : null)
-                        }
+                        value={religionOptions.find((option) => option.value === field.value) || null}
+                        onChange={(selected) => field.onChange(selected ? selected.value : null)}
                       />
                     )}
                   />
-
-                  {errors.religion && (
-                    <span className="text-red-500 text-xs mt-1">
-                      {errors.religion.message}
-                    </span>
-                  )}
+                  {errors.religion && <span className="text-red-500 text-xs mt-1">{errors.religion.message}</span>}
                 </div>
               </div>
 
@@ -176,12 +162,13 @@ export const Form1 = ({ initialData = {} }) => {
                     <div className="space-y-3">
                       <div className="flex items-center justify-center w-full">
                         <label
-                          className={`flex flex-col items-center justify-center w-full aspect-square border-2 border-dashed rounded-lg cursor-pointer transition-all ${errors.files
-                            ? "border-red-500 bg-red-50 hover:bg-red-100"
-                            : photoPreview
+                          className={`flex flex-col items-center justify-center w-full aspect-square border-2 border-dashed rounded-lg cursor-pointer transition-all ${
+                            errors.files
+                              ? "border-red-500 bg-red-50 hover:bg-red-100"
+                              : photoPreview
                               ? "border-green-500 bg-green-50 hover:bg-green-100"
                               : "border-gray-300 bg-gray-50 hover:bg-gray-100"
-                            }`}
+                          }`}
                         >
                           <div className="flex flex-col items-center justify-center p-4">
                             {photoPreview ? (
@@ -204,29 +191,14 @@ export const Form1 = ({ initialData = {} }) => {
                                   }}
                                   className="absolute -top-2 -right-2 bg-red-500 text-white rounded-full p-1.5 hover:bg-red-600 shadow-lg"
                                 >
-                                  <svg
-                                    className="w-4 h-4"
-                                    fill="none"
-                                    stroke="currentColor"
-                                    viewBox="0 0 24 24"
-                                  >
-                                    <path
-                                      strokeLinecap="round"
-                                      strokeLinejoin="round"
-                                      strokeWidth="2"
-                                      d="M6 18L18 6M6 6l12 12"
-                                    />
+                                  <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M6 18L18 6M6 6l12 12" />
                                   </svg>
                                 </button>
                               </div>
                             ) : (
                               <>
-                                <svg
-                                  className="w-12 h-12 mb-3 text-gray-400"
-                                  fill="none"
-                                  stroke="currentColor"
-                                  viewBox="0 0 24 24"
-                                >
+                                <svg className="w-12 h-12 mb-3 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                   <path
                                     strokeLinecap="round"
                                     strokeLinejoin="round"
@@ -235,19 +207,10 @@ export const Form1 = ({ initialData = {} }) => {
                                   />
                                 </svg>
                                 <p className="mb-2 text-xs text-center text-gray-500">
-                                  <span className="font-semibold">
-                                    Click to upload
-                                  </span>
+                                  <span className="font-semibold">Click to upload</span>
                                 </p>
-                                <p className="text-xs text-gray-500 text-center">
-                                  JPG, JPEG, PNG
-                                </p>
-                                <p className="text-xs text-gray-500 text-center">
-                                  (MAX. 5MB)
-                                </p>
-                                <p className="text-xs text-blue-600 mt-2 font-semibold">
-                                  Blue Background
-                                </p>
+                                <p className="text-xs text-gray-500 text-center">JPG, JPEG, PNG (MAX. 5MB)</p>
+                                <p className="text-xs text-blue-600 mt-2 font-semibold">Blue Background</p>
                               </>
                             )}
                           </div>
@@ -258,33 +221,23 @@ export const Form1 = ({ initialData = {} }) => {
                             className="hidden"
                             onChange={(e) => {
                               const file = e.target.files?.[0];
-                              if (file) {
-                                if (file.size > 5 * 1024 * 1024) {
-                                  alert("File size must not exceed 5MB");
-                                  return;
-                                }
+                              if (!file) return;
 
-                                if (
-                                  ![
-                                    "image/jpeg",
-                                    "image/jpg",
-                                    "image/png",
-                                  ].includes(file.type)
-                                ) {
-                                  alert(
-                                    "Only JPG, JPEG, and PNG files are allowed"
-                                  );
-                                  return;
-                                }
-
-                                const reader = new FileReader();
-                                reader.onloadend = () => {
-                                  setPhotoPreview(reader.result);
-                                };
-                                reader.readAsDataURL(file);
-
-                                onChange(file);
+                              if (file.size > 5 * 1024 * 1024) {
+                                alert("File size must not exceed 5MB");
+                                return;
                               }
+
+                              if (!["image/jpeg", "image/jpg", "image/png"].includes(file.type)) {
+                                alert("Only JPG, JPEG, and PNG files are allowed");
+                                return;
+                              }
+
+                              const reader = new FileReader();
+                              reader.onloadend = () => setPhotoPreview(reader.result);
+                              reader.readAsDataURL(file);
+
+                              onChange(file);
                             }}
                           />
                         </label>
@@ -293,11 +246,7 @@ export const Form1 = ({ initialData = {} }) => {
                       {photoPreview && (
                         <div className="bg-green-50 border border-green-200 rounded-lg p-2">
                           <p className="text-xs text-green-700 flex items-center">
-                            <svg
-                              className="w-4 h-4 mr-1"
-                              fill="currentColor"
-                              viewBox="0 0 20 20"
-                            >
+                            <svg className="w-4 h-4 mr-1" fill="currentColor" viewBox="0 0 20 20">
                               <path
                                 fillRule="evenodd"
                                 d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"
@@ -310,9 +259,7 @@ export const Form1 = ({ initialData = {} }) => {
                       )}
 
                       <div className="bg-blue-50 border border-blue-200 rounded-lg p-3">
-                        <p className="text-xs text-blue-800 font-semibold mb-1">
-                          Requirements:
-                        </p>
+                        <p className="text-xs text-blue-800 font-semibold mb-1">Requirements:</p>
                         <ul className="text-xs text-blue-700 space-y-0.5">
                           <li>• Passport size</li>
                           <li>• Blue background</li>
@@ -322,11 +269,7 @@ export const Form1 = ({ initialData = {} }) => {
                     </div>
                   )}
                 />
-                {errors.files && (
-                  <span className="text-red-500 text-xs mt-1 block">
-                    {errors.files.message}
-                  </span>
-                )}
+                {errors.files && <span className="text-red-500 text-xs mt-1 block">{errors.files.message}</span>}
               </div>
             </div>
           </div>
@@ -334,7 +277,9 @@ export const Form1 = ({ initialData = {} }) => {
 
         {/* Navigation Buttons */}
         <div className="flex justify-end">
-          <Button isLoading={isPending} type="submit"
+          <Button
+            isLoading={isPending}
+            type="submit"
             className="px-8 py-3 bg-gradient-to-r from-blue-600 to-blue-500 text-white font-bold rounded-lg shadow-lg hover:shadow-xl transform hover:-translate-y-0.5 transition-all duration-200"
           >
             Next Step →
@@ -353,18 +298,8 @@ export const Form1 = ({ initialData = {} }) => {
               onClick={() => setShowPhotoModal(false)}
               className="absolute -top-4 -right-4 bg-white text-gray-800 rounded-full p-2 hover:bg-gray-100 shadow-lg z-10"
             >
-              <svg
-                className="w-6 h-6"
-                fill="none"
-                stroke="currentColor"
-                viewBox="0 0 24 24"
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth="2"
-                  d="M6 18L18 6M6 6l12 12"
-                />
+              <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M6 18L18 6M6 6l12 12" />
               </svg>
             </button>
             <img

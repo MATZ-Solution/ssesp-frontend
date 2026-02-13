@@ -29,7 +29,7 @@ export const router = createBrowserRouter([
           <Form1 />
         </ProtectedRouteForm>
       </ProtectedRoute>
-    ),
+    ),  
   },
   {
     path: "/form/guardian-info-2",
