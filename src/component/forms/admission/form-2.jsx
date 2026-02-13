@@ -8,8 +8,6 @@ import { useAddApplicantGuardianInfo, useGetApplicantGuardianInfo } from "../../
 import ProtectedRouteForm from "../../../../utils/protected-route-form";
 import Button from "../../button";
 import { divisionData } from "../../../../data/schools_grouped_by_division_updated_gender";
-import { customSelectStyles } from "../../../styles/custom-styles";
-import Select from "react-select";
 
 export const Form2 = () => {
 const districtOptions = divisionData

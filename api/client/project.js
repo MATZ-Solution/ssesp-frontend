@@ -161,7 +161,7 @@ export function useEditProjects(id) {
 }
 
 export function useProjectProposalAction() {
-  const queryClient = useQueryClient();
+  const queryClient = useQueryClient(); 
   const {
     mutate: updateProposalAction,
     mutateAsync,
