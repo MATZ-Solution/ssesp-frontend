@@ -10,6 +10,7 @@ import { setFormStatus } from "../../redux/slices/authSlice";
 export function useAddApplicantInfo() {
   const navigate = useNavigate();
   const dispatch = useDispatch()
+  const queryClient = useQueryClient();
   const {
     mutate: addApplicant,
     isSuccess,
@@ -27,8 +28,11 @@ export function useAddApplicantInfo() {
       }),
     onSuccess: (data) => {
       toast.success("Success");
-      dispatch(setFormStatus({formStatus: 'guardian-info-2'}))
+      dispatch(setFormStatus({ formStatus: 'guardian-info-2' }))
       navigate("/form/guardian-info-2");
+      queryClient.invalidateQueries({
+        queryKey: [API_ROUTE.applicant.getApplicantInfo],
+      });
     },
     onError: (error) => {
       toast.error("Failed to add details.");
@@ -40,6 +44,7 @@ export function useAddApplicantInfo() {
 export function useAddApplicantGuardianInfo() {
   const navigate = useNavigate();
   const dispatch = useDispatch()
+  const queryClient = useQueryClient();
 
   const {
     mutate: addApplicantGuardian,
@@ -50,10 +55,13 @@ export function useAddApplicantGuardianInfo() {
   } = useMutation({
     mutationFn: async (data) =>
       await api.put(`${API_ROUTE.applicant.addApplicantGuardianInfo}`, data),
-      onSuccess: (data) => {
+    onSuccess: (data) => {
       toast.success("Success");
-      dispatch(setFormStatus({formStatus: 'address-3'}))
+      dispatch(setFormStatus({ formStatus: 'address-3' }))
       navigate("/form/address-3");
+      queryClient.invalidateQueries({
+        queryKey: [API_ROUTE.applicant.getApplicantGuardianInfo],
+      });
     },
     onError: (error) => {
       console.log("error: ", error)
@@ -66,6 +74,7 @@ export function useAddApplicantGuardianInfo() {
 export function useAddApplicantAddressInfo() {
   const navigate = useNavigate();
   const dispatch = useDispatch()
+  const queryClient = useQueryClient();
 
   const {
     mutate: addApplicantAddress,
@@ -76,10 +85,13 @@ export function useAddApplicantAddressInfo() {
   } = useMutation({
     mutationFn: async (data) =>
       await api.put(`${API_ROUTE.applicant.addApplicantAddressInfo}`, data),
-      onSuccess: (data) => {
+    onSuccess: (data) => {
       toast.success("Success");
-      dispatch(setFormStatus({formStatus: 'school-info-4'}))
+      dispatch(setFormStatus({ formStatus: 'school-info-4' }))
       navigate("/form/school-info-4");
+      queryClient.invalidateQueries({
+        queryKey: [API_ROUTE.applicant.getApplicantAddressInfo],
+      });
     },
     onError: (error) => {
       console.log("error: ", error)
@@ -92,6 +104,7 @@ export function useAddApplicantAddressInfo() {
 export function useAddApplicantSchoolInfo() {
   const navigate = useNavigate();
   const dispatch = useDispatch()
+  const queryClient = useQueryClient();
 
   const {
     mutate: addApplicantSchool,
@@ -102,10 +115,13 @@ export function useAddApplicantSchoolInfo() {
   } = useMutation({
     mutationFn: async (data) =>
       await api.put(`${API_ROUTE.applicant.addApplicantSchoolInfo}`, data),
-      onSuccess: (data) => {
+    onSuccess: (data) => {
       toast.success("Success");
-      dispatch(setFormStatus({formStatus: 'document-upload-5'}))
+      dispatch(setFormStatus({ formStatus: 'document-upload-5' }))
       navigate("/form/document-upload-5");
+      queryClient.invalidateQueries({
+        queryKey: [API_ROUTE.applicant.getApplicantSchoolInfo],
+      });
     },
     onError: (error) => {
       console.log("error: ", error)
@@ -118,6 +134,7 @@ export function useAddApplicantSchoolInfo() {
 export function useAddApplicantTestPreference() {
   const navigate = useNavigate();
   const dispatch = useDispatch()
+  const queryClient = useQueryClient();
 
   const {
     mutate: addTestPreference,
@@ -128,10 +145,13 @@ export function useAddApplicantTestPreference() {
   } = useMutation({
     mutationFn: async (data) =>
       await api.put(`${API_ROUTE.applicant.addApplicantTestPreference}`, data),
-      onSuccess: (data) => {
+    onSuccess: (data) => {
       toast.success("Success");
-      dispatch(setFormStatus({formStatus: 'completed'}))
+      dispatch(setFormStatus({ formStatus: 'completed' }))
       navigate("/form/complete");
+      queryClient.invalidateQueries({
+        queryKey: [API_ROUTE.applicant.getApplicantTestPreference],
+      });
     },
     onError: (error) => {
       console.log("error: ", error)

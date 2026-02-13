@@ -8,8 +8,8 @@
   ];
 
    export const genderOptions = [
-    { value: 'Male', label: 'Male' },
-    { value: 'Female', label: 'Female' },
+    { value: 'male', label: 'Male' },
+    { value: 'female', label: 'Female' },
   ];
 
    export const schoolCategoryOptions = [
