@@ -303,18 +303,40 @@ const Form5 = ({ initialData = {} }) => {
         if (initialData.doc4Preview) setDoc4Preview(initialData.doc4Preview);
     }, [initialData]);
 
-    const onSubmit = (data) => {
-        const formData = new FormData();
-        Object.entries(data).forEach(([key, value]) => {
-            if (value) {
-                formData.append(key, value);
-            }
-        });
+const onSubmit = (data) => {
+    // Create an array of documents
+    const documentsArray = [
+        { name: "Birth Certificate (B-Form)", file: data.document1 },
+        { name: "Previous School Leaving Certificate", file: data.document2 },
+        { name: "Parent/Guardian CNIC", file: data.document3 },
+        { name: "Previous Academic Record", file: data.document4 }
+    ];
 
-        console.log("Form submitted with documents:", data);
-        // Your submission logic here
-        // addDocuments(formData);
-    };
+    console.log("Documents Array:", documentsArray);
+    
+    // If you also want just the files in an array
+    const filesArray = [
+        data.document1,
+        data.document2,
+        data.document3,
+        data.document4
+    ];
+    
+    console.log("Files Array:", filesArray);
+
+    // Original FormData (if you still need it)
+    const formData = new FormData();
+    Object.entries(data).forEach(([key, value]) => {
+        if (value) {
+            formData.append(key, value);
+        }
+    });
+
+    console.log("Form Data:", formData);
+    
+    // Your submission logic here
+    // addDocuments(formData);
+};
 
     const documents = [
         {
