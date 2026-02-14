@@ -153,7 +153,7 @@ export function useAddApplicantDocument() {
     onSuccess: (data) => {
       toast.success("Success");
       dispatch(setFormStatus({ formStatus: 'test-preference-6' }))
-      navigate("/form/test-preference-6");
+      navigate("/form/school-preference-6");
       queryClient.invalidateQueries({
         queryKey: [API_ROUTE.applicant.getApplicantInfo],
       });
@@ -165,26 +165,26 @@ export function useAddApplicantDocument() {
   return { addDocument, isSuccess, isPending, isError, error };
 }
 
-export function useAddApplicantTestPreference() {
+export function useAddApplicantSchoolPreference() {
   const navigate = useNavigate();
   const dispatch = useDispatch()
   const queryClient = useQueryClient();
 
   const {
-    mutate: addTestPreference,
+    mutate: addSchoolPreference,
     isSuccess,
     isPending,
     isError,
     error,
   } = useMutation({
     mutationFn: async (data) =>
-      await api.put(`${API_ROUTE.applicant.addApplicantTestPreference}`, data),
+      await api.put(`${API_ROUTE.applicant.addApplicantSchoolPreference}`, data),
     onSuccess: (data) => {
       toast.success("Success");
       dispatch(setFormStatus({ formStatus: 'completed' }))
       navigate("/form/complete");
       queryClient.invalidateQueries({
-        queryKey: [API_ROUTE.applicant.getApplicantTestPreference],
+        queryKey: [API_ROUTE.applicant.getApplicantSchoolPreference],
       });
     },
     onError: (error) => {
@@ -192,7 +192,7 @@ export function useAddApplicantTestPreference() {
       toast.error("Failed to add details.");
     },
   });
-  return { addTestPreference, isSuccess, isPending, isError, error };
+  return { addSchoolPreference, isSuccess, isPending, isError, error };
 }
 
 // GET
@@ -268,11 +268,11 @@ export function useGetApplicantSchoolInfo() {
   };
 }
 
-export function useGetApplicantTestPreference() {
+export function useGetApplicantSchoolPreference() {
   const { data, isSuccess, isPending, isError, isLoading } = useQuery({
     queryKey: [API_ROUTE.applicant.getApplicantTestPreference],
     queryFn: async () =>
-      await api.get(`${API_ROUTE.applicant.getApplicantTestPreference}`),
+      await api.get(`${API_ROUTE.applicant.getApplicantSchoolPreference}`),
     // enabled: id !== undefined && id !== null,
     staleTime: 60 * 1000 * 5, // 5 minute,
     retry: 1,

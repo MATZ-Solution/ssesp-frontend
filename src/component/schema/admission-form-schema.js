@@ -127,16 +127,16 @@ export const step4Schema = yup.object().shape({
           const currentYear = new Date().getFullYear();
           return year >= 1950 && year <= currentYear;
         })
-        .test("chronological-order", "Year should match class progression", function(value) {
+        .test("chronological-order", "Year should match class progression", function (value) {
           const { class: className } = this.parent;
           if (!value || !className) return true;
-          
+
           const year = parseInt(value);
           const currentYear = new Date().getFullYear();
-          
+
           // Year should not be in the future
           if (year > currentYear) return false;
-          
+
           return true;
         }),
     })
@@ -184,7 +184,7 @@ export const step2Schema = yup.object().shape({
 
   relation: yup
     .string()
-    .optional(), 
+    .optional(),
 
   guardianContactNumber: yup
     .string()
@@ -200,11 +200,15 @@ export const step2Schema = yup.object().shape({
 // Validation schema for Step 5 only
 export const step5Schema = yup.object().shape({
 
-  testMedium: yup.string().required('Test medium is required'),
-  division: yup.string().required('Division is required'),
-  acknowledgment: yup
-    .boolean()
-    .oneOf([true], 'You must acknowledge the terms'),
+  first_priority_school: yup.string().required('School 1 is required'),
+  second_priority_school: yup.string().required('School 2 is required'),
+  third_priority_school: yup.string().required('School 3 is required'),
+
+  // testMedium: yup.string().required('Test medium is required'),
+  // division: yup.string().required('Division is required'),
+  // acknowledgment: yup
+  //   .boolean()
+  //   .oneOf([true], 'You must acknowledge the terms'),
 });
 
 
@@ -221,48 +225,48 @@ export const loginSchema = yup.object().shape({
 });
 
 export const documentUploadSchema = yup.object().shape({
-    document1: yup
-        .mixed()
-        .required("Document 1 is required")
-        .test("fileSize", "File size must not exceed 5MB", (value) => {
-            if (!value) return true;
-            return value.size <= 5 * 1024 * 1024;
-        })
-        .test("fileType", "Only PDF, JPG, JPEG, and PNG files are allowed", (value) => {
-            if (!value) return true;
-            return ["application/pdf", "image/jpeg", "image/jpg", "image/png"].includes(value.type);
-        }),
-    document2: yup
-        .mixed()
-        .required("Document 2 is required")
-        .test("fileSize", "File size must not exceed 5MB", (value) => {
-            if (!value) return true;
-            return value.size <= 5 * 1024 * 1024;
-        })
-        .test("fileType", "Only PDF, JPG, JPEG, and PNG files are allowed", (value) => {
-            if (!value) return true;
-            return ["application/pdf", "image/jpeg", "image/jpg", "image/png"].includes(value.type);
-        }),
-    document3: yup
-        .mixed()
-        .required("Document 3 is required")
-        .test("fileSize", "File size must not exceed 5MB", (value) => {
-            if (!value) return true;
-            return value.size <= 5 * 1024 * 1024;
-        })
-        .test("fileType", "Only PDF, JPG, JPEG, and PNG files are allowed", (value) => {
-            if (!value) return true;
-            return ["application/pdf", "image/jpeg", "image/jpg", "image/png"].includes(value.type);
-        }),
-    document4: yup
-        .mixed()
-        .required("Document 4 is required")
-        .test("fileSize", "File size must not exceed 5MB", (value) => {
-            if (!value) return true;
-            return value.size <= 5 * 1024 * 1024;
-        })
-        .test("fileType", "Only PDF, JPG, JPEG, and PNG files are allowed", (value) => {
-            if (!value) return true;
-            return ["application/pdf", "image/jpeg", "image/jpg", "image/png"].includes(value.type);
-        }),
+  document1: yup
+    .mixed()
+    .required("Document 1 is required")
+    .test("fileSize", "File size must not exceed 5MB", (value) => {
+      if (!value) return true;
+      return value.size <= 5 * 1024 * 1024;
+    })
+    .test("fileType", "Only PDF, JPG, JPEG, and PNG files are allowed", (value) => {
+      if (!value) return true;
+      return ["application/pdf", "image/jpeg", "image/jpg", "image/png"].includes(value.type);
+    }),
+  document2: yup
+    .mixed()
+    .required("Document 2 is required")
+    .test("fileSize", "File size must not exceed 5MB", (value) => {
+      if (!value) return true;
+      return value.size <= 5 * 1024 * 1024;
+    })
+    .test("fileType", "Only PDF, JPG, JPEG, and PNG files are allowed", (value) => {
+      if (!value) return true;
+      return ["application/pdf", "image/jpeg", "image/jpg", "image/png"].includes(value.type);
+    }),
+  document3: yup
+    .mixed()
+    .required("Document 3 is required")
+    .test("fileSize", "File size must not exceed 5MB", (value) => {
+      if (!value) return true;
+      return value.size <= 5 * 1024 * 1024;
+    })
+    .test("fileType", "Only PDF, JPG, JPEG, and PNG files are allowed", (value) => {
+      if (!value) return true;
+      return ["application/pdf", "image/jpeg", "image/jpg", "image/png"].includes(value.type);
+    }),
+  document4: yup
+    .mixed()
+    .required("Document 4 is required")
+    .test("fileSize", "File size must not exceed 5MB", (value) => {
+      if (!value) return true;
+      return value.size <= 5 * 1024 * 1024;
+    })
+    .test("fileType", "Only PDF, JPG, JPEG, and PNG files are allowed", (value) => {
+      if (!value) return true;
+      return ["application/pdf", "image/jpeg", "image/jpg", "image/png"].includes(value.type);
+    }),
 });

@@ -13,13 +13,13 @@ const API_ROUTE = {
     addApplicantAddressInfo: "/api/applicant/addApplicantAddressInfo",
     addApplicantSchoolInfo: "/api/applicant/addApplicantSchoolInfo",
     addApplicantDocument: "/api/applicant/addApplicantDocument",
-    addApplicantTestPreference: "/api/applicant/addApplicantTestPreference",
+    addApplicantSchoolPreference: "/api/applicant/addApplicantSchoolPreference",
 
     getApplicantInfo: "/api/applicant/getApplicantInfo",
     getApplicantGuardianInfo: "/api/applicant/getApplicantGuardianInfo",
     getApplicantAddressInfo: "/api/applicant/getApplicantAddressInfo",
     getApplicantSchoolInfo: "/api/applicant/getApplicantSchoolInfo",
-    getApplicantTestPreference: "/api/applicant/getApplicantTestPreference",
+    getApplicantSchoolPreference: "/api/applicant/getApplicantSchoolPreference",
 
   },
 };
