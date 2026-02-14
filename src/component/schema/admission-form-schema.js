@@ -255,7 +255,7 @@ export const documentUploadSchema = yup.object().shape({
     .required("Document 1 is required")
     .test("fileSize", "File size must not exceed 5MB", (value) => {
       if (!value) return true;
-      return value.size <= 5 * 1024 * 1024;
+      return value.size <= 1 * 1024 * 1024;
     })
     .test("fileType", "Only PDF, JPG, JPEG, and PNG files are allowed", (value) => {
       if (!value) return true;
@@ -266,7 +266,7 @@ export const documentUploadSchema = yup.object().shape({
     .required("Document 2 is required")
     .test("fileSize", "File size must not exceed 5MB", (value) => {
       if (!value) return true;
-      return value.size <= 5 * 1024 * 1024;
+      return value.size <= 1 * 1024 * 1024;
     })
     .test("fileType", "Only PDF, JPG, JPEG, and PNG files are allowed", (value) => {
       if (!value) return true;
@@ -277,7 +277,7 @@ export const documentUploadSchema = yup.object().shape({
     .required("Document 3 is required")
     .test("fileSize", "File size must not exceed 5MB", (value) => {
       if (!value) return true;
-      return value.size <= 5 * 1024 * 1024;
+      return value.size <= 1 * 1024 * 1024;
     })
     .test("fileType", "Only PDF, JPG, JPEG, and PNG files are allowed", (value) => {
       if (!value) return true;
@@ -288,7 +288,7 @@ export const documentUploadSchema = yup.object().shape({
     .required("Document 4 is required")
     .test("fileSize", "File size must not exceed 5MB", (value) => {
       if (!value) return true;
-      return value.size <= 5 * 1024 * 1024;
+      return value.size <= 1 * 1024 * 1024;
     })
     .test("fileType", "Only PDF, JPG, JPEG, and PNG files are allowed", (value) => {
       if (!value) return true;

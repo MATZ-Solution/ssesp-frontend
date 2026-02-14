@@ -119,7 +119,7 @@ const DocumentUploadItem = ({
                                                 PDF, JPG, JPEG, PNG
                                             </p>
                                             <p className="text-xs text-gray-500 text-center">
-                                                (MAX. 5MB)
+                                                (MAX. 1MB)
                                             </p>
                                         </>
                                     )}
@@ -133,7 +133,7 @@ const DocumentUploadItem = ({
                                         const file = e.target.files?.[0];
                                         if (file) {
                                             if (file.size > 5 * 1024 * 1024) {
-                                                alert("File size must not exceed 5MB");
+                                                alert("File size must not exceed 1MB");
                                                 return;
                                             }
 
@@ -327,7 +327,7 @@ const Form5 = ({ initialData = {} }) => {
                         <div className="mb-8">
                             <div className="bg-blue-50 border-l-4 border-blue-500 p-4 rounded-r-lg mb-6">
                                 <p className="text-sm text-blue-800">
-                                    <strong>Important:</strong> All documents must be clear, legible, and not exceed 5MB in size
+                                    <strong>Important:</strong> All documents must be clear, legible, and not exceed 1MB in size
                                 </p>
                             </div>
 

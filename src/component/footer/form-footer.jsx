@@ -13,9 +13,7 @@ function FormFooter() {
           http://sef.org.pk/ssesp/apply
         </a>
       </p>
-      <p className="mt-4 text-xs text-gray-500">
-        Public School Gadap, Karachi, 22 km of Super Highway Main Gadap Road, Gadap Town, Karachi
-      </p>
+    
     </div>
   );
 }
