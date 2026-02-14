@@ -10,6 +10,7 @@ import Button from "../../button";
 import { divisionData } from "../../../../data/districtData";
 import Select from "react-select";
 import { customSelectStyles } from "../../../styles/custom-styles";
+import { guardianrelation } from "../../../../data/form-data";
 
 export const Form2 = () => {  
 const districtOptions = divisionData
@@ -35,7 +36,10 @@ const districtOptions = divisionData
       guardianContact: "",
       contact1: "",
       contact2: "",
-      guatdianRelation: "",
+      guardianRelation: "",
+      guardianannualIncome: "",
+      relation: "",
+      Profession: "",
     },
   });
 
@@ -55,8 +59,8 @@ const districtOptions = divisionData
             <ControlledInputField
               name="fatherName"
               control={control}
-              label="Father's Name"
-              placeholder="Enter father's name"
+              label="Name (Father/Guardian )"
+              placeholder="Enter Father's / Guardian name"
               required
               errors={errors}
             />
@@ -65,28 +69,19 @@ const districtOptions = divisionData
               <ControlledInputField
                 name="fatherCNIC"
                 control={control}
-                label="Father's CNIC"
+                label="CNIC (Father/Guardian )"
                 placeholder="12345-1234567-1"
                 maxLength={15}
                 required
                 errors={errors}
                 helpText="Format: 12345-1234567-1"
               />
-
-              {/* <ControlledInputField
-                name="domicileDistrict"
-                control={control}
-                label="District of Domicile (Father)"
-                placeholder="Enter district"
-                required
-                errors={errors}
-              /> */}
             
-            <div>
+              <div>
                 <label className="block text-sm font-semibold text-gray-700 mb-1.5">
-                  District of Domicile (Father) <span className="text-red-500">*</span>
+                  District of Domicile (Father/Guardian) <span className="text-red-500">*</span>
                 </label>
-                 <Controller
+                <Controller
                   name="domicileDistrict"
                   control={control}
                   render={({ field }) => (
@@ -94,7 +89,7 @@ const districtOptions = divisionData
                       {...field}
                       options={districtOptions}
                       styles={customSelectStyles(errors)}
-                      placeholder="District of Domicile (Father)"
+                      placeholder="District of Domicile (Father/Guardian)"
                       isClearable
                       menuPortalTarget={document.body}
                       menuPosition="fixed"
@@ -103,44 +98,64 @@ const districtOptions = divisionData
                     />
                   )}
                 />
-            </div>
-               
+                {errors.domicileDistrict && (
+                  <p className="text-red-500 text-sm mt-1">{errors.domicileDistrict.message}</p>
+                )}
+              </div>
             </div>
 
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
-              <ControlledInputField
-                name="guardianName"
+               <ControlledInputField
+                name="Profession"
                 control={control}
-                label="Guardian's Name"
-                placeholder="Enter guardian's name (if applicable)"
-                errors={errors}
-              />
-
-                 <ControlledInputField
-                name="guardianRelation"
-                control={control}
-                label="Guardian's Relation"
-                placeholder="Enter guardian's relation (if applicable)"
+                label="Profession (Father/Guardian's)"
+                placeholder="Enter profession of Father/Guardian"
+                required
                 errors={errors}
               />
 
               <ControlledInputField
-                name="guardianContact"
+                name="guardianannualIncome"
                 control={control}
-                label="Guardian's Contact"
-                type="tel"
-                placeholder="03001234567"
-                maxLength={11}
+                label="Annual Income (Father/Guardian's)"
+                type="number"
+                placeholder="Enter annual income in PKR"
+                required
                 errors={errors}
-                helpText="Must start with 03"
               />
             </div>
 
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
+              <div>
+                <label className="block text-sm font-semibold text-gray-700 mb-1.5">
+                  Relation (Guardian)
+                </label>
+                <Controller
+                  name="relation"
+                  control={control}
+                  render={({ field }) => (
+                    <Select
+                      {...field}
+                      options={guardianrelation}
+                      styles={customSelectStyles(errors)}
+                      placeholder="Select Relation (Guardian) if Applicable"
+                      isClearable
+                      menuPortalTarget={document.body}
+                      menuPosition="fixed"
+                      value={guardianrelation.find(opt => opt.value === field.value) || null}
+                      onChange={(option) => field.onChange(option ? option.value : "")}
+                    />
+                  )}
+                />
+                {errors.relation && (
+                  <p className="text-red-500 text-sm mt-1">{errors.relation.message}</p>
+                )}
+              </div>
+
               <ControlledInputField
                 name="contact1"
                 control={control}
-                label="Phone Number "
+                label="Phone Number"
                 type="tel"
                 placeholder="03001234567"
                 maxLength={11}
@@ -148,14 +163,17 @@ const districtOptions = divisionData
                 errors={errors}
                 helpText="Must start with 03"
               />
+            </div>
 
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
               <ControlledInputField
                 name="contact2"
                 control={control}
-                label="WhatsApp Number "
+                label="WhatsApp Number"
                 type="tel"
                 placeholder="03001234567"
                 maxLength={11}
+                required
                 errors={errors}
                 helpText="Must start with 03"
               />
@@ -165,7 +183,6 @@ const districtOptions = divisionData
 
         {/* Navigation Buttons */}
         <div className="flex justify-between">
-
           <button
             type="button"
             onClick={() => navigate('/form/student-info-1')}

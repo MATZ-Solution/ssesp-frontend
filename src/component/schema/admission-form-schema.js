@@ -73,38 +73,57 @@ export const step4Schema = yup.object().shape({
 });
 
 // Validation schema for Step 2 only
+
+// CNIC validation regex: 12345-1234567-1
+const cnicRegex = /^\d{5}-\d{7}-\d{1}$/;
+
+// Phone number validation: Must start with 03 and be 11 digits
+const phoneRegex = /^03\d{9}$/;
+
 export const step2Schema = yup.object().shape({
-  fatherName: yup.string().required("Father's name is required"),
+  fatherName: yup
+    .string()
+    .required("Father's / Guardian name is required")
+    .min(3, "Name must be at least 3 characters")
+    .max(100, "Name must not exceed 100 characters")
+    .matches(/^[a-zA-Z\s]+$/, "Name can only contain letters and spaces"),
+
   fatherCNIC: yup
     .string()
-    .required("Father's CNIC is required")
-    .matches(/^\d{5}-\d{7}-\d{1}$/, 'CNIC must be in format: 12345-1234567-1'),
-  domicileDistrict: yup.string().required('District of Domicile is required'),
-  guardianName: yup.string(),
-  guardianRelation: yup.string().when('guardianName', {
-    is: (val) => val && val.length > 0,
-    then: yup.string().required('Guardian relation is required when guardian name is provided'),
-    otherwise: yup.string(),
-  }),
-  guardianContact: yup
+    .required("Father's / Guardian CNIC is required")
+    .matches(cnicRegex, "CNIC must be in format: 12345-1234567-1"),
+
+  domicileDistrict: yup
     .string()
-    .test('starts-with-03', 'Contact must start with 03', function (value) {
-      if (!value) return true;
-      return value.startsWith('03');
-    })
-    .matches(/^03\d{9}$/, 'Invalid format (03XXXXXXXXX)'),
+    .required("District of Domicile is required"),
+
+  Profession: yup
+    .string()
+    .required("Profession is required")
+    .min(2, "Profession must be at least 2 characters")
+    .max(100, "Profession must not exceed 100 characters"),
+
+  guardianannualIncome: yup
+    .number()
+    .typeError("Annual income must be a number")
+    .required("Annual income is required")
+    .positive("Annual income must be a positive number")
+    .integer("Annual income must be a whole number")
+    .min(0, "Annual income cannot be negative"),
+
+  relation: yup
+    .string()
+    .optional(), 
+
   contact1: yup
     .string()
-    .required('Contact number is required')
-    .test('starts-with-03', 'Contact must start with 03', (value) => value?.startsWith('03'))
-    .matches(/^03\d{9}$/, 'Invalid format (03XXXXXXXXX)'),
+    .required("Phone number is required")
+    .matches(phoneRegex, "Phone number must start with 03 and be 11 digits"),
+
   contact2: yup
     .string()
-    .test('starts-with-03', 'Contact must start with 03', function (value) {
-      if (!value) return true;
-      return value.startsWith('03');
-    })
-    .matches(/^03\d{9}$/, 'Invalid format (03XXXXXXXXX)'),
+    .required("WhatsApp number is required")
+    .matches(phoneRegex, "WhatsApp number must start with 03 and be 11 digits"),
 });
 
 // Validation schema for Step 5 only

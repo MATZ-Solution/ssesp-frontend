@@ -22,6 +22,12 @@
   ];
 
    export const classOptions = [
-    { value: 'Class 7', label: 'Class 7' },
     { value: 'Class 8', label: 'Class 8' },
+  ];
+
+     export const guardianrelation = [
+    { value: 'Brother', label: 'Brother' },
+    { value: 'Mother', label: 'Mother' },
+    { value: 'Uncle', label: 'Uncle' },
+    { value: 'Aunt', label: 'Aunt' },
   ];

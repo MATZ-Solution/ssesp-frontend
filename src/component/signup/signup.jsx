@@ -15,6 +15,7 @@ import {
   Phone,
   IdCard,
   X,
+  Mail,
 } from "lucide-react";
 import {
   useNavigate
@@ -27,12 +28,10 @@ const Signup = () => {
   const [activeModal, setActiveModal] = useState(null);
 
   const signupSchema = yup.object().shape({
-    phoneNumber: yup
+    email: yup
       .string()
-      .required('Phone number is required')
-      .matches(/^[0-9]+$/, 'Phone number must contain only digits')
-      .min(10, 'Phone number must be at least 10 digits')
-      .max(11, 'Phone number must not exceed 11 digits'),
+      .required('Email is required')
+      .email('Please enter a valid email address'),
   });
 
   const {
@@ -43,7 +42,7 @@ const Signup = () => {
     resolver: yupResolver(signupSchema),
     mode: "onChange",
     defaultValues: {
-      phoneNumber: "",
+      email: "",
     }
   });
 
@@ -287,24 +286,24 @@ const Signup = () => {
                 {/* Phone Number with Controller */}
                 <div className="space-y-2">
                   <label className="text-sm font-medium text-gray-200 flex items-center gap-2">
-                    <Phone size={16} className="text-[#4BA54F]" />
-                    Phone Number
+                    <Mail size={16} className="text-[#4BA54F]" />
+                    Email Address
                   </label>
                   <Controller
-                    name="phoneNumber"
+                    name="email"
                     control={control}
                     render={({ field }) => (
                       <input
                         {...field}
                         type="text"
                         className="w-full px-4 py-3 bg-white/5 border border-white/10 rounded-xl text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-[#4BA54F] focus:border-transparent transition-all duration-300"
-                        placeholder="03XX-XXXXXXX"
+                        placeholder="john@example.com"
                       />
                     )}
                   />
-                  {errors.phoneNumber && (
+                  {errors.email && (
                     <p className="text-red-400 text-sm flex items-center gap-1">
-                      ⚠ {errors.phoneNumber.message}
+                      ⚠ {errors.email.message}
                     </p>
                   )}
                 </div>

@@ -33,17 +33,20 @@ const Login5 = () => {
   const [shownumber, setShownumber] = useState(false);
   const [activeModal, setActiveModal] = useState(null);
   const navigate = useNavigate()
-
-  const loginSchema = yup.object().shape({
+  
+const loginSchema = yup.object().shape({
+    email: yup
+      .string()
+      .required('Email is required')
+      .email('Please enter a valid email address'),
     applicationID: yup
       .string()
-      .required('Applicant ID is required'),
-    // Remove .email() if applicant ID isn't always an email
-    phoneNumber: yup  // Add this field
-      .string()
-      .required('Phone number is required')
-      .min(10, 'Phone number must be at least 10 digits'),
+      .required('Applicant ID is required')
+      .min(6, 'Applicant ID must be at least 6 characters'),
   });
+
+
+  
   const {
     register,
     handleSubmit,
@@ -189,15 +192,15 @@ Sign in to access Portal                </h2>
                 <div className="space-y-2">
                   <label className="text-sm font-medium text-gray-200 flex items-center gap-2">
                     <Lock size={16} className="text-[#4BA54F]" />
-                    Phone Number
+                    Emai 
                   </label>
                   <div className="relative">
                     <input
-                      // type={shownumber ? "text" : "password"}
-                      type={"text"}
-                      {...register("phoneNumber")}
+                      // type={shownumber ? "text" : "applicantid"}
+                      type={"email"}
+                      {...register("email")}
                       className="w-full px-4 py-3 bg-white/5 border border-white/10 rounded-xl text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-[#4BA54F] focus:border-transparent transition-all duration-300"
-                      placeholder="Enter your phone number"
+                      placeholder="Enter your email"
                     />
                     {/* <button
                       type="button"
@@ -207,9 +210,9 @@ Sign in to access Portal                </h2>
                       {shownumber ? <EyeOff size={20} /> : <Eye size={20} />}
                     </button> */}
                   </div>
-                  {errors.phoneNumber && (
+                  {errors.email && (
                     <p className="text-red-400 text-sm flex items-center gap-1">
-                      ⚠ {errors.phoneNumber.message}
+                      ⚠ {errors.email.message}
                     </p>
                   )}
                 </div>
