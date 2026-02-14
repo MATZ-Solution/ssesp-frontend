@@ -12,16 +12,16 @@ import Select from "react-select";
 import { customSelectStyles } from "../../../styles/custom-styles";
 import { guardianrelation } from "../../../../data/form-data";
 
-export const Form2 = () => {  
-const districtOptions = divisionData
-  .flatMap(d => d.districts)
-  .map(d => ({ label: d.district, value: d.district }));
+export const Form2 = () => {
+  const districtOptions = divisionData
+    .flatMap(d => d.districts)
+    .map(d => ({ label: d.district, value: d.district }));
 
- 
+
   const navigate = useNavigate()
   const { addApplicantGuardian, isSuccess, isPending, isError, error } = useAddApplicantGuardianInfo()
   const { data, isLoading } = useGetApplicantGuardianInfo()
-  console.log("data: ", data)
+
   const {
     handleSubmit,
     control,
@@ -29,22 +29,19 @@ const districtOptions = divisionData
   } = useForm({
     resolver: yupResolver(step2Schema),
     defaultValues: {
-      fatherName: "",
-      fatherCNIC: "",
-      domicileDistrict: "",
       guardianName: "",
-      guardianContact: "",
-      contact1: "",
-      contact2: "",
-      guardianRelation: "",
+      guardianCNIC: "",
+      guardianDomicileDistrict: "",
+      guardianProfession: "",
       guardianannualIncome: "",
       relation: "",
-      Profession: "",
+      guardianContactNumber: "",
+      guardianContactWhattsappNumber: ""
     },
   });
 
   const onSubmit = (data) => {
-    console.log('Step 2 - Father/Guardian Information:', data);
+    // console.log('Step 2 - Father/Guardian Information:', data);
     addApplicantGuardian(data)
   };
 
@@ -57,7 +54,7 @@ const districtOptions = divisionData
         <div className="mb-8">
           <div className="grid grid-cols-1 gap-5">
             <ControlledInputField
-              name="fatherName"
+              name="guardianName"
               control={control}
               label="Name (Father/Guardian )"
               placeholder="Enter Father's / Guardian name"
@@ -67,7 +64,7 @@ const districtOptions = divisionData
 
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
               <ControlledInputField
-                name="fatherCNIC"
+                name="guardianCNIC"
                 control={control}
                 label="CNIC (Father/Guardian )"
                 placeholder="12345-1234567-1"
@@ -76,13 +73,13 @@ const districtOptions = divisionData
                 errors={errors}
                 helpText="Format: 12345-1234567-1"
               />
-            
+
               <div>
                 <label className="block text-sm font-semibold text-gray-700 mb-1.5">
                   District of Domicile (Father/Guardian) <span className="text-red-500">*</span>
                 </label>
                 <Controller
-                  name="domicileDistrict"
+                  name="guardianDomicileDistrict"
                   control={control}
                   render={({ field }) => (
                     <Select
@@ -98,15 +95,15 @@ const districtOptions = divisionData
                     />
                   )}
                 />
-                {errors.domicileDistrict && (
-                  <p className="text-red-500 text-sm mt-1">{errors.domicileDistrict.message}</p>
+                {errors.guardianDomicileDistrict && (
+                  <p className="text-red-500 text-sm mt-1">{errors.guardianDomicileDistrict.message}</p>
                 )}
               </div>
             </div>
 
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
-               <ControlledInputField
-                name="Profession"
+              <ControlledInputField
+                name="guardianProfession"
                 control={control}
                 label="Profession (Father/Guardian's)"
                 placeholder="Enter profession of Father/Guardian"
@@ -153,7 +150,7 @@ const districtOptions = divisionData
               </div>
 
               <ControlledInputField
-                name="contact1"
+                name="guardianContactNumber"
                 control={control}
                 label="Phone Number"
                 type="tel"
@@ -167,7 +164,7 @@ const districtOptions = divisionData
 
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
               <ControlledInputField
-                name="contact2"
+                name="guardianContactWhattsappNumber"
                 control={control}
                 label="WhatsApp Number"
                 type="tel"

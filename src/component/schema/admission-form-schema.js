@@ -152,23 +152,23 @@ const cnicRegex = /^\d{5}-\d{7}-\d{1}$/;
 const phoneRegex = /^03\d{9}$/;
 
 export const step2Schema = yup.object().shape({
-  fatherName: yup
+  guardianName: yup
     .string()
     .required("Father's / Guardian name is required")
     .min(3, "Name must be at least 3 characters")
     .max(100, "Name must not exceed 100 characters")
     .matches(/^[a-zA-Z\s]+$/, "Name can only contain letters and spaces"),
 
-  fatherCNIC: yup
+  guardianCNIC: yup
     .string()
     .required("Father's / Guardian CNIC is required")
     .matches(cnicRegex, "CNIC must be in format: 12345-1234567-1"),
 
-  domicileDistrict: yup
+  guardianDomicileDistrict: yup
     .string()
     .required("District of Domicile is required"),
 
-  Profession: yup
+  guardianProfession: yup
     .string()
     .required("Profession is required")
     .min(2, "Profession must be at least 2 characters")
@@ -186,12 +186,12 @@ export const step2Schema = yup.object().shape({
     .string()
     .optional(), 
 
-  contact1: yup
+  guardianContactNumber: yup
     .string()
     .required("Phone number is required")
     .matches(phoneRegex, "Phone number must start with 03 and be 11 digits"),
 
-  contact2: yup
+  guardianContactWhattsappNumber: yup
     .string()
     .required("WhatsApp number is required")
     .matches(phoneRegex, "WhatsApp number must start with 03 and be 11 digits"),
