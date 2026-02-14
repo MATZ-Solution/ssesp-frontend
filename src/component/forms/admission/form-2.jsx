@@ -7,9 +7,11 @@ import { useNavigate } from "react-router-dom";
 import { useAddApplicantGuardianInfo, useGetApplicantGuardianInfo } from "../../../../api/client/applicant";
 import ProtectedRouteForm from "../../../../utils/protected-route-form";
 import Button from "../../button";
-import { divisionData } from "../../../../data/schools_grouped_by_division_updated_gender";
+import { divisionData } from "../../../../data/districtData";
+import Select from "react-select";
+import { customSelectStyles } from "../../../styles/custom-styles";
 
-export const Form2 = () => {
+export const Form2 = () => {  
 const districtOptions = divisionData
   .flatMap(d => d.districts)
   .map(d => ({ label: d.district, value: d.district }));
@@ -166,7 +168,7 @@ const districtOptions = divisionData
 
           <button
             type="button"
-            onClick={() => navigate('/form/student-info')}
+            onClick={() => navigate('/form/student-info-1')}
             className="px-8 py-3 bg-gray-200 text-gray-700 font-bold rounded-lg shadow hover:shadow-lg hover:bg-gray-300 transform hover:-translate-y-0.5 transition-all duration-200"
           >
             ← Previous

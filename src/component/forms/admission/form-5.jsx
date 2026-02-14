@@ -3,53 +3,8 @@ import React, { useState, useEffect } from 'react';
 import { useForm, Controller } from 'react-hook-form';
 import * as yup from 'yup';
 import FormTemplate from "../../template/form-template";
-
-const documentUploadSchema = yup.object().shape({
-    document1: yup
-        .mixed()
-        .required("Document 1 is required")
-        .test("fileSize", "File size must not exceed 5MB", (value) => {
-            if (!value) return true;
-            return value.size <= 5 * 1024 * 1024;
-        })
-        .test("fileType", "Only PDF, JPG, JPEG, and PNG files are allowed", (value) => {
-            if (!value) return true;
-            return ["application/pdf", "image/jpeg", "image/jpg", "image/png"].includes(value.type);
-        }),
-    document2: yup
-        .mixed()
-        .required("Document 2 is required")
-        .test("fileSize", "File size must not exceed 5MB", (value) => {
-            if (!value) return true;
-            return value.size <= 5 * 1024 * 1024;
-        })
-        .test("fileType", "Only PDF, JPG, JPEG, and PNG files are allowed", (value) => {
-            if (!value) return true;
-            return ["application/pdf", "image/jpeg", "image/jpg", "image/png"].includes(value.type);
-        }),
-    document3: yup
-        .mixed()
-        .required("Document 3 is required")
-        .test("fileSize", "File size must not exceed 5MB", (value) => {
-            if (!value) return true;
-            return value.size <= 5 * 1024 * 1024;
-        })
-        .test("fileType", "Only PDF, JPG, JPEG, and PNG files are allowed", (value) => {
-            if (!value) return true;
-            return ["application/pdf", "image/jpeg", "image/jpg", "image/png"].includes(value.type);
-        }),
-    document4: yup
-        .mixed()
-        .required("Document 4 is required")
-        .test("fileSize", "File size must not exceed 5MB", (value) => {
-            if (!value) return true;
-            return value.size <= 5 * 1024 * 1024;
-        })
-        .test("fileType", "Only PDF, JPG, JPEG, and PNG files are allowed", (value) => {
-            if (!value) return true;
-            return ["application/pdf", "image/jpeg", "image/jpg", "image/png"].includes(value.type);
-        }),
-});
+import { documentUploadSchema } from "../../schema/admission-form-schema";
+import { useAddApplicantDocument } from "../../../../api/client/applicant";
 
 const DocumentUploadItem = ({
     name,
@@ -80,10 +35,10 @@ const DocumentUploadItem = ({
                         <div className="flex items-center justify-center w-full">
                             <label
                                 className={`flex flex-col items-center justify-center w-full h-48 border-2 border-dashed rounded-lg cursor-pointer transition-all ${errors[name]
-                                        ? "border-red-500 bg-red-50 hover:bg-red-100"
-                                        : preview
-                                            ? "border-green-500 bg-green-50 hover:bg-green-100"
-                                            : "border-gray-300 bg-gray-50 hover:bg-gray-100"
+                                    ? "border-red-500 bg-red-50 hover:bg-red-100"
+                                    : preview
+                                        ? "border-green-500 bg-green-50 hover:bg-green-100"
+                                        : "border-gray-300 bg-gray-50 hover:bg-gray-100"
                                     }`}
                             >
                                 <div className="flex flex-col items-center justify-center p-4 w-full h-full">
@@ -303,40 +258,23 @@ const Form5 = ({ initialData = {} }) => {
         if (initialData.doc4Preview) setDoc4Preview(initialData.doc4Preview);
     }, [initialData]);
 
-const onSubmit = (data) => {
-    // Create an array of documents
-    const documentsArray = [
-        { name: "Birth Certificate (B-Form)", file: data.document1 },
-        { name: "Previous School Leaving Certificate", file: data.document2 },
-        { name: "Parent/Guardian CNIC", file: data.document3 },
-        { name: "Previous Academic Record", file: data.document4 }
-    ];
+    const { addDocument, isSuccess, isPending, isError, error } = useAddApplicantDocument()
 
-    console.log("Documents Array:", documentsArray);
-    
-    // If you also want just the files in an array
-    const filesArray = [
-        data.document1,
-        data.document2,
-        data.document3,
-        data.document4
-    ];
-    
-    console.log("Files Array:", filesArray);
+    const onSubmit = (data) => {
+        const documentsArray = [
+            { name: "Birth Certificate", file: data.document1 },
+            { name: "Previous School Leaving Certificate", file: data.document2 },
+            { name: "Guardian CNIC", file: data.document3 },
+            { name: "Previous Academic Record", file: data.document4 }
+        ];
 
-    // Original FormData (if you still need it)
-    const formData = new FormData();
-    Object.entries(data).forEach(([key, value]) => {
-        if (value) {
-            formData.append(key, value);
-        }
-    });
-
-    console.log("Form Data:", formData);
-    
-    // Your submission logic here
-    // addDocuments(formData);
-};
+        const formData = new FormData()
+        documentsArray.forEach((item, index) => {
+            formData.append(item.name, item.file);
+        })
+        // Your submission logic here
+        addDocument(formData);
+    };
 
     const documents = [
         {
@@ -412,6 +350,7 @@ const onSubmit = (data) => {
                         {/* Navigation Buttons */}
                         <div className="flex justify-between border-t pt-6">
                             <button
+                                onClick={() => navigate("/form/school-info-4")}
                                 type="button"
                                 className="px-8 py-3 bg-gray-200 text-gray-700 font-bold rounded-lg shadow hover:bg-gray-300 transition-all duration-200"
                             >

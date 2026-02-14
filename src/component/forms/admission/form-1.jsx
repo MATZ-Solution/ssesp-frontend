@@ -13,6 +13,7 @@ import Button from "../../button";
 import { BFormField } from "../../BFormField";
 
 export const Form1 = ({ initialData = {} }) => {
+
   const [photoPreview, setPhotoPreview] = useState(null);
   const [showPhotoModal, setShowPhotoModal] = useState(false);
 
@@ -40,7 +41,9 @@ export const Form1 = ({ initialData = {} }) => {
 
   const watchNoBForm = watch("noBForm");
 
-  // Clear B-Form field when "No B-Form" is checked
+  const files = watch("files");
+  console.log("files: ", files)
+
   useEffect(() => {
     if (watchNoBForm) {
       setValue("studentBForm", "");
@@ -113,12 +116,11 @@ export const Form1 = ({ initialData = {} }) => {
                     render={({ field }) => (
                       <input
                         {...field}
-                        type="date"
+                        type="date" 
                         min="2012-01-01"
                         max="2018-12-31"
-                        className={`w-full px-4 py-2.5 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none ${
-                          errors.dob ? "border-red-500 bg-red-50" : "border-gray-300"
-                        }`}
+                        className={`w-full px-4 py-2.5 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none ${errors.dob ? "border-red-500 bg-red-50" : "border-gray-300"
+                          }`}
                       />
                     )}
                   />
@@ -162,13 +164,12 @@ export const Form1 = ({ initialData = {} }) => {
                     <div className="space-y-3">
                       <div className="flex items-center justify-center w-full">
                         <label
-                          className={`flex flex-col items-center justify-center w-full aspect-square border-2 border-dashed rounded-lg cursor-pointer transition-all ${
-                            errors.files
+                          className={`flex flex-col items-center justify-center w-full aspect-square border-2 border-dashed rounded-lg cursor-pointer transition-all ${errors.files
                               ? "border-red-500 bg-red-50 hover:bg-red-100"
                               : photoPreview
-                              ? "border-green-500 bg-green-50 hover:bg-green-100"
-                              : "border-gray-300 bg-gray-50 hover:bg-gray-100"
-                          }`}
+                                ? "border-green-500 bg-green-50 hover:bg-green-100"
+                                : "border-gray-300 bg-gray-50 hover:bg-gray-100"
+                            }`}
                         >
                           <div className="flex flex-col items-center justify-center p-4">
                             {photoPreview ? (
@@ -209,8 +210,8 @@ export const Form1 = ({ initialData = {} }) => {
                                 <p className="mb-2 text-xs text-center text-gray-500">
                                   <span className="font-semibold">Click to upload</span>
                                 </p>
-                                <p className="text-xs text-gray-500 text-center">JPG, JPEG, PNG (MAX. 5MB)</p>
-                                <p className="text-xs text-blue-600 mt-2 font-semibold">Blue Background</p>
+                                <p className="text-xs text-gray-500 text-center">JPG, JPEG, PNG (MAX. 1MB)</p>
+                                <p className="text-xs text-blue-600 mt-2 font-semibold">Blue Background Or White Background</p>
                               </>
                             )}
                           </div>
@@ -219,12 +220,15 @@ export const Form1 = ({ initialData = {} }) => {
                             type="file"
                             accept="image/jpeg,image/jpg,image/png"
                             className="hidden"
+                            onClick={(e) => {
+                              e.target.value = null; 
+                            }}
                             onChange={(e) => {
                               const file = e.target.files?.[0];
                               if (!file) return;
 
-                              if (file.size > 5 * 1024 * 1024) {
-                                alert("File size must not exceed 5MB");
+                              if (file.size > 1 * 1024 * 1024) {
+                                alert("File size must not exceed 1MB");
                                 return;
                               }
 
@@ -262,7 +266,7 @@ export const Form1 = ({ initialData = {} }) => {
                         <p className="text-xs text-blue-800 font-semibold mb-1">Requirements:</p>
                         <ul className="text-xs text-blue-700 space-y-0.5">
                           <li>• Passport size</li>
-                          <li>• Blue background</li>
+                          <li>• Blue background Or White Background</li>
                           <li>• Clear & recent</li>
                         </ul>
                       </div>

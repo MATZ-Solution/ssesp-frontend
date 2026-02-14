@@ -12,10 +12,8 @@ import {
 } from "../../../../api/client/applicant";
 import Button from "../../button";
 import { useState, useEffect } from "react";
-import { divisionData } from '../../../../data/schools_grouped_by_division_updated_gender';
+import { divisionData } from '../../../../data/districtData';
 import { useDivisionDistricts } from '../../../../utils/locationOption';
-
-
 
 // --- Form Component ---
 export const Form3 = () => {
@@ -134,7 +132,7 @@ export const Form3 = () => {
         <div className="flex justify-between">
           <button
             type="button"
-            onClick={() => navigate("/form/guardian-info")}
+            onClick={() => navigate("/form/guardian-info-2")}
             className="px-8 py-3 bg-gray-200 text-gray-700 font-bold rounded-lg shadow hover:shadow-lg hover:bg-gray-300 transform hover:-translate-y-0.5 transition-all duration-200"
           >
             ← Previous

@@ -19,8 +19,8 @@ export const step1Schema = yup.object().shape({
     .required("Student photo is required")
     .test(
       "fileSize",
-      "File size must be less than 5MB",
-      (value) => value && value.size <= 5 * 1024 * 1024
+      "File size must be less than 1MB",
+      (value) => value && value.size <= 1 * 1024 * 1024
     )
     .test(
       "fileType",
@@ -52,10 +52,10 @@ export const step3Schema = yup.object().shape({
 export const step4Schema = yup.object().shape({
   schoolName: yup.string().required('School name is required'),
   schoolCategory: yup.string().required('School category is required'),
-schoolSemisCode: yup
-  .string()
-  .required('School SEMIS/Code is required')
-  .matches(/^\d{9}$/, 'School SEMIS/Code must be exactly 9 digits'),
+  schoolSemisCode: yup
+    .string()
+    .required('School SEMIS/Code is required')
+    .matches(/^\d{9}$/, 'School SEMIS/Code must be exactly 9 digits'),
   studyingInClass: yup
     .string()
     .required("Class is required"),
@@ -69,53 +69,53 @@ schoolSemisCode: yup
     }),
   schoolGRNo: yup.string().required('School GR No is required'),
   headmasterName: yup.string().required('Name is required'),
- 
+
 });
 
 // Validation schema for Step 2 only
- export const step2Schema = yup.object().shape({
-    fatherName: yup.string().required("Father's name is required"),
-    fatherCNIC: yup
-      .string()
-      .required("Father's CNIC is required")
-      .matches(/^\d{5}-\d{7}-\d{1}$/, 'CNIC must be in format: 12345-1234567-1'),
-    domicileDistrict: yup.string().required('District of Domicile is required'),
-    guardianName: yup.string(),
-    guardianRelation: yup.string().when('guardianName', {
-      is: (val) => val && val.length > 0,
-      then: yup.string().required('Guardian relation is required when guardian name is provided'),
-      otherwise: yup.string(),
-    }),
-    guardianContact: yup
-      .string()
-      .test('starts-with-03', 'Contact must start with 03', function (value) {
-        if (!value) return true;
-        return value.startsWith('03');
-      })
-      .matches(/^03\d{9}$/, 'Invalid format (03XXXXXXXXX)'),
-    contact1: yup
-      .string()
-      .required('Contact number is required')
-      .test('starts-with-03', 'Contact must start with 03', (value) => value?.startsWith('03'))
-      .matches(/^03\d{9}$/, 'Invalid format (03XXXXXXXXX)'),
-    contact2: yup
-      .string()
-      .test('starts-with-03', 'Contact must start with 03', function (value) {
-        if (!value) return true;
-        return value.startsWith('03');
-      })
-      .matches(/^03\d{9}$/, 'Invalid format (03XXXXXXXXX)'),
-  });
+export const step2Schema = yup.object().shape({
+  fatherName: yup.string().required("Father's name is required"),
+  fatherCNIC: yup
+    .string()
+    .required("Father's CNIC is required")
+    .matches(/^\d{5}-\d{7}-\d{1}$/, 'CNIC must be in format: 12345-1234567-1'),
+  domicileDistrict: yup.string().required('District of Domicile is required'),
+  guardianName: yup.string(),
+  guardianRelation: yup.string().when('guardianName', {
+    is: (val) => val && val.length > 0,
+    then: yup.string().required('Guardian relation is required when guardian name is provided'),
+    otherwise: yup.string(),
+  }),
+  guardianContact: yup
+    .string()
+    .test('starts-with-03', 'Contact must start with 03', function (value) {
+      if (!value) return true;
+      return value.startsWith('03');
+    })
+    .matches(/^03\d{9}$/, 'Invalid format (03XXXXXXXXX)'),
+  contact1: yup
+    .string()
+    .required('Contact number is required')
+    .test('starts-with-03', 'Contact must start with 03', (value) => value?.startsWith('03'))
+    .matches(/^03\d{9}$/, 'Invalid format (03XXXXXXXXX)'),
+  contact2: yup
+    .string()
+    .test('starts-with-03', 'Contact must start with 03', function (value) {
+      if (!value) return true;
+      return value.startsWith('03');
+    })
+    .matches(/^03\d{9}$/, 'Invalid format (03XXXXXXXXX)'),
+});
 
 // Validation schema for Step 5 only
-// export const step5Schema = yup.object().shape({
+export const step5Schema = yup.object().shape({
 
-//   testMedium: yup.string().required('Test medium is required'),
-//   division: yup.string().required('Division is required'),
-//   acknowledgment: yup
-//     .boolean()
-//     .oneOf([true], 'You must acknowledge the terms'),
-// });
+  testMedium: yup.string().required('Test medium is required'),
+  division: yup.string().required('Division is required'),
+  acknowledgment: yup
+    .boolean()
+    .oneOf([true], 'You must acknowledge the terms'),
+});
 
 
 export const loginSchema = yup.object().shape({
@@ -128,4 +128,51 @@ export const loginSchema = yup.object().shape({
     .string()
     .required('Password is required')
     .min(6, 'Password must be at least 6 characters'),
+});
+
+export const documentUploadSchema = yup.object().shape({
+    document1: yup
+        .mixed()
+        .required("Document 1 is required")
+        .test("fileSize", "File size must not exceed 5MB", (value) => {
+            if (!value) return true;
+            return value.size <= 5 * 1024 * 1024;
+        })
+        .test("fileType", "Only PDF, JPG, JPEG, and PNG files are allowed", (value) => {
+            if (!value) return true;
+            return ["application/pdf", "image/jpeg", "image/jpg", "image/png"].includes(value.type);
+        }),
+    document2: yup
+        .mixed()
+        .required("Document 2 is required")
+        .test("fileSize", "File size must not exceed 5MB", (value) => {
+            if (!value) return true;
+            return value.size <= 5 * 1024 * 1024;
+        })
+        .test("fileType", "Only PDF, JPG, JPEG, and PNG files are allowed", (value) => {
+            if (!value) return true;
+            return ["application/pdf", "image/jpeg", "image/jpg", "image/png"].includes(value.type);
+        }),
+    document3: yup
+        .mixed()
+        .required("Document 3 is required")
+        .test("fileSize", "File size must not exceed 5MB", (value) => {
+            if (!value) return true;
+            return value.size <= 5 * 1024 * 1024;
+        })
+        .test("fileType", "Only PDF, JPG, JPEG, and PNG files are allowed", (value) => {
+            if (!value) return true;
+            return ["application/pdf", "image/jpeg", "image/jpg", "image/png"].includes(value.type);
+        }),
+    document4: yup
+        .mixed()
+        .required("Document 4 is required")
+        .test("fileSize", "File size must not exceed 5MB", (value) => {
+            if (!value) return true;
+            return value.size <= 5 * 1024 * 1024;
+        })
+        .test("fileType", "Only PDF, JPG, JPEG, and PNG files are allowed", (value) => {
+            if (!value) return true;
+            return ["application/pdf", "image/jpeg", "image/jpg", "image/png"].includes(value.type);
+        }),
 });

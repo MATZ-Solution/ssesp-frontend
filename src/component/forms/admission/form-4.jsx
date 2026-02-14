@@ -16,7 +16,7 @@ import {
   useGetApplicantSchoolInfo,
 } from "../../../../api/client/applicant";
 import Button from "../../button";
-import { divisionData } from "../../../../data/schools_grouped_by_division_updated_gender";
+import { divisionData } from "../../../../data/districtData";
 
 export const Form4 = () => {
   const navigate = useNavigate();
@@ -25,10 +25,10 @@ export const Form4 = () => {
     useAddApplicantSchoolInfo();
   const { data, isLoading } = useGetApplicantSchoolInfo();
 
-// Map divisionData into an array of all districts
-const districtOptions = divisionData
-  .flatMap(d => d.districts)
-  .map(d => ({ label: d.district, value: d.district }));
+  // Map divisionData into an array of all districts
+  const districtOptions = divisionData
+    .flatMap(d => d.districts)
+    .map(d => ({ label: d.district, value: d.district }));
 
   const {
     handleSubmit,
@@ -166,15 +166,16 @@ const districtOptions = divisionData
               />
             </div>
 
-            <div className="grid grid-cols-1">
+            <div className="grid grid-cols-2">
               <ControlledInputField
                 name="headmasterName"
                 control={control}
-                label="Headmaster / Headmistress / Principal Name"
+                label="Headmaster / Principal Name"
                 placeholder="Enter name"
                 required
                 errors={errors}
               />
+             
             </div>
 
             {/* Tabular Form - Class 5 to 8 Records */}
@@ -182,7 +183,7 @@ const districtOptions = divisionData
               <h3 className="text-base sm:text-lg font-bold text-gray-800 mb-3 sm:mb-4">
                 Previous Class Records (Class 5 to 8)
               </h3>
-              
+
               {/* Desktop/Tablet Table View */}
               <div className="hidden md:block -mx-4 sm:mx-0">
                 <div className="inline-block min-w-full align-middle">
@@ -260,25 +261,25 @@ const districtOptions = divisionData
                                 )}
                               />
                             </td>
-                          <td className="border border-gray-300 px-3 lg:px-4 py-2 lg:py-3">
-  <Controller
-    name={`previous_school.${index}.district`}
-    control={control}
-    render={({ field }) => (
-      <Select
-        {...field}
-        options={districtOptions}
-        styles={customSelectStyles(errors)}
-        placeholder="Select District"
-        isClearable
-        menuPortalTarget={document.body}
-        menuPosition="fixed"
-        value={districtOptions.find(opt => opt.value === field.value) || null}
-        onChange={(option) => field.onChange(option ? option.value : "")}
-      />
-    )}
-  />
-</td>
+                            <td className="border border-gray-300 px-3 lg:px-4 py-2 lg:py-3">
+                              <Controller
+                                name={`previous_school.${index}.district`}
+                                control={control}
+                                render={({ field }) => (
+                                  <Select
+                                    {...field}
+                                    options={districtOptions}
+                                    styles={customSelectStyles(errors)}
+                                    placeholder="Select District"
+                                    isClearable
+                                    menuPortalTarget={document.body}
+                                    menuPosition="fixed"
+                                    value={districtOptions.find(opt => opt.value === field.value) || null}
+                                    onChange={(option) => field.onChange(option ? option.value : "")}
+                                  />
+                                )}
+                              />
+                            </td>
 
                             <td className="border border-gray-300 px-3 lg:px-4 py-2 lg:py-3">
                               <Controller
@@ -370,28 +371,28 @@ const districtOptions = divisionData
                         />
                       </div>
 
-             <div>
-  <label className="block text-xs font-semibold text-gray-700 mb-1.5">
-    District
-  </label>
-  <Controller
-    name={`previous_school.${index}.district`}
-    control={control}
-    render={({ field }) => (
-      <Select
-        {...field}
-        options={districtOptions}
-        styles={customSelectStyles(errors)}
-        placeholder="Select District"
-        isClearable
-        menuPortalTarget={document.body}
-        menuPosition="fixed"
-        value={districtOptions.find(opt => opt.value === field.value) || null}
-        onChange={(option) => field.onChange(option ? option.value : "")}
-      />
-    )}
-  />
-</div>
+                      <div>
+                        <label className="block text-xs font-semibold text-gray-700 mb-1.5">
+                          District
+                        </label>
+                        <Controller
+                          name={`previous_school.${index}.district`}
+                          control={control}
+                          render={({ field }) => (
+                            <Select
+                              {...field}
+                              options={districtOptions}
+                              styles={customSelectStyles(errors)}
+                              placeholder="Select District"
+                              isClearable
+                              menuPortalTarget={document.body}
+                              menuPosition="fixed"
+                              value={districtOptions.find(opt => opt.value === field.value) || null}
+                              onChange={(option) => field.onChange(option ? option.value : "")}
+                            />
+                          )}
+                        />
+                      </div>
 
 
                       <div>
@@ -424,7 +425,7 @@ const districtOptions = divisionData
         <div className="flex flex-col sm:flex-row justify-between gap-3 sm:gap-4 mt-6 sm:mt-8">
           <button
             type="button"
-            onClick={() => navigate("/form/address")}
+            onClick={() => navigate("/form/address-3")}
             className="w-full sm:w-auto px-6 sm:px-8 py-3 bg-gray-200 text-gray-700 font-bold rounded-lg shadow hover:shadow-lg hover:bg-gray-300 transform hover:-translate-y-0.5 transition-all duration-200 order-2 sm:order-1"
           >
             ← Previous

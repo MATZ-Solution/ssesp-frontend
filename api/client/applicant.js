@@ -131,6 +131,40 @@ export function useAddApplicantSchoolInfo() {
   return { addApplicantSchool, isSuccess, isPending, isError, error };
 }
 
+export function useAddApplicantDocument() {
+  const navigate = useNavigate();
+  const dispatch = useDispatch()
+  const queryClient = useQueryClient();
+  const {
+    mutate: addDocument,
+    isSuccess,
+    isPending,
+    isError,
+    error,
+  } = useMutation({
+    mutationFn: async (data) =>
+      await api.post(`${API_ROUTE.applicant.addApplicantDocument}`, data, {
+        headers: {
+          "Content-Type": "multipart/form-data",
+          Authorization: api.defaults.headers.common["Authorization"],
+        },
+        timeout: 30000,
+      }),
+    onSuccess: (data) => {
+      toast.success("Success");
+      dispatch(setFormStatus({ formStatus: 'test-preference-6' }))
+      navigate("/form/test-preference-6");
+      queryClient.invalidateQueries({
+        queryKey: [API_ROUTE.applicant.getApplicantInfo],
+      });
+    },
+    onError: (error) => {
+      toast.error("Failed to add details.");
+    },
+  });
+  return { addDocument, isSuccess, isPending, isError, error };
+}
+
 export function useAddApplicantTestPreference() {
   const navigate = useNavigate();
   const dispatch = useDispatch()

@@ -12,6 +12,7 @@ const API_ROUTE = {
     addApplicantGuardianInfo: "/api/applicant/addApplicantGuardianInfo",
     addApplicantAddressInfo: "/api/applicant/addApplicantAddressInfo",
     addApplicantSchoolInfo: "/api/applicant/addApplicantSchoolInfo",
+    addApplicantDocument: "/api/applicant/addApplicantDocument",
     addApplicantTestPreference: "/api/applicant/addApplicantTestPreference",
 
     getApplicantInfo: "/api/applicant/getApplicantInfo",

@@ -1,6 +1,6 @@
 import { useMemo } from "react";
  import { useState, useEffect } from "react";
-import { divisionData } from '../data/schools_grouped_by_division_updated_gender';
+import { divisionData } from '../data/districtData';
 
 /**
  * Division Options

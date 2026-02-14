@@ -49,11 +49,11 @@ const Login5 = () => {
 
   const { userLogin, isSuccess, isPending, isError, error } = useLogin();
 
-  useEffect(() => {
-    if (isSuccess) {
-      navigate("/dashboard");
-    }
-  }, [isSuccess, navigate]);
+  // useEffect(() => {
+  //   if (isSuccess) {
+  //     navigate("/dashboard");
+  //   }
+  // }, [isSuccess, navigate]);
 
   const onSubmit = async (data) => {
     try {
