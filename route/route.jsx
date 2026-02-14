@@ -14,6 +14,7 @@ import Signup from "../src/component/signup/signup";
 import ProtectedRoute from "../utils/protectRoute";
 import ProtectedRouteForm from "../utils/protected-route-form";
 import ApplicationSubmitted from "../src/component/applicationSubmitted";
+import NotFound from "../src/component/not-found";
 
 export const router = createBrowserRouter([
   {
@@ -88,6 +89,11 @@ export const router = createBrowserRouter([
   {
     path: "/login",
     element: withSuspense(<Login5 />),
+  },
+
+  {
+    path: "*",
+    element: withSuspense(<NotFound />),
   },
 
   // {
