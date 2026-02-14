@@ -192,7 +192,7 @@ Sign in to access Portal                </h2>
                 <div className="space-y-2">
                   <label className="text-sm font-medium text-gray-200 flex items-center gap-2">
                     <Lock size={16} className="text-[#4BA54F]" />
-                    Emai 
+                    Email
                   </label>
                   <div className="relative">
                     <input
