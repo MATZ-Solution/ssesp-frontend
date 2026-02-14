@@ -2,33 +2,58 @@ import * as yup from 'yup';
 
 
 
+const bFormRegex = /^\d{5}-\d{7}-\d{1}$/;
+
 export const step1Schema = yup.object().shape({
   studentName: yup
     .string()
-    .required('Student name is required')
-    .matches(/^[A-Z\s]+$/, 'Name must be in CAPITAL LETTERS only'),
-  gender: yup.string().required('Gender is required'),
+    .required("Student name is required")
+    .matches(/^[A-Z\s]+$/, "Name must be in CAPITAL LETTERS only")
+    .min(3, "Name must be at least 3 characters"),
+
+  gender: yup
+    .string()
+    .required("Gender is required")
+    .oneOf(["male", "female", "other"], "Please select a valid gender"),
+
+  noBForm: yup
+    .boolean()
+    .default(false),
+
   studentBForm: yup
     .string()
-    .required('Student B-Form is required')
-    .matches(/^\d{5}-\d{7}-\d{1}$/, 'B-Form must be in format: 12345-1234567-1'),
-  dob: yup.string().required('Date of birth is required'),
-  religion: yup.string().required("Religion is required"),
+    .when("noBForm", {
+      is: false,
+      then: (schema) => schema
+        .required("B-Form number is required")
+        .matches(bFormRegex, "Invalid B-Form format. Use: 12345-1234567-1")
+        .length(15, "B-Form must be exactly 15 characters"),
+      otherwise: (schema) => schema.notRequired().nullable(),
+    }),
+
+  dob: yup
+    .date()
+    .required("Date of birth is required")
+    .min(new Date("2012-01-01"), "Date must be after January 1, 2012")
+    .max(new Date("2018-12-31"), "Date must be before December 31, 2018")
+    .typeError("Please enter a valid date"),
+
+  religion: yup
+    .string()
+    .required("Religion is required")
+    .nullable(),
+
   files: yup
     .mixed()
     .required("Student photo is required")
-    .test(
-      "fileSize",
-      "File size must be less than 1MB",
-      (value) => value && value.size <= 1 * 1024 * 1024
-    )
-    .test(
-      "fileType",
-      "Only JPG, JPEG, and PNG files are allowed",
-      (value) =>
-        value &&
-        ["image/jpeg", "image/jpg", "image/png"].includes(value.type)
-    )
+    .test("fileSize", "File size must not exceed 1MB", (value) => {
+      if (!value) return false;
+      return value.size <= 1 * 1024 * 1024;
+    })
+    .test("fileType", "Only JPG, JPEG, and PNG files are allowed", (value) => {
+      if (!value) return false;
+      return ["image/jpeg", "image/jpg", "image/png"].includes(value.type);
+    }),
 });
 
 // Validation schema for Step 3 only
