@@ -14,6 +14,7 @@ import Signup from "../src/component/signup/signup";
 import ProtectedRoute from "../utils/protectRoute";
 import ProtectedRouteForm from "../utils/protected-route-form";
 import ApplicationSubmitted from "../src/component/applicationSubmitted";
+import CandidatePDFDownloader from "../src/component/template/pdf-template";
 
 export const router = createBrowserRouter([
   {
@@ -29,7 +30,7 @@ export const router = createBrowserRouter([
           <Form1 />
         </ProtectedRouteForm>
       </ProtectedRoute>
-    ),  
+    ),
   },
   {
     path: "/form/guardian-info-2",
