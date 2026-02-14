@@ -7,15 +7,15 @@ import { useNavigate } from "react-router-dom";
 import { useAddApplicantGuardianInfo, useGetApplicantGuardianInfo } from "../../../../api/client/applicant";
 import ProtectedRouteForm from "../../../../utils/protected-route-form";
 import Button from "../../button";
-import { divisionData } from "../../../../data/districtData";
+import { districts } from "../../../../data/new-district";
 import Select from "react-select";
 import { customSelectStyles } from "../../../styles/custom-styles";
 import { guardianrelation } from "../../../../data/form-data";
 
 export const Form2 = () => {
-  const districtOptions = divisionData
-    .flatMap(d => d.districts)
-    .map(d => ({ label: d.district, value: d.district }));
+  
+  const districtOptions = districts
+    .map(item => ({ label: item, value: item }));
 
 
   const navigate = useNavigate()
