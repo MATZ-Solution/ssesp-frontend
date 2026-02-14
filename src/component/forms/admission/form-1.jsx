@@ -56,13 +56,21 @@ export const Form1 = ({ initialData = {} }) => {
     }
   }, [initialData.photoPreview]);
 
-  const onSubmit = (formData) => {
-    const dataToSend = new FormData();
-    Object.entries(formData).forEach(([key, value]) => {
+ const onSubmit = (formData) => {
+  const dataToSend = new FormData();
+
+  Object.entries(formData).forEach(([key, value]) => {
+    if (key === "dob" && value) {
+      const formattedDate = new Date(value).toISOString().split("T")[0];
+      dataToSend.append("dob", formattedDate);
+    } else {
       dataToSend.append(key, value);
-    });
-    addApplicant(dataToSend);
-  };
+    }
+  });
+
+  addApplicant(dataToSend);
+};
+
 
   return (
     <FormTemplate>
