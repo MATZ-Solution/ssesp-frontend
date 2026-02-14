@@ -356,8 +356,8 @@ const Signup = () => {
                 </Button>
 
                 {/* Success Message */}
-                {data?.data?.message === 'User added successfully' && (
-                  <div className="bg-gradient-to-r from-green-100 to-green-200 text-green-800 px-4 py-3 rounded-lg shadow-md border border-green-300 flex items-center gap-3">
+                {isSuccess && (
+                  <div className="bg-gradient-to-r from-green-100 to-green-200 text-green-800 px-3 lg:px-4 py-2.5 lg:py-3 rounded-lg shadow-md border border-green-300 flex items-start gap-2 lg:gap-3">
                     <svg
                       className="w-5 h-5 flex-shrink-0 text-green-600"
                       fill="none"
@@ -371,7 +371,15 @@ const Signup = () => {
                         d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"
                       />
                     </svg>
-                    <span className="font-medium">Your application ID is: {data?.data?.applicantID}</span>
+                    <div className="flex-1">
+                      <p className="font-semibold text-sm lg:text-base">Account created successfully!</p>
+                      {/* <p className="text-xs lg:text-sm mt-1">
+                        Email send Successfully.
+                      </p> */}
+                      {/* <p className="text-xs mt-1 text-green-700">
+                        Please save this ID. Redirecting to login...
+                      </p> */}
+                    </div>
                   </div>
                 )}
 
