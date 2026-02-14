@@ -34,8 +34,8 @@ export const step1Schema = yup.object().shape({
   dob: yup
     .date()
     .required("Date of birth is required")
-    .min(new Date("2012-01-01"), "Date must be after January 1, 2012")
-    .max(new Date("2018-12-31"), "Date must be before December 31, 2018")
+    .min(new Date("2011-01-01"), "Date must be after January 1, 2011")
+    .max(new Date("2015-12-31"), "Date must be before December 31, 2015")
     .typeError("Please enter a valid date"),
 
   religion: yup
