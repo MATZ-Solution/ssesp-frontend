@@ -1,4 +1,5 @@
-import { CheckCircle } from "lucide-react";
+import { CheckCircle , IdCard,
+  X, } from "lucide-react";
 
 export  const Modal = ({ isOpen, onClose, content }) => {
     if (!isOpen) return null;

@@ -21,8 +21,6 @@ import {
 } from "react-router-dom";
 import { useSignUp } from "../../../api/client/user";
 import Button from "../button"
-import { featureModals } from "../../../data/feature";
-import { Modal } from "../modal/active-modal";
 
 const Signup = () => {
   const navigate = useNavigate();
@@ -68,8 +66,110 @@ const Signup = () => {
     { Icon: Shield, delay: 18, duration: 25, size: 26, color: "text-green-500" },
   ];
 
+  const featureModals = {
+    "Easy Registration": {
+      title: "Scholarship Coverage",
+      description: "This Scholarship covers the following free facilities:",
+      features: [
+        "Admission & Tuition Fees",
+        "Examination fees",
+        "Boarding & Lodging facilities",
+        "School Uniforms",
+        "School Shoes",
+        "Text Books",
+        "Monthly Stipend"
+      ]
+    },
+    "Secure & Encrypted": {
+      title: "Eligibility Criteria",
+      description: "To be eligible for this scholarship, applicants must meet the following requirements:",
+      features: [
+        "Must have studied consecutively for the last three years in Sindh Government schools or SEF schools",
+        "Age limit: Must not be older than 14 years as on 1st April, 2026",
+        "Must be a permanent resident of the respective district of Sindh",
+        "Applicants with a sibling currently availing the scholarship are not eligible",
+        "If more than one child qualifies, only one will be selected (preference given to girl child)",
+        "Annual income of parents/guardian from all sources up to PKR 1,200,000 per annum"
+      ]
+    },
+    "Track Progress": {
+      title: "Selection Criteria",
+      description: "Selection shall be made on the basis of Entry Test results and Interview:",
+      features: [
+        "English – Minimum 60 marks (Weightage 20%)",
+        "Mathematics – Minimum 60 marks (Weightage 25%)",
+        "Sindhi/Urdu – Minimum 60 marks (Weightage 20%)",
+        "Science/General Knowledge – Minimum 60 marks (Weightage 20%)",
+        "Interview – Weightage 15%",
+        "For class VIII admission, entry test will be from class VII syllabus (Sindh Textbook Board)"
+      ]
+    },
+    "Quick Approval": {
+      title: "Application Procedure & Documents",
+      description: "Follow these steps to complete your application:",
+      features: [
+        "Application only available online at: https://sef.org.pk/ssesp/apply",
+        "Last date for application: 25th February, 2026",
+        "Only complete applications with supporting documents will be entertained",
+        "Required Documents: Recent passport-size photo, GR page (3 years confirmation), Student B-Form, parent/guardian CNIC, Domicile, PRC, and verified income certificate",
+        "Submission of false/forged documents will lead to scholarship cancellation and legal action",
+        "Scholarship continuation requires minimum 60% marks in subsequent academic years"
+      ]
+    }
+  };
 
+  const Modal = ({ isOpen, onClose, content }) => {
+    if (!isOpen) return null;
 
+    return (
+      <div 
+        className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm"
+        onClick={onClose}
+      >
+        <div 
+          className="relative bg-gradient-to-br from-slate-800 to-slate-900 rounded-2xl p-8 max-w-lg w-full border border-white/20 shadow-2xl transform transition-all"
+          onClick={(e) => e.stopPropagation()}
+        >
+          {/* Close button */}
+          <button
+            onClick={onClose}
+            className="absolute top-4 right-4 text-gray-400 hover:text-white transition-colors"
+          >
+            <X size={24} />
+          </button>
+
+          {/* Modal content */}
+          <div className="text-white">
+            <h3 className="text-2xl font-bold mb-4 text-transparent bg-clip-text bg-gradient-to-r from-[#4BA54F] to-emerald-400">
+              {content.title}
+            </h3>
+            <p className="text-gray-300 mb-6">
+              {content.description}
+            </p>
+            
+            <div className="space-y-3">
+              <h4 className="text-sm font-semibold text-emerald-400 uppercase tracking-wide">
+                Key Features:
+              </h4>
+              {content.features.map((feature, idx) => (
+                <div key={idx} className="flex items-start gap-3">
+                  <CheckCircle size={20} className="text-[#4BA54F] flex-shrink-0 mt-0.5" />
+                  <span className="text-gray-300">{feature}</span>
+                </div>
+              ))}
+            </div>
+
+            <button
+              onClick={onClose}
+              className="mt-8 w-full bg-gradient-to-r from-[#4BA54F] to-emerald-500 hover:from-emerald-600 hover:to-emerald-700 text-white font-semibold py-3 rounded-xl transition-all duration-300 transform hover:scale-[1.02]"
+            >
+              Got it!
+            </button>
+          </div>
+        </div>
+      </div>
+    );
+  };
 
   return (
     <div className="min-h-screen relative overflow-hidden bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900">
