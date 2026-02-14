@@ -1,6 +1,6 @@
 export const newDistrictData =[
   {
-    "institute": "District Cadet College Sanghar",
+    "institute": "Cadet College Sanghar",
     "category": "Boys",
     "districts": [
       "Hyderabad",
