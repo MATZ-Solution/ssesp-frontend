@@ -4,8 +4,8 @@ import { removeUser } from "../../redux/slices/authSlice";
 
 const api = axios.create({
   // live database
-  // baseURL: 'https://ssespserver.matzsolutions.com',
-  baseURL: "http://localhost:22309/",
+  baseURL: 'https://ssespserver.matzsolutions.com',
+  // baseURL: "http://localhost:22309/",
   withCredentials: true,
   headers: {
     "Content-Type": "application/json",
