@@ -1,6 +1,6 @@
 import { yupResolver } from "@hookform/resolvers/yup";
 import { useEffect, useState } from "react";
-import { useForm } from "react-hook-form";
+import { useForm,Controller } from "react-hook-form";
 import { ControlledInputField } from "../../input-field";
 import { testMediumOptions } from "../../../../data/form-data";
 import { ControlledRadioGroup } from "../../Radio-button";
@@ -10,6 +10,8 @@ import { useNavigate } from "react-router-dom";
 import { useAddApplicantTestPreference, useGetApplicantTestPreference } from "../../../../api/client/applicant";
 import Button from "../../button";
 import { divisionData } from "../../../../data/districtData";
+import { customSelectStyles } from "../../../styles/custom-styles";
+import Select from "react-select";
 
 export const Form6 = () => {
 
@@ -36,7 +38,8 @@ export const Form6 = () => {
     // addTestPreference(data)
   };
 
-  console.log("school: ", data)
+  const schools = data?.map(item => ({value: item.school_name, label: item.school_name}))
+  console.log("school: ", schools)
 
   return (
     <FormTemplate>
@@ -44,6 +47,27 @@ export const Form6 = () => {
         onSubmit={handleSubmit(onSubmit)}
         className="bg-white shadow-xl p-6 sm:p-8 lg:p-10"
       >
+
+        <Controller
+          name="division"
+          control={control}
+          render={({ field }) => (
+            <Select
+              {...field}
+              // value={selectedDivision}
+              options={schools || []}
+              styles={customSelectStyles(errors)}
+              placeholder="Select School"
+              isClearable
+              onChange={(value) => {
+                field.onChange(value);
+                // setValue("district", null);
+                // setSelectedDivision(value); 
+              }}
+            />
+          )}
+        />
+
         {/* <div className="mb-8">
           <div className="grid grid-cols-1 gap-5">
             <ControlledRadioGroup
@@ -67,8 +91,7 @@ export const Form6 = () => {
         </div> */}
 
         {/* Important Information Sections */}
-        <div className="space-y-6 mb-8">
-          {/* Entry Test Criteria */}
+        {/* <div className="space-y-6 mb-8">
           <div className="bg-blue-50 border-l-4 border-blue-500 p-6 rounded-r-lg">
             <h3 className="text-lg font-bold text-blue-900 mb-4">
               Entry Test Criteria
@@ -103,7 +126,6 @@ export const Form6 = () => {
             </div>
           </div>
 
-          {/* Eligibility Criteria */}
           <div className="bg-green-50 border-l-4 border-green-500 p-6 rounded-r-lg">
             <h3 className="text-lg font-bold text-green-900 mb-4">
               Eligibility Criteria
@@ -137,7 +159,6 @@ export const Form6 = () => {
             </ul>
           </div>
 
-          {/* Documents Required */}
           <div className="bg-orange-50 border-l-4 border-orange-500 p-6 rounded-r-lg">
             <h3 className="text-lg font-bold text-orange-900 mb-4">
               Documents Required
@@ -173,9 +194,9 @@ export const Form6 = () => {
               </li>
             </ul>
           </div>
-        </div>
+        </div> */}
 
-        <div className="mb-6">
+        {/* <div className="mb-6">
           <label className="flex items-start gap-3">
             <input
               type="checkbox"
@@ -194,7 +215,7 @@ export const Form6 = () => {
               {errors.acknowledgment.message}
             </p>
           )}
-        </div>
+        </div> */}
 
         {/* Navigation Buttons */}
         <div className="flex justify-between">

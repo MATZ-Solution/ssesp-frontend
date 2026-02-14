@@ -263,9 +263,9 @@ const Form5 = ({ initialData = {} }) => {
     const onSubmit = (data) => {
         const documentsArray = [
             { name: "Birth Certificate", file: data.document1 },
-            { name: "Previous School Leaving Certificate", file: data.document2 },
+            { name: "Guardian Doimicile", file: data.document2 },
             { name: "Guardian CNIC", file: data.document3 },
-            { name: "Previous Academic Record", file: data.document4 }
+            { name: "Guardian PRC", file: data.document4 }
         ];
 
         const formData = new FormData()
@@ -286,22 +286,22 @@ const Form5 = ({ initialData = {} }) => {
         },
         {
             name: "document2",
-            label: "Previous School Leaving Certificate",
-            description: "Upload leaving certificate from previous institution",
+            label: "Parent/Guardian Doimicile",
+            description: "Upload copy of parent or guardian's Domicile",
             preview: doc2Preview,
             setPreview: setDoc2Preview,
         },
         {
             name: "document3",
             label: "Parent/Guardian CNIC",
-            description: "Upload copy of parent or guardian's CNIC (front & back)",
+            description: "Upload copy of parent or guardian's CNIC",
             preview: doc3Preview,
             setPreview: setDoc3Preview,
         },
         {
             name: "document4",
-            label: "Previous Academic Record",
-            description: "Upload report card or academic transcript",
+            label: "Parent/Guardian PRC",
+            description: "Upload copy of parent or guardian's PRC",
             preview: doc4Preview,
             setPreview: setDoc4Preview,
         },
