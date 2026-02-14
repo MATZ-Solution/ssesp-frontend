@@ -169,7 +169,7 @@ const loginSchema = yup.object().shape({
           <div className="lg:hidden absolute top-6 left-6 flex items-center gap-2">
             <img src={logo} alt="Logo" className="w-10 h-10 rounded-lg" />
             <span className="text-white font-bold text-sm">
-              Goverment of Sindh SSEP
+               Sindh Education Foundation
             </span>
           </div>
 
@@ -182,7 +182,7 @@ const loginSchema = yup.object().shape({
               {/* Header */}
               <div className="text-center mb-8">
                 <h2 className="text-3xl font-bold text-white mb-2">
-Sign in to access Portal                </h2>
+Welcome to the Scholarship Portal               </h2>
               </div>
 
               {/* Login Form */}
