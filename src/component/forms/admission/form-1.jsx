@@ -44,11 +44,11 @@ export const Form1 = ({ initialData = {} }) => {
   const files = watch("files");
   console.log("files: ", files)
 
-  useEffect(() => {
-    if (watchNoBForm) {
-      setValue("studentBForm", "");
-    }
-  }, [watchNoBForm, setValue]);
+  // useEffect(() => {
+  //   if (watchNoBForm) {
+  //     setValue("studentBForm", "");
+  //   }
+  // }, [watchNoBForm, setValue]);
 
   useEffect(() => {
     if (initialData.photoPreview) {
@@ -58,6 +58,7 @@ export const Form1 = ({ initialData = {} }) => {
 
  const onSubmit = (formData) => {
   const dataToSend = new FormData();
+  console.log("Form Data to submit:", formData);
 
   Object.entries(formData).forEach(([key, value]) => {
     if (key === "dob" && value) {
@@ -110,6 +111,8 @@ export const Form1 = ({ initialData = {} }) => {
                     control={control}
                     errors={errors}
                     watchNoBForm={watchNoBForm}
+                    setValue={setValue}
+
                   />
                 </div>
 
