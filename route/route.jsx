@@ -68,7 +68,7 @@ export const router = createBrowserRouter([
     ),
   },
   {
-    path: "/form/test-preference-6",
+    path: "/form/school-preference-6",
     element: (
       <ProtectedRoute>
         <Form6 />

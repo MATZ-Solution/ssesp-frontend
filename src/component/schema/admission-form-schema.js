@@ -49,27 +49,98 @@ export const step3Schema = yup.object().shape({
     .required("District is required"),
 });
 // Validation schema for Step 4 only
+
 export const step4Schema = yup.object().shape({
-  schoolName: yup.string().required('School name is required'),
-  schoolCategory: yup.string().required('School category is required'),
+  // Current School Information
+  schoolName: yup
+    .string()
+    .required("School name is required")
+    .min(3, "School name must be at least 3 characters")
+    .trim(),
+
+  schoolCategory: yup
+    .string()
+    .required("School category is required"),
+
   schoolSemisCode: yup
     .string()
-    .required('School SEMIS/Code is required')
-    .matches(/^\d{9}$/, 'School SEMIS/Code must be exactly 9 digits'),
+    .required("School SEMIS/Code is required")
+    .matches(/^\d{9}$/, "SEMIS Code must be exactly 9 digits")
+    .length(9, "SEMIS Code must be exactly 9 digits"),
+
   studyingInClass: yup
     .string()
-    .required("Class is required"),
+    .nullable()
+    .required("Currently studying class is required"),
+
   enrollmentYear: yup
     .string()
-    .required('Year of enrollment is required')
-    .matches(/^\d{4}$/, 'Must be a 4-digit year')
-    .test('valid-year', 'Year must be between 2018-2024', (value) => {
+    .required("Year of enrollment is required")
+    .matches(/^\d{4}$/, "Year must be 4 digits")
+    .test("valid-year", "Please enter a valid year", (value) => {
+      if (!value) return false;
       const year = parseInt(value);
-      return year >= 2018 && year <= 2024;
+      const currentYear = new Date().getFullYear();
+      return year >= 1950 && year <= currentYear;
     }),
-  schoolGRNo: yup.string().required('School GR No is required'),
-  headmasterName: yup.string().required('Name is required'),
 
+  schoolGRNo: yup
+    .string()
+    .required("School GR number is required")
+    .trim(),
+
+  headmasterName: yup
+    .string()
+    .required("Headmaster/Principal name is required")
+    .min(3, "Name must be at least 3 characters")
+    .matches(/^[a-zA-Z\s]+$/, "Name should only contain letters")
+    .trim(),
+
+  // Previous School Records (Class 5 to 8)
+  previous_school: yup.array().of(
+    yup.object().shape({
+      class: yup
+        .string()
+        .required("Class is required"),
+
+      schoolCategory: yup
+        .string()
+        .required("School category is required for this class"),
+
+      semisCode: yup
+        .string()
+        .required("SEMIS Code is required for this class")
+        .matches(/^\d{9}$/, "SEMIS Code must be exactly 9 digits")
+        .length(9, "SEMIS Code must be exactly 9 digits"),
+
+      district: yup
+        .string()
+        .required("District is required for this class"),
+
+      yearOfPassing: yup
+        .string()
+        .required("Year of passing is required for this class")
+        .matches(/^\d{4}$/, "Year must be 4 digits")
+        .test("valid-year", "Please enter a valid year", (value) => {
+          if (!value) return false;
+          const year = parseInt(value);
+          const currentYear = new Date().getFullYear();
+          return year >= 1950 && year <= currentYear;
+        })
+        .test("chronological-order", "Year should match class progression", function(value) {
+          const { class: className } = this.parent;
+          if (!value || !className) return true;
+          
+          const year = parseInt(value);
+          const currentYear = new Date().getFullYear();
+          
+          // Year should not be in the future
+          if (year > currentYear) return false;
+          
+          return true;
+        }),
+    })
+  ).min(4, "All 4 class records are required").required("Previous school records are required"),
 });
 
 // Validation schema for Step 2 only

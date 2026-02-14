@@ -7,7 +7,7 @@ const stepsList = [
   "address-3",
   "school-info-4",
   "document-upload-5",
-  "test-preference-6",
+  "school-preference-6",
 ];
 
 const stepTitles = [
@@ -16,7 +16,7 @@ const stepTitles = [
   "Address Information",
   "School Information",
   "Document Upload",
-  "Test Preference",
+  "School Preference",
 ];
 
 function Steps() {

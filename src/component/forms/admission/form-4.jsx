@@ -62,7 +62,6 @@ export const Form4 = () => {
   const onSubmit = (data) => {
     console.log("Step 4 - Previous School Information:", data);
     console.log("Previous Class Records (Array of Objects):", data.previous_school);
-    // navigate('/form/test-preference')
     addApplicantSchool(data);
   };
 
@@ -166,7 +165,7 @@ export const Form4 = () => {
               />
             </div>
 
-            <div className="grid grid-cols-2">
+            <div className="grid grid-cols-1">
               <ControlledInputField
                 name="headmasterName"
                 control={control}
@@ -175,13 +174,12 @@ export const Form4 = () => {
                 required
                 errors={errors}
               />
-             
             </div>
 
             {/* Tabular Form - Class 5 to 8 Records */}
             <div className="mt-6 sm:mt-8">
               <h3 className="text-base sm:text-lg font-bold text-gray-800 mb-3 sm:mb-4">
-                Previous Class Records (Class 5 to 8)
+                Previous Class Records (Class 5 to 8) <span className="text-red-500">*</span>
               </h3>
 
               {/* Desktop/Tablet Table View */}
@@ -195,16 +193,16 @@ export const Form4 = () => {
                             Class
                           </th>
                           <th className="border border-gray-300 px-3 lg:px-4 py-2 lg:py-3 text-left text-xs lg:text-sm font-semibold text-gray-700 whitespace-nowrap">
-                            School Category
+                            School Category <span className="text-red-500">*</span>
                           </th>
                           <th className="border border-gray-300 px-3 lg:px-4 py-2 lg:py-3 text-left text-xs lg:text-sm font-semibold text-gray-700 whitespace-nowrap">
-                            SEMIS Code
+                            SEMIS Code <span className="text-red-500">*</span>
                           </th>
                           <th className="border border-gray-300 px-3 lg:px-4 py-2 lg:py-3 text-left text-xs lg:text-sm font-semibold text-gray-700 whitespace-nowrap">
-                            District
+                            District <span className="text-red-500">*</span>
                           </th>
                           <th className="border border-gray-300 px-3 lg:px-4 py-2 lg:py-3 text-left text-xs lg:text-sm font-semibold text-gray-700 whitespace-nowrap">
-                            Year of Passing
+                            Year of Passing <span className="text-red-500">*</span>
                           </th>
                         </tr>
                       </thead>
@@ -240,6 +238,11 @@ export const Form4 = () => {
                                   />
                                 )}
                               />
+                              {errors.previous_school?.[index]?.schoolCategory && (
+                                <span className="text-red-500 text-xs mt-1 block">
+                                  {errors.previous_school[index].schoolCategory.message}
+                                </span>
+                              )}
                             </td>
                             <td className="border border-gray-300 px-3 lg:px-4 py-2 lg:py-3">
                               <Controller
@@ -260,6 +263,11 @@ export const Form4 = () => {
                                   />
                                 )}
                               />
+                              {errors.previous_school?.[index]?.semisCode && (
+                                <span className="text-red-500 text-xs mt-1 block">
+                                  {errors.previous_school[index].semisCode.message}
+                                </span>
+                              )}
                             </td>
                             <td className="border border-gray-300 px-3 lg:px-4 py-2 lg:py-3">
                               <Controller
@@ -279,6 +287,11 @@ export const Form4 = () => {
                                   />
                                 )}
                               />
+                              {errors.previous_school?.[index]?.district && (
+                                <span className="text-red-500 text-xs mt-1 block">
+                                  {errors.previous_school[index].district.message}
+                                </span>
+                              )}
                             </td>
 
                             <td className="border border-gray-300 px-3 lg:px-4 py-2 lg:py-3">
@@ -295,6 +308,11 @@ export const Form4 = () => {
                                   />
                                 )}
                               />
+                              {errors.previous_school?.[index]?.yearOfPassing && (
+                                <span className="text-red-500 text-xs mt-1 block">
+                                  {errors.previous_school[index].yearOfPassing.message}
+                                </span>
+                              )}
                             </td>
                           </tr>
                         ))}
@@ -320,7 +338,7 @@ export const Form4 = () => {
                     <div className="space-y-4">
                       <div>
                         <label className="block text-xs font-semibold text-gray-700 mb-1.5">
-                          School Category
+                          School Category <span className="text-red-500">*</span>
                         </label>
                         <Controller
                           name={`previous_school.${index}.schoolCategory`}
@@ -345,11 +363,16 @@ export const Form4 = () => {
                             />
                           )}
                         />
+                        {errors.previous_school?.[index]?.schoolCategory && (
+                          <span className="text-red-500 text-xs mt-1 block">
+                            {errors.previous_school[index].schoolCategory.message}
+                          </span>
+                        )}
                       </div>
 
                       <div>
                         <label className="block text-xs font-semibold text-gray-700 mb-1.5">
-                          SEMIS Code
+                          SEMIS Code <span className="text-red-500">*</span>
                         </label>
                         <Controller
                           name={`previous_school.${index}.semisCode`}
@@ -369,11 +392,16 @@ export const Form4 = () => {
                             />
                           )}
                         />
+                        {errors.previous_school?.[index]?.semisCode && (
+                          <span className="text-red-500 text-xs mt-1 block">
+                            {errors.previous_school[index].semisCode.message}
+                          </span>
+                        )}
                       </div>
 
                       <div>
                         <label className="block text-xs font-semibold text-gray-700 mb-1.5">
-                          District
+                          District <span className="text-red-500">*</span>
                         </label>
                         <Controller
                           name={`previous_school.${index}.district`}
@@ -392,12 +420,16 @@ export const Form4 = () => {
                             />
                           )}
                         />
+                        {errors.previous_school?.[index]?.district && (
+                          <span className="text-red-500 text-xs mt-1 block">
+                            {errors.previous_school[index].district.message}
+                          </span>
+                        )}
                       </div>
-
 
                       <div>
                         <label className="block text-xs font-semibold text-gray-700 mb-1.5">
-                          Year of Passing
+                          Year of Passing <span className="text-red-500">*</span>
                         </label>
                         <Controller
                           name={`previous_school.${index}.yearOfPassing`}
@@ -412,6 +444,11 @@ export const Form4 = () => {
                             />
                           )}
                         />
+                        {errors.previous_school?.[index]?.yearOfPassing && (
+                          <span className="text-red-500 text-xs mt-1 block">
+                            {errors.previous_school[index].yearOfPassing.message}
+                          </span>
+                        )}
                       </div>
                     </div>
                   </div>
