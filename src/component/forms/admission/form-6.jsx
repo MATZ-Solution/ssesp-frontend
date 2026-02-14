@@ -63,135 +63,150 @@ export const Form6 = () => {
 
   return (
     <FormTemplate>
-      <form
-        onSubmit={handleSubmit(onSubmit)}
-        className="bg-white shadow-xl p-6 sm:p-8 lg:p-10"
-      >
-        <div className="mb-8 space-y-6">
 
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">
-              1st Priority School <span className="text-red-500">*</span>
-            </label>
-
-            <Controller
-              name="first_priority_school"
-              control={control}
-              render={({ field }) => (
-                <Select
-                  options={getAvailableSchools(field.value)}
-                  styles={customSelectStyles(errors)}
-                  placeholder="Select 1st Priority School"
-                  isClearable
-                  isLoading={isLoading}
-                  value={
-                    field.value
-                      ? { value: field.value, label: field.value }
-                      : null
-                  }
-                  onChange={(option) =>
-                    field.onChange(option ? option.value : null)
-                  }
-                />
-              )}
-            />
-
-            {errors.first_priority_school && (
-              <p className="text-red-500 text-sm mt-1">
-                {errors.first_priority_school.message}
-              </p>
-            )}
+      {
+        isLoading ?
+          <div className="flex flex-col items-center justify-center mt-10">
+            <div className="relative w-16 h-16">
+              <div className="absolute top-0 left-0 w-full h-full border-4 border-emerald-200 rounded-full"></div>
+              <div className="absolute top-0 left-0 w-full h-full border-4 border-[#4BA54F] rounded-full animate-spin border-t-transparent"></div>
+            </div>
+            <p className="mt-4 text-gray-600 font-medium">Loading...</p>
           </div>
+          :
+          (data && data?.length > 0) ?
+            <form
+              onSubmit={handleSubmit(onSubmit)}
+              className="bg-white shadow-xl p-6 sm:p-8 lg:p-10"
+            >
+              <div className="mb-8 space-y-6">
 
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">
-              2nd Priority School <span className="text-red-500">*</span>
-            </label>
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                    1st Priority School <span className="text-red-500">*</span>
+                  </label>
 
-            <Controller
-              name="second_priority_school"
-              control={control}
-              render={({ field }) => (
-                <Select
-                  options={getAvailableSchools(field.value)}
-                  styles={customSelectStyles(errors)}
-                  placeholder="Select 2nd Priority School"
-                  isClearable
-                  isLoading={isLoading}
-                  isDisabled={!firstPriority}
-                  value={
-                    field.value
-                      ? { value: field.value, label: field.value }
-                      : null
-                  }
-                  onChange={(option) =>
-                    field.onChange(option ? option.value : null)
-                  }
-                />
-              )}
-            />
+                  <Controller
+                    name="first_priority_school"
+                    control={control}
+                    render={({ field }) => (
+                      <Select
+                        options={getAvailableSchools(field.value)}
+                        styles={customSelectStyles(errors)}
+                        placeholder="Select 1st Priority School"
+                        isClearable
+                        isLoading={isLoading}
+                        value={
+                          field.value
+                            ? { value: field.value, label: field.value }
+                            : null
+                        }
+                        onChange={(option) =>
+                          field.onChange(option ? option.value : null)
+                        }
+                      />
+                    )}
+                  />
 
-            {errors.second_priority_school && (
-              <p className="text-red-500 text-sm mt-1">
-                {errors.second_priority_school.message}
-              </p>
-            )}
-          </div>
+                  {errors.first_priority_school && (
+                    <p className="text-red-500 text-sm mt-1">
+                      {errors.first_priority_school.message}
+                    </p>
+                  )}
+                </div>
 
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">
-              3rd Priority School <span className="text-red-500">*</span>
-            </label>
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                    2nd Priority School <span className="text-red-500">*</span>
+                  </label>
 
-            <Controller
-              name="third_priority_school"
-              control={control}
-              render={({ field }) => (
-                <Select
-                  options={getAvailableSchools(field.value)}
-                  styles={customSelectStyles(errors)}
-                  placeholder="Select 3rd Priority School"
-                  isClearable
-                  isLoading={isLoading}
-                  isDisabled={!secondPriority}
-                  value={
-                    field.value
-                      ? { value: field.value, label: field.value }
-                      : null
-                  }
-                  onChange={(option) =>
-                    field.onChange(option ? option.value : null)
-                  }
-                />
-              )}
-            />
+                  <Controller
+                    name="second_priority_school"
+                    control={control}
+                    render={({ field }) => (
+                      <Select
+                        options={getAvailableSchools(field.value)}
+                        styles={customSelectStyles(errors)}
+                        placeholder="Select 2nd Priority School"
+                        isClearable
+                        isLoading={isLoading}
+                        isDisabled={!firstPriority}
+                        value={
+                          field.value
+                            ? { value: field.value, label: field.value }
+                            : null
+                        }
+                        onChange={(option) =>
+                          field.onChange(option ? option.value : null)
+                        }
+                      />
+                    )}
+                  />
 
-            {errors.third_priority_school && (
-              <p className="text-red-500 text-sm mt-1">
-                {errors.third_priority_school.message}
-              </p>
-            )}
-          </div>
-        </div>
+                  {errors.second_priority_school && (
+                    <p className="text-red-500 text-sm mt-1">
+                      {errors.second_priority_school.message}
+                    </p>
+                  )}
+                </div>
 
-        <div className="flex justify-between">
-          <button
-            type="button"
-            onClick={() => navigate("/form/document-upload-6")}
-            className="px-8 py-3 bg-gray-200 text-gray-700 font-bold rounded-lg shadow hover:shadow-lg hover:bg-gray-300 transform hover:-translate-y-0.5 transition-all duration-200"
-          >
-            ← Previous
-          </button>
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                    3rd Priority School <span className="text-red-500">*</span>
+                  </label>
 
-          <Button
-            isLoading={isPending}
-            type="submit"
-            className="px-8 py-3 bg-gradient-to-r from-blue-600 to-blue-500 text-white font-bold rounded-lg shadow-lg hover:shadow-xl transform hover:-translate-y-0.5 transition-all duration-200"
-          >
-            Submit
-          </Button>
-        </div>
-      </form>
+                  <Controller
+                    name="third_priority_school"
+                    control={control}
+                    render={({ field }) => (
+                      <Select
+                        options={getAvailableSchools(field.value)}
+                        styles={customSelectStyles(errors)}
+                        placeholder="Select 3rd Priority School"
+                        isClearable
+                        isLoading={isLoading}
+                        isDisabled={!secondPriority}
+                        value={
+                          field.value
+                            ? { value: field.value, label: field.value }
+                            : null
+                        }
+                        onChange={(option) =>
+                          field.onChange(option ? option.value : null)
+                        }
+                      />
+                    )}
+                  />
+
+                  {errors.third_priority_school && (
+                    <p className="text-red-500 text-sm mt-1">
+                      {errors.third_priority_school.message}
+                    </p>
+                  )}
+                </div>
+              </div>
+
+              <div className="flex justify-between">
+                <button
+                  type="button"
+                  onClick={() => navigate("/form/document-upload-6")}
+                  className="px-8 py-3 bg-gray-200 text-gray-700 font-bold rounded-lg shadow hover:shadow-lg hover:bg-gray-300 transform hover:-translate-y-0.5 transition-all duration-200"
+                >
+                  ← Previous
+                </button>
+
+                <Button
+                  isLoading={isPending}
+                  type="submit"
+                  className="px-8 py-3 bg-gradient-to-r from-blue-600 to-blue-500 text-white font-bold rounded-lg shadow-lg hover:shadow-xl transform hover:-translate-y-0.5 transition-all duration-200"
+                >
+                  Submit
+                </Button>
+              </div>
+            </form>
+            :
+            <p className="mt-10 text-center">No School Found</p>
+      }
     </FormTemplate>
   );
 };
