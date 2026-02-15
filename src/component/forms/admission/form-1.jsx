@@ -42,13 +42,6 @@ export const Form1 = ({ initialData = {} }) => {
   const watchNoBForm = watch("noBForm");
 
   const files = watch("files");
-  console.log("files: ", files)
-
-  // useEffect(() => {
-  //   if (watchNoBForm) {
-  //     setValue("studentBForm", "");
-  //   }
-  // }, [watchNoBForm, setValue]);
 
   useEffect(() => {
     if (initialData.photoPreview) {
@@ -58,7 +51,6 @@ export const Form1 = ({ initialData = {} }) => {
 
  const onSubmit = (formData) => {
   const dataToSend = new FormData();
-  console.log("Form Data to submit:", formData);
 
   Object.entries(formData).forEach(([key, value]) => {
     if (key === "dob" && value) {

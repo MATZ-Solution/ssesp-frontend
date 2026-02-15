@@ -15,7 +15,7 @@ function Button({
       onClick={onClick}
       disabled={isLoading}
       className={` ${className} flex gap-2 items-center justify-center font-semibold text-white  rounded-full transition
-        ${isLoading ? "opacity-70 cursor-not-allowed" : "hover:bg-[#05929c] cursor-pointer"}`}
+        ${isLoading ? "opacity-70 cursor-not-allowed" : " cursor-pointer"}`}
     >
       {isLoading ? (
         <>

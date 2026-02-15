@@ -60,8 +60,6 @@ export const Form4 = () => {
   });
 
   const onSubmit = (data) => {
-    console.log("Step 4 - Previous School Information:", data);
-    console.log("Previous Class Records (Array of Objects):", data.previous_school);
     addApplicantSchool(data);
   };
 

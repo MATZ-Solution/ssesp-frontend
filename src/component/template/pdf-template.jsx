@@ -1,425 +1,254 @@
-import React, { useState } from 'react';
-import Button from '../button';
-
+import React, { useState } from "react";
+import jsPDF from "jspdf";
+import Button from "../button";
 
 const CandidatePDFDownloader = ({ data }) => {
+  const [isGenerating, setIsGenerating] = useState(false);
 
-  const [isPrinting, setIsPrinting] = useState(false);
+  const downloadPDF = async () => {
+    setIsGenerating(true);
+    
+    try {
+      const doc = new jsPDF("p", "mm", "a4");
+      let y = 20;
 
-  const imageUrl = data?.fileUrl || '';
-  const hasImage = imageUrl && imageUrl.trim() !== '';
+      /* ========================= */
+      /* Title                     */
+      /* ========================= */
+      doc.setFontSize(20);
+      doc.setFont(undefined, 'bold');
+      doc.setTextColor(0, 160, 60); // #00A03C
+      doc.text("CANDIDATE REGISTRATION FORM", 105, y, {
+        align: "center",
+      });
+      y += 8;
+      
+      // Title underline
+      doc.setDrawColor(0, 160, 60);
+      doc.setLineWidth(1);
+      doc.line(20, y, 190, y);
+      y += 15;
 
-  const generatePDF = () => {
-    setIsPrinting(true);
+      /* ========================= */
+      /* Section Title Helper      */
+      /* ========================= */
+      const addSectionTitle = (title) => {
+        doc.setFontSize(13);
+        doc.setFont(undefined, 'bold');
+        doc.setTextColor(255, 255, 255);
+        doc.setFillColor(0, 160, 60); // #00A03C
+        doc.rect(20, y - 6, 170, 9, "F");
+        doc.text(title, 25, y);
+        y += 10;
+        doc.setTextColor(0, 0, 0);
+        doc.setFont(undefined, 'normal');
+      };
 
-    const printWindow = document.createElement('iframe');
-    printWindow.style.position = 'absolute';
-    printWindow.style.width = '0';
-    printWindow.style.height = '0';
-    printWindow.style.border = 'none';
-
-    document.body.appendChild(printWindow);
-
-    const doc = printWindow.contentWindow.document;
-
-    doc.open();
-    doc.write(`
-      <!DOCTYPE html>
-      <html>
-      <head>
-        <title>Candidate Registration Form</title>
-        <script src="https://cdn.tailwindcss.com"></script>
-        <style>
-          @media print {
-            body { 
-              -webkit-print-color-adjust: exact;
-              print-color-adjust: exact;
-            }
-          }
-        </style>
-      </head>
-      <body class="bg-white p-8">
-        <!-- Title -->
-        <div class="text-center mb-8">
-          <h1 class="text-3xl font-bold text-indigo-600 border-b-4 border-indigo-600 pb-3">
-            CANDIDATE REGISTRATION FORM
-          </h1>
-        </div>
+      /* ========================= */
+      /* Row Helper                */
+      /* ========================= */
+      const addRow = (label, value, capitalize = false) => {
+        doc.setFontSize(11);
+        doc.setFont(undefined, 'bold');
+        doc.text(`${label}:`, 25, y);
+        doc.setFont(undefined, 'normal');
         
-        <!-- Personal Information with Picture -->
-        <div class="mb-6">
-          <div class="bg-indigo-600 text-white font-bold text-lg px-4 py-2 mb-4">
-            PERSONAL INFORMATION
-          </div>
-          <div class="flex px-4">
-            <!-- Left side - Personal info -->
-            <div class="flex-grow space-y-2">
-              <div class="flex">
-                <span class="font-semibold w-48">Candidate Name:</span>
-                <span class="text-gray-700">${data.studentName || 'N/A'}</span>
-              </div>
-              <div class="flex">
-                <span class="font-semibold w-48">Gender:</span>
-                <span class="text-gray-700 capitalize">${data.gender || 'N/A'}</span>
-              </div>
-              <div class="flex">
-                <span class="font-semibold w-48">B Form Number:</span>
-                <span class="text-gray-700">${data.studentBForm || 'N/A'}</span>
-              </div>
-              <div class="flex">
-                <span class="font-semibold w-48">Date of Birth:</span>
-                <span class="text-gray-700">${data.dob || 'N/A'}</span>
-              </div>
-              <div class="flex">
-                <span class="font-semibold w-48">Religion:</span>
-                <span class="text-gray-700">${data.religion || 'N/A'}</span>
-              </div>
-            </div>
-            
-            <!-- Right side - Picture -->
-            ${hasImage ? `
-            <div class="flex-shrink-0 ml-8">
-              <img src="${imageUrl}" alt="Candidate" class="w-32 h-32 object-contain border-4 border-indigo-600 rounded-lg shadow-lg" onerror="this.style.display='none'">
-            </div>
-          ` : ''}
-          </div>
-        </div>
+        // Capitalize if needed
+        let displayValue = String(value || "N/A");
+        if (capitalize && value) {
+          displayValue = displayValue.charAt(0).toUpperCase() + displayValue.slice(1).toLowerCase();
+        }
         
-        <!-- Guardian Information -->
-        <div class="mb-6">
-          <div class="bg-indigo-600 text-white font-bold text-lg px-4 py-2 mb-4">
-            FATHER/GUARDIAN INFORMATION
-          </div>
-          <div class="space-y-2 px-4">
-            <div class="flex">
-              <span class="font-semibold w-48">Name:</span>
-              <span class="text-gray-700">${data.guardianName || 'N/A'}</span>
-            </div>
-            <div class="flex">
-              <span class="font-semibold w-48">CNIC:</span>
-              <span class="text-gray-700">${data.guardianCNIC || 'N/A'}</span>
-            </div>
-            <div class="flex">
-              <span class="font-semibold w-48">Relation:</span>
-              <span class="text-gray-700">${data.relation || 'N/A'}</span>
-            </div>
-            <div class="flex">
-              <span class="font-semibold w-48">District of Domicile:</span>
-              <span class="text-gray-700">${data.guardianDomicileDistrict || 'N/A'}</span>
-            </div>
-          </div>
-        </div>
-        
-        <!-- Priority Schools -->
-        <div class="mb-6">
-          <div class="bg-indigo-600 text-white font-bold text-lg px-4 py-2 mb-4">
-            SCHOOL PRIORITY SELECTION
-          </div>
-          <div class="space-y-2 px-4">
-            <div class="flex">
-              <span class="font-semibold w-48">First Priority:</span>
-              <span class="text-gray-700">${data.first_priority_school || 'N/A'}</span>
-            </div>
-            <div class="flex">
-              <span class="font-semibold w-48">Second Priority:</span>
-              <span class="text-gray-700">${data.second_priority_school || 'N/A'}</span>
-            </div>
-            <div class="flex">
-              <span class="font-semibold w-48">Third Priority:</span>
-              <span class="text-gray-700">${data.third_priority_school || 'N/A'}</span>
-            </div>
-          </div>
-        </div>
-        
-      </body>
-      </html>
-    `);
-    doc.close();
+        doc.text(displayValue, 80, y);
+        y += 6;
+      };
 
-    setTimeout(() => {
-      printWindow.contentWindow.focus();
-      printWindow.contentWindow.print();
+      /* ========================= */
+      /* Format Date Helper        */
+      /* ========================= */
+      const formatDate = (dateString) => {
+        if (!dateString) return "N/A";
+        
+        try {
+          const date = new Date(dateString);
+          
+          // Get day, month, year
+          const day = String(date.getDate()).padStart(2, '0');
+          const month = String(date.getMonth() + 1).padStart(2, '0'); // Months are 0-indexed
+          const year = date.getFullYear();
+          
+          // Return in DD/MM/YYYY format
+          return `${day}/${month}/${year}`;
+        } catch (error) {
+          return "N/A";
+        }
+      };
 
-      setTimeout(() => {
-        document.body.removeChild(printWindow);
-        setIsPrinting(false);
-      }, 100);
-    }, 500);
+      /* ========================= */
+      /* PERSONAL INFORMATION      */
+      /* ========================= */
+      addSectionTitle("PERSONAL INFORMATION");
+      const imageStartY = y - 2;
+      
+      addRow("Candidate Name", data?.studentName, true); // Capitalize
+      addRow("Gender", data?.gender, true); // Capitalize
+      addRow("B Form Number", data?.studentBForm);
+      addRow("Date of Birth", formatDate(data?.dob)); // Format date
+      addRow("Religion", data?.religion, true); // Capitalize
+
+      /* ========================= */
+      /* Add Image - AUTO DETECT   */
+      /* ========================= */
+      if (data?.fileUrl) {
+        try {
+          const imageData = await getBase64FromUrl(data.fileUrl);
+          const imageFormat = getImageFormat(imageData);
+          
+          const imgSize = 40;
+          const imgX = 147;
+          const imgY = imageStartY;
+          
+          doc.addImage(
+            imageData,
+            imageFormat,
+            imgX,
+            imgY,
+            imgSize,
+            imgSize
+          );
+          
+          doc.setDrawColor(0, 160, 60);
+          doc.setLineWidth(1);
+          doc.rect(imgX, imgY, imgSize, imgSize);
+          
+        } catch (err) {
+          console.log("Image load failed:", err);
+        }
+      }
+
+      y += 20;
+
+      /* ========================= */
+      /* GUARDIAN INFO             */
+      /* ========================= */
+      addSectionTitle("FATHER / GUARDIAN INFORMATION");
+      addRow("Name", data?.guardianName, true); // Capitalize
+      addRow("CNIC", data?.guardianCNIC);
+      addRow("Relation", data?.relation, true); // Capitalize
+      addRow("District of Domicile", data?.guardianDomicileDistrict, true); // Capitalize
+      
+      y += 8;
+
+      /* ========================= */
+      /* SCHOOL PRIORITY           */
+      /* ========================= */
+      addSectionTitle("SCHOOL PRIORITY SELECTION");
+      addRow("First Priority", data?.first_priority_school, true); // Capitalize
+      addRow("Second Priority", data?.second_priority_school, true); // Capitalize
+      addRow("Third Priority", data?.third_priority_school, true); // Capitalize
+
+      y += 12;
+
+      /* ========================= */
+      /* FOOTER                    */
+      /* ========================= */
+      doc.setDrawColor(200, 200, 200);
+      doc.setLineWidth(0.5);
+      doc.line(20, y, 190, y);
+      y += 6;
+      
+      doc.setFontSize(9);
+      doc.setTextColor(100, 100, 100);
+      doc.setFont(undefined, 'italic');
+      doc.text(`Generated on: ${new Date().toLocaleString()}`, 105, y, {
+        align: "center",
+      });
+
+      /* ========================= */
+      /* SAVE PDF                  */
+      /* ========================= */
+      doc.save(`${data?.studentName || 'Candidate'}_Registration_Form.pdf`);
+
+    } catch (error) {
+      console.error("PDF generation error:", error);
+      alert("Failed to generate PDF. Please try again.");
+    } finally {
+      setIsGenerating(false);
+    }
+  };
+
+  /* ================================================ */
+  /* AUTO-DETECT IMAGE FORMAT FROM BASE64             */
+  /* ================================================ */
+  const getImageFormat = (base64String) => {
+    if (!base64String) return 'JPEG';
+    
+    if (base64String.startsWith('data:image/jpeg') || base64String.startsWith('data:image/jpg')) {
+      return 'JPEG';
+    } else if (base64String.startsWith('data:image/png')) {
+      return 'PNG';
+    } else if (base64String.startsWith('data:image/gif')) {
+      return 'GIF';
+    } else if (base64String.startsWith('data:image/webp')) {
+      return 'WEBP';
+    } else if (base64String.startsWith('data:image/bmp')) {
+      return 'BMP';
+    } else {
+      return 'JPEG';
+    }
+  };
+
+  /* ================================================ */
+  /* Convert Image URL to Base64                      */
+  /* ================================================ */
+  const getBase64FromUrl = async (url) => {
+    const response = await fetch(url);
+    
+    if (!response.ok) {
+      throw new Error(`Failed to fetch image: ${response.status}`);
+    }
+    
+    const blob = await response.blob();
+    
+    return new Promise((resolve, reject) => {
+      const reader = new FileReader();
+      reader.onloadend = () => resolve(reader.result);
+      reader.onerror = reject;
+      reader.readAsDataURL(blob);
+    });
   };
 
   return (
     <Button
-      onClick={generatePDF}
-      className="px-8 py-3 bg-[#00A03C] text-white font-bold rounded-lg shadow-lg hover:shadow-xl transform hover:-translate-y-0.5 transition-all duration-200"
+      onClick={downloadPDF}
+      disabled={isGenerating}
+      className="px-8 py-3 bg-[#00A03C] hover:bg-[#028d37] text-white font-bold rounded-lg shadow-lg hover:shadow-xl transform hover:-translate-y-0.5 transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
     >
-      Download PDF
+      {isGenerating ? (
+        <span className="flex items-center justify-center">
+          <svg className="animate-spin h-5 w-5 mr-2" viewBox="0 0 24 24">
+            <circle 
+              className="opacity-25" 
+              cx="12" 
+              cy="12" 
+              r="10" 
+              stroke="currentColor" 
+              strokeWidth="4" 
+              fill="none"
+            />
+            <path 
+              className="opacity-75" 
+              fill="currentColor" 
+              d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
+            />
+          </svg>
+          Generating PDF...
+        </span>
+      ) : (
+        'Download PDF'
+      )}
     </Button>
-
   );
 };
 
-
-// const CandidatePDFDownloader = ({data}) => {
-
-//     const [isPrinting, setIsPrinting] = useState(false);
-
-//     const candidateData = {
-//         candidateName: "Ahmed Ali Khan",
-//         gender: "Male",
-//         bForm: "42101-1234567-1",
-//         dob: "2008-03-15",
-//         religion: "Islam",
-//         // Candidate Picture (Base64) - Replace this with your actual image
-//         candidatePicture: "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='200' height='200'%3E%3Crect width='200' height='200' fill='%234F46E5'/%3E%3Ctext x='50%25' y='50%25' dominant-baseline='middle' text-anchor='middle' font-family='Arial' font-size='80' fill='white'%3EAA%3C/text%3E%3C/svg%3E",
-//         guardianName: "Muhammad Ali Khan",
-//         guardianCNIC: "42101-9876543-1",
-//         relation: "Father",
-//         domicileDistrict: "Karachi",
-//         guardianProfession: "Business Owner",
-//         annualIncome: "800000",
-//         phoneNumber: "0321-1234567",
-//         whatsappNumber: "0321-1234567",
-//         postalAddress: "House No. 123, Block A, Gulshan-e-Iqbal, Karachi",
-//         division: "Karachi",
-//         district: "Karachi Central",
-//         schoolName: "Karachi Grammar School",
-//         schoolCategory: "Private",
-//         schoolCode: "KHI-KGS-001",
-//         currentClass: "9th",
-//         enrollmentYear: "2020",
-//         grNumber: "GR-2020-12345",
-//         principalName: "Dr. Sarah Ahmed",
-//         firstPrioritySchool: "Karachi Grammar School",
-//         secondPrioritySchool: "Beaconhouse School System",
-//         thirdPrioritySchool: "The City School"
-//     };
-
-//     const generatePDF = () => {
-//         setIsPrinting(true);
-
-//         const printWindow = document.createElement('iframe');
-//         printWindow.style.position = 'absolute';
-//         printWindow.style.width = '0';
-//         printWindow.style.height = '0';
-//         printWindow.style.border = 'none';
-
-//         document.body.appendChild(printWindow);
-
-//         const doc = printWindow.contentWindow.document;
-
-//         doc.open();
-//         doc.write(`
-//       <!DOCTYPE html>
-//       <html>
-//       <head>
-//         <title>Candidate Registration Form</title>
-//         <script src="https://cdn.tailwindcss.com"></script>
-//         <style>
-//           @media print {
-//             body { 
-//               -webkit-print-color-adjust: exact;
-//               print-color-adjust: exact;
-//             }
-//           }
-//         </style>
-//       </head>
-//       <body class="bg-white p-8">
-//         <!-- Title -->
-//         <div class="text-center mb-8">
-//           <h1 class="text-3xl font-bold text-indigo-600 border-b-4 border-indigo-600 pb-3">
-//             CANDIDATE REGISTRATION FORM
-//           </h1>
-//         </div>
-
-//         <!-- Personal Information with Picture -->
-//         <div class="mb-6">
-//           <div class="bg-indigo-600 text-white font-bold text-lg px-4 py-2 mb-4">
-//             PERSONAL INFORMATION
-//           </div>
-//           <div class="flex px-4">
-//             <!-- Left side - Personal info -->
-//             <div class="flex-grow space-y-2">
-//               <div class="flex">
-//                 <span class="font-semibold w-48">Candidate Name:</span>
-//                 <span class="text-gray-700">${candidateData.candidateName}</span>
-//               </div>
-//               <div class="flex">
-//                 <span class="font-semibold w-48">Gender:</span>
-//                 <span class="text-gray-700">${candidateData.gender}</span>
-//               </div>
-//               <div class="flex">
-//                 <span class="font-semibold w-48">B Form Number:</span>
-//                 <span class="text-gray-700">${candidateData.bForm}</span>
-//               </div>
-//               <div class="flex">
-//                 <span class="font-semibold w-48">Date of Birth:</span>
-//                 <span class="text-gray-700">${candidateData.dob}</span>
-//               </div>
-//               <div class="flex">
-//                 <span class="font-semibold w-48">Religion:</span>
-//                 <span class="text-gray-700">${candidateData.religion}</span>
-//               </div>
-//             </div>
-
-//             <!-- Right side - Picture -->
-//             ${candidateData.candidatePicture ? `
-//               <div class="flex-shrink-0 ml-8">
-//                 <img src="${candidateData.candidatePicture}" alt="Candidate" class="w-32 h-32 object-cover border-4 border-indigo-600 rounded-lg shadow-lg">
-//               </div>
-//             ` : ''}
-//           </div>
-//         </div>
-
-//         <!-- Guardian Information -->
-//         <div class="mb-6">
-//           <div class="bg-indigo-600 text-white font-bold text-lg px-4 py-2 mb-4">
-//             FATHER/GUARDIAN INFORMATION
-//           </div>
-//           <div class="space-y-2 px-4">
-//             <div class="flex">
-//               <span class="font-semibold w-48">Name:</span>
-//               <span class="text-gray-700">${candidateData.guardianName}</span>
-//             </div>
-//             <div class="flex">
-//               <span class="font-semibold w-48">CNIC:</span>
-//               <span class="text-gray-700">${candidateData.guardianCNIC}</span>
-//             </div>
-//             <div class="flex">
-//               <span class="font-semibold w-48">Relation:</span>
-//               <span class="text-gray-700">${candidateData.relation}</span>
-//             </div>
-//             <div class="flex">
-//               <span class="font-semibold w-48">District of Domicile:</span>
-//               <span class="text-gray-700">${candidateData.domicileDistrict}</span>
-//             </div>
-//             <div class="flex">
-//               <span class="font-semibold w-48">Profession:</span>
-//               <span class="text-gray-700">${candidateData.guardianProfession}</span>
-//             </div>
-//             <div class="flex">
-//               <span class="font-semibold w-48">Annual Income:</span>
-//               <span class="text-gray-700">Rs. ${candidateData.annualIncome}</span>
-//             </div>
-//           </div>
-//         </div>
-
-//         <!-- Contact Information -->
-//         <div class="mb-6">
-//           <div class="bg-indigo-600 text-white font-bold text-lg px-4 py-2 mb-4">
-//             CONTACT INFORMATION
-//           </div>
-//           <div class="space-y-2 px-4">
-//             <div class="flex">
-//               <span class="font-semibold w-48">Phone Number:</span>
-//               <span class="text-gray-700">${candidateData.phoneNumber}</span>
-//             </div>
-//             <div class="flex">
-//               <span class="font-semibold w-48">WhatsApp Number:</span>
-//               <span class="text-gray-700">${candidateData.whatsappNumber}</span>
-//             </div>
-//             <div class="flex">
-//               <span class="font-semibold w-48">Postal Address:</span>
-//               <span class="text-gray-700">${candidateData.postalAddress}</span>
-//             </div>
-//             <div class="flex">
-//               <span class="font-semibold w-48">Division:</span>
-//               <span class="text-gray-700">${candidateData.division}</span>
-//             </div>
-//             <div class="flex">
-//               <span class="font-semibold w-48">District:</span>
-//               <span class="text-gray-700">${candidateData.district}</span>
-//             </div>
-//           </div>
-//         </div>
-
-//         <!-- School Information -->
-//         <div class="mb-6">
-//           <div class="bg-indigo-600 text-white font-bold text-lg px-4 py-2 mb-4">
-//             CURRENT SCHOOL INFORMATION
-//           </div>
-//           <div class="space-y-2 px-4">
-//             <div class="flex">
-//               <span class="font-semibold w-48">School Name:</span>
-//               <span class="text-gray-700">${candidateData.schoolName}</span>
-//             </div>
-//             <div class="flex">
-//               <span class="font-semibold w-48">School Category:</span>
-//               <span class="text-gray-700">${candidateData.schoolCategory}</span>
-//             </div>
-//             <div class="flex">
-//               <span class="font-semibold w-48">School SEMIS/Code:</span>
-//               <span class="text-gray-700">${candidateData.schoolCode}</span>
-//             </div>
-//             <div class="flex">
-//               <span class="font-semibold w-48">Current Class:</span>
-//               <span class="text-gray-700">${candidateData.currentClass}</span>
-//             </div>
-//             <div class="flex">
-//               <span class="font-semibold w-48">Year of Enrollment:</span>
-//               <span class="text-gray-700">${candidateData.enrollmentYear}</span>
-//             </div>
-//             <div class="flex">
-//               <span class="font-semibold w-48">School GR Number:</span>
-//               <span class="text-gray-700">${candidateData.grNumber}</span>
-//             </div>
-//             <div class="flex">
-//               <span class="font-semibold w-48">Principal Name:</span>
-//               <span class="text-gray-700">${candidateData.principalName}</span>
-//             </div>
-//           </div>
-//         </div>
-
-//         <!-- Priority Schools -->
-//         <div class="mb-6">
-//           <div class="bg-indigo-600 text-white font-bold text-lg px-4 py-2 mb-4">
-//             SCHOOL PRIORITY SELECTION
-//           </div>
-//           <div class="space-y-2 px-4">
-//             <div class="flex">
-//               <span class="font-semibold w-48">First Priority:</span>
-//               <span class="text-gray-700">${candidateData.firstPrioritySchool}</span>
-//             </div>
-//             <div class="flex">
-//               <span class="font-semibold w-48">Second Priority:</span>
-//               <span class="text-gray-700">${candidateData.secondPrioritySchool}</span>
-//             </div>
-//             <div class="flex">
-//               <span class="font-semibold w-48">Third Priority:</span>
-//               <span class="text-gray-700">${candidateData.thirdPrioritySchool}</span>
-//             </div>
-//           </div>
-//         </div>
-
-//         <!-- Footer -->
-//         <div class="border-t-2 border-gray-300 mt-8 pt-4 text-center text-sm text-gray-500">
-//           Generated on: ${new Date().toLocaleString()}
-//         </div>
-//       </body>
-//       </html>
-//     `);
-//         doc.close();
-
-//         setTimeout(() => {
-//             printWindow.contentWindow.focus();
-//             printWindow.contentWindow.print();
-
-//             setTimeout(() => {
-//                 document.body.removeChild(printWindow);
-//                 setIsPrinting(false);
-//             }, 100);
-//         }, 500);
-//     };
-
-//     return (
-//         <Button
-//             onClick={generatePDF}
-//             className="px-8 py-3 bg-gradient-to-r from-blue-600 to-blue-500 text-white font-bold rounded-lg shadow-lg hover:shadow-xl transform hover:-translate-y-0.5 transition-all duration-200"
-//         >
-//             Download PDF
-//         </Button>
-
-//     );
-// };
-
 export default CandidatePDFDownloader;
-
