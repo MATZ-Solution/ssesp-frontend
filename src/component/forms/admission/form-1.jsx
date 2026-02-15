@@ -42,13 +42,6 @@ export const Form1 = ({ initialData = {} }) => {
   const watchNoBForm = watch("noBForm");
 
   const files = watch("files");
-  console.log("files: ", files)
-
-  useEffect(() => {
-    if (watchNoBForm) {
-      setValue("studentBForm", "");
-    }
-  }, [watchNoBForm, setValue]);
 
   useEffect(() => {
     if (initialData.photoPreview) {
@@ -56,13 +49,21 @@ export const Form1 = ({ initialData = {} }) => {
     }
   }, [initialData.photoPreview]);
 
-  const onSubmit = (formData) => {
-    const dataToSend = new FormData();
-    Object.entries(formData).forEach(([key, value]) => {
+ const onSubmit = (formData) => {
+  const dataToSend = new FormData();
+
+  Object.entries(formData).forEach(([key, value]) => {
+    if (key === "dob" && value) {
+      const formattedDate = new Date(value).toISOString().split("T")[0];
+      dataToSend.append("dob", formattedDate);
+    } else {
       dataToSend.append(key, value);
-    });
-    addApplicant(dataToSend);
-  };
+    }
+  });
+
+  addApplicant(dataToSend);
+};
+
 
   return (
     <FormTemplate>
@@ -102,6 +103,8 @@ export const Form1 = ({ initialData = {} }) => {
                     control={control}
                     errors={errors}
                     watchNoBForm={watchNoBForm}
+                    setValue={setValue}
+
                   />
                 </div>
 
@@ -117,15 +120,15 @@ export const Form1 = ({ initialData = {} }) => {
                       <input
                         {...field}
                         type="date" 
-                        min="2012-01-01"
-                        max="2018-12-31"
+                        min="2011-01-01"
+                        max="2015-12-31"
                         className={`w-full px-4 py-2.5 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none ${errors.dob ? "border-red-500 bg-red-50" : "border-gray-300"
                           }`}
                       />
                     )}
                   />
                   {errors.dob && <span className="text-red-500 text-xs mt-1">{errors.dob.message}</span>}
-                  <p className="text-xs text-gray-500 mt-1">Select date between 2012-2018</p>
+                  <p className="text-xs text-gray-500 mt-1">Select date between 2011-2015</p>
                 </div>
 
                 {/* Religion */}

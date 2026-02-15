@@ -23,7 +23,7 @@ function FormHeader() {
                     <div className="mb-4">
                         <div className="bg-white/20 backdrop-blur-sm rounded-lg py-2 px-4 inline-block border border-white/20">
                             <p className="text-sm sm:text-base">
-                                Application Form for Students of Government and SEF Schools in Grade 8, 9
+                                Application Form for Students of Government and SEF Schools in Grade 8
                             </p>
                         </div>
                     </div>

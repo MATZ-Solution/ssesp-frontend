@@ -1,9 +1,14 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import Navbar from './Navbar';
+import { useGetApplicantPDFinfo } from '../../api/client/applicant';
+import CandidatePDFDownloader from './template/pdf-template';
 
 const ApplicationSubmitted = () => {
+
     const navigate = useNavigate();
+
+    const { data, isSuccess, isError, isLoading } = useGetApplicantPDFinfo()
 
     return (
         <div className='max-w-5xl mx-auto'>
@@ -115,8 +120,14 @@ const ApplicationSubmitted = () => {
                                     support@example.com
                                 </a>
                             </p> */}
+                            <div className='flex justify-center'>
+                                {isLoading ? <p>Loading...</p> :
+                                    <CandidatePDFDownloader data={data[0]} />
+                                }
+                            </div>
                         </div>
                     </div>
+
 
                     {/* Additional Info Cards */}
                     {/* <div className="grid md:grid-cols-3 gap-4 mt-6">
@@ -151,6 +162,8 @@ const ApplicationSubmitted = () => {
                         </div>
                     </div> */}
                 </div>
+
+
             </div>
         </div>
     );

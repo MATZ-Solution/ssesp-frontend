@@ -35,7 +35,6 @@ export const Form6 = () => {
   });
 
   const onSubmit = async (formData) => {
-    console.log("School Preferences:", formData);
     addSchoolPreference(formData);
   };
 

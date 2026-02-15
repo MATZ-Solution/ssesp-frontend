@@ -10,7 +10,6 @@ const ProtectedRouteForm = ({ children }) => {
 
     const currentStepName = useSelector(state => state.auth.user.formStatus)
     
-    console.log("currentStepName: ", currentStepName)
 
     const currentStepNumber = formPath.split("-")[2];
 

@@ -285,3 +285,21 @@ export function useGetApplicantSchoolPreference() {
     isLoading,
   };
 }
+
+export function useGetApplicantPDFinfo() {
+  const { data, isSuccess, isPending, isError, isLoading } = useQuery({
+    queryKey: [API_ROUTE.applicant.getApplicantPDFinfo],
+    queryFn: async () =>
+      await api.get(`${API_ROUTE.applicant.getApplicantPDFinfo}`),
+    // enabled: id !== undefined && id !== null,
+    staleTime: 60 * 1000 * 5, // 5 minute,
+    retry: 1,
+  });
+  return {
+    data: data?.data?.data,
+    isSuccess,
+    isPending,
+    isError,
+    isLoading,
+  };
+}

@@ -60,8 +60,6 @@ export const Form4 = () => {
   });
 
   const onSubmit = (data) => {
-    console.log("Step 4 - Previous School Information:", data);
-    console.log("Previous Class Records (Array of Objects):", data.previous_school);
     addApplicantSchool(data);
   };
 
@@ -193,10 +191,10 @@ export const Form4 = () => {
                             Class
                           </th>
                           <th className="border border-gray-300 px-3 lg:px-4 py-2 lg:py-3 text-left text-xs lg:text-sm font-semibold text-gray-700 whitespace-nowrap">
-                            School Category <span className="text-red-500">*</span>
+                            School Category  <span className="text-red-500">*</span>
                           </th>
                           <th className="border border-gray-300 px-3 lg:px-4 py-2 lg:py-3 text-left text-xs lg:text-sm font-semibold text-gray-700 whitespace-nowrap">
-                            SEMIS Code <span className="text-red-500">*</span>
+                            School / SEMIS Code <span className="text-red-500">*</span>
                           </th>
                           <th className="border border-gray-300 px-3 lg:px-4 py-2 lg:py-3 text-left text-xs lg:text-sm font-semibold text-gray-700 whitespace-nowrap">
                             District <span className="text-red-500">*</span>

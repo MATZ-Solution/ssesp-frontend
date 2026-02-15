@@ -41,9 +41,7 @@ export const Form3 = () => {
     useDivisionDistricts(divisionData);
 
   const onSubmit = (formData) => {
-    console.log("Step 3 - Address Information:", formData);
     addApplicantAddress(formData);
-    // navigate('/form/school-info')
   };
 
   return (
