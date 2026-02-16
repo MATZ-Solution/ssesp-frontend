@@ -37,9 +37,9 @@ export const router = createBrowserRouter([
     path: "/form/guardian-info-2",
     element: (
       <ProtectedRoute>
-        {/* <ProtectedRouteForm> */}
+        <ProtectedRouteForm>
           <Form2 />
-        {/* </ProtectedRouteForm> */}
+        </ProtectedRouteForm>
       </ProtectedRoute>
     ),
   },

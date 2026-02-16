@@ -19,11 +19,7 @@ export const step1Schema = yup.object().shape({
   noBForm: yup
     .boolean()
     .default(false),
-    sefSiblingStudying: yup
-  .string()
-  .required("Please select an option"),
-
-
+ 
 
   studentBForm: yup
     .string()
