@@ -297,6 +297,7 @@ export function useGetApplicantPDFinfo() {
   });
   return {
     data: data?.data?.data,
+    previous_school: data?.data?.previous_school,
     isSuccess,
     isPending,
     isError,
