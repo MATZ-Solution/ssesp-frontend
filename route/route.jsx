@@ -27,9 +27,9 @@ export const router = createBrowserRouter([
     path: "/form/student-info-1",
     element: (
       <ProtectedRoute>
-        <ProtectedRouteForm>
+        {/* <ProtectedRouteForm> */}
           <Form1 />
-        </ProtectedRouteForm>
+        {/* </ProtectedRouteForm> */}
       </ProtectedRoute>
     ),
   },

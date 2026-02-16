@@ -36,10 +36,23 @@ export const Form1 = ({ initialData = {} }) => {
       religion: initialData.religion || null,
       files: initialData.files || null,
       noBForm: initialData.noBForm || false,
+
+  sefSiblingStudying: initialData.sefSiblingStudying || "",  // NEW
+  sefSiblingCount: initialData.sefSiblingCount || "",        // NEW
     },
   });
 
+    const watchSefSibling = watch("sefSiblingStudying");
+
+  useEffect(() => {
+  if (watchSefSibling !== "yes") {
+    setValue("sefSiblingCount", "");
+  }
+}, [watchSefSibling, setValue]);
+
+
   const watchNoBForm = watch("noBForm");
+
 
   const files = watch("files");
 
@@ -152,7 +165,40 @@ export const Form1 = ({ initialData = {} }) => {
                   />
                   {errors.religion && <span className="text-red-500 text-xs mt-1">{errors.religion.message}</span>}
                 </div>
+
+                {/* SEF Sibling Question */}
+<div className="space-y-4">
+  <ControlledRadioGroup
+    name="sefSiblingStudying"
+    control={control}
+    label="Are your siblings currently studying under the SEF scholarship program?"
+    options={[
+      { value: "yes", label: "Yes" },
+      { value: "no", label: "No" },
+    ]}
+    required
+    errors={errors}
+  />
+
+  {watchSefSibling === "yes" && (
+    <ControlledInputField
+      name="sefSiblingCount"
+      control={control}
+      label="How many siblings? (Maximum 2)"
+      type="number"
+      placeholder="Enter number (Max 2)"
+      required
+      errors={errors}
+      inputProps={{
+        min: 1,
+        max: 2,
+      }}
+    />
+  )}
+</div>
               </div>
+
+
 
               {/* Photo Upload */}
               <div className="lg:col-span-1">

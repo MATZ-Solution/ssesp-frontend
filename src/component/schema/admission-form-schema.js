@@ -19,6 +19,22 @@ export const step1Schema = yup.object().shape({
   noBForm: yup
     .boolean()
     .default(false),
+    sefSiblingStudying: yup
+  .string()
+  .required("Please select an option"),
+
+sefSiblingCount: yup
+  .number()
+  .when("sefSiblingStudying", {
+    is: "yes",
+    then: (schema) =>
+      schema
+        .required("Please enter number of siblings")
+        .min(1, "Minimum 1")
+        .max(2, "Maximum allowed is 2"),
+    otherwise: (schema) => schema.notRequired(),
+  }),
+
 
   studentBForm: yup
     .string()
