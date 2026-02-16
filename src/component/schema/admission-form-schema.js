@@ -229,8 +229,7 @@ export const step2Schema = yup.object().shape({
     then: (schema) =>
       schema
         .required("Please enter number of siblings")
-        .min(1, "Minimum 1")
-        .max(2, "Maximum allowed is 2"),
+        .oneOf([1, 2], "Only 1 or 2 siblings are allowed"),
     otherwise: (schema) => schema.notRequired(),
   }),
 
