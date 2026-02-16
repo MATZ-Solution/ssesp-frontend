@@ -1,15 +1,15 @@
 import React from 'react';
-import { useNavigate } from 'react-router-dom';
 import Navbar from './Navbar';
-import { useGetApplicantPDFinfo } from '../../api/client/applicant';
+import { useNavigate } from 'react-router-dom';
 import CandidatePDFDownloader from './template/pdf-template';
+import { useGetApplicantPDFinfo } from '../../api/client/applicant';
 
 const ApplicationSubmitted = () => {
 
     const { data, previous_school, priority_school, isSuccess, isError, isLoading } = useGetApplicantPDFinfo()
-    console.log("priority_school: ", priority_school)
+    
     return (
-        <div className='max-w-5xl mx-auto'>
+        <div className='max-w-5xl mx-auto py-8 px-4 sm:px-6 lg:px-8'>
             <Navbar />
             <div className="mt-10 flex items-center justify-center p-4">
 
