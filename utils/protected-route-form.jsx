@@ -9,10 +9,11 @@ const ProtectedRouteForm = ({ children }) => {
     const formNumber = formPath.split("-")[2];
 
     const currentStepName = useSelector(state => state.auth.user.formStatus)
-    
-
     const currentStepNumber = formPath.split("-")[2];
 
+    console.log("currentStepName: ", currentStepName)
+
+    // initially if form status is null navigate form 1
     if (!currentStepName) {
         if (formPath !== "student-info-1") {
             return <Navigate to={`/form/student-info-1`} replace />
@@ -20,12 +21,15 @@ const ProtectedRouteForm = ({ children }) => {
         return children;
     }
 
+    if (currentStepName === 'completed') {
+        return <Navigate to={`/form/complete`} replace />
+    }
+
     if (currentStepName && (Number(formNumber) <= Number(currentStepNumber))) {
         return children;
     }
-    
+
     <Navigate to={`/form/${currentStepName}`} replace />;
-    console.log("1")
     return children
 };
 

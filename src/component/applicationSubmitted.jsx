@@ -6,8 +6,8 @@ import CandidatePDFDownloader from './template/pdf-template';
 
 const ApplicationSubmitted = () => {
 
-    const { data, previous_school, isSuccess, isError, isLoading } = useGetApplicantPDFinfo()
-
+    const { data, previous_school, priority_school, isSuccess, isError, isLoading } = useGetApplicantPDFinfo()
+    console.log("priority_school: ", priority_school)
     return (
         <div className='max-w-5xl mx-auto'>
             <Navbar />
@@ -120,7 +120,7 @@ const ApplicationSubmitted = () => {
                             </p> */}
                             <div className='flex justify-center'>
                                 {isLoading ? <p>Loading...</p> :
-                                    <CandidatePDFDownloader data={data[0]} previous_school={previous_school}/>
+                                    <CandidatePDFDownloader data={data[0]} previous_school={previous_school} priority_school={priority_school}/>
                                 }
                             </div>
                         </div>

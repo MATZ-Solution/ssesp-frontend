@@ -1,3 +1,4 @@
+import { useEffect } from "react";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { useForm, Controller } from "react-hook-form";
 import { step5Schema } from "../../schema/admission-form-schema";
@@ -24,18 +25,36 @@ export const Form6 = () => {
     handleSubmit,
     control,
     watch,
+    reset,
     formState: { errors },
   } = useForm({
     resolver: yupResolver(step5Schema),
     defaultValues: {
-      first_priority_school: null,
-      second_priority_school: null,
-      third_priority_school: null,
+      priority: []
     },
   });
 
+  // Reset form when data is loaded
+  useEffect(() => {
+    if (data && data.length > 0) {
+      reset({
+        priority: data.map((_, index) => ({
+          schoolName: null,
+          priority: index + 1
+        }))
+      });
+    }
+  }, [data, reset]);
+
   const onSubmit = async (formData) => {
-    addSchoolPreference(formData);
+    
+    const validPriorities = formData.priority.filter(p => p.schoolName !== null);
+    if (validPriorities.length === 0) {
+      console.log("No schools selected");
+      return;
+    }
+    
+    addSchoolPreference({ priority: validPriorities });
   };
 
   const schools =
@@ -44,25 +63,20 @@ export const Form6 = () => {
       label: item.school_name,
     })) || [];
 
-  const firstPriority = watch("first_priority_school");
-  const secondPriority = watch("second_priority_school");
-  const thirdPriority = watch("third_priority_school");
+  const watchedPriorities = watch("priority");
 
-  const getAvailableSchools = (currentValue) => {
-    return schools.filter((school) => {
-      if (school.value === currentValue) return true;
+  const getAvailableSchools = (currentIndex) => {
+    const selectedSchools = watchedPriorities
+      ?.map((p, idx) => idx !== currentIndex ? p?.schoolName : null)
+      .filter(Boolean) || [];
 
-      return (
-        school.value !== firstPriority &&
-        school.value !== secondPriority &&
-        school.value !== thirdPriority
-      );
-    });
+    return schools.filter((school) =>
+      !selectedSchools.includes(school.value)
+    );
   };
 
   return (
     <FormTemplate>
-
       {
         isLoading ?
           <div className="flex flex-col items-center justify-center mt-10">
@@ -79,110 +93,48 @@ export const Form6 = () => {
               className="bg-white shadow-xl p-6 sm:p-8 lg:p-10"
             >
               <div className="mb-8 space-y-6">
+                {data?.map((_, index) => {
+                  const priorityNumber = index + 1;
+                  const ordinal = priorityNumber === 1 ? "1st" :
+                    priorityNumber === 2 ? "2nd" :
+                      priorityNumber === 3 ? "3rd" :
+                        `${priorityNumber}th`;
 
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
-                    1st Priority School <span className="text-red-500">*</span>
-                  </label>
+                  return (
+                    <div key={index}>
+                      <label className="block text-sm font-medium text-gray-700 mb-2">
+                        {ordinal} Priority School <span className="text-red-500">*</span>
+                      </label>
 
-                  <Controller
-                    name="first_priority_school"
-                    control={control}
-                    render={({ field }) => (
-                      <Select
-                        options={getAvailableSchools(field.value)}
-                        styles={customSelectStyles(errors)}
-                        placeholder="Select 1st Priority School"
-                        isClearable
-                        isLoading={isLoading}
-                        value={
-                          field.value
-                            ? { value: field.value, label: field.value }
-                            : null
-                        }
-                        onChange={(option) =>
-                          field.onChange(option ? option.value : null)
-                        }
+                      <Controller
+                        name={`priority.${index}.schoolName`}
+                        control={control}
+                        render={({ field }) => (
+                          <Select
+                            options={getAvailableSchools(index)}
+                            styles={customSelectStyles(errors)}
+                            placeholder={`Select ${ordinal} Priority School`}
+                            isClearable
+                            isLoading={isLoading}
+                            value={
+                              field.value
+                                ? { value: field.value, label: field.value }
+                                : null
+                            }
+                            onChange={(option) =>
+                              field.onChange(option ? option.value : null)
+                            }
+                          />
+                        )}
                       />
-                    )}
-                  />
-
-                  {errors.first_priority_school && (
-                    <p className="text-red-500 text-sm mt-1">
-                      {errors.first_priority_school.message}
-                    </p>
-                  )}
-                </div>
-
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
-                    2nd Priority School <span className="text-red-500">*</span>
-                  </label>
-
-                  <Controller
-                    name="second_priority_school"
-                    control={control}
-                    render={({ field }) => (
-                      <Select
-                        options={getAvailableSchools(field.value)}
-                        styles={customSelectStyles(errors)}
-                        placeholder="Select 2nd Priority School"
-                        isClearable
-                        isLoading={isLoading}
-                        isDisabled={!firstPriority}
-                        value={
-                          field.value
-                            ? { value: field.value, label: field.value }
-                            : null
-                        }
-                        onChange={(option) =>
-                          field.onChange(option ? option.value : null)
-                        }
-                      />
-                    )}
-                  />
-
-                  {errors.second_priority_school && (
-                    <p className="text-red-500 text-sm mt-1">
-                      {errors.second_priority_school.message}
-                    </p>
-                  )}
-                </div>
-
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
-                    3rd Priority School <span className="text-red-500">*</span>
-                  </label>
-
-                  <Controller
-                    name="third_priority_school"
-                    control={control}
-                    render={({ field }) => (
-                      <Select
-                        options={getAvailableSchools(field.value)}
-                        styles={customSelectStyles(errors)}
-                        placeholder="Select 3rd Priority School"
-                        isClearable
-                        isLoading={isLoading}
-                        isDisabled={!secondPriority}
-                        value={
-                          field.value
-                            ? { value: field.value, label: field.value }
-                            : null
-                        }
-                        onChange={(option) =>
-                          field.onChange(option ? option.value : null)
-                        }
-                      />
-                    )}
-                  />
-
-                  {errors.third_priority_school && (
-                    <p className="text-red-500 text-sm mt-1">
-                      {errors.third_priority_school.message}
-                    </p>
-                  )}
-                </div>
+                      {errors.priority?.[index]?.schoolName && (
+                        <p className="text-red-500 text-sm mt-1">
+                          {errors.priority[index].schoolName.message}
+                        </p>
+                      )}
+                    </div>
+                  );
+                })}
               </div>
 
               <div className="flex justify-between">

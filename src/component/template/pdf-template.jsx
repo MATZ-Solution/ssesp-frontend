@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import jsPDF from "jspdf";
 import Button from "../button";
 
-const CandidatePDFDownloader = ({ data, previous_school }) => {
+const CandidatePDFDownloader = ({ data, previous_school, priority_school }) => {
   const [isGenerating, setIsGenerating] = useState(false);
 
   const downloadPDF = async () => {
@@ -307,9 +307,23 @@ const CandidatePDFDownloader = ({ data, previous_school }) => {
       /* SCHOOL PRIORITY           */
       /* ========================= */
       addSectionTitle("SCHOOL PRIORITY SELECTION");
-      addRow("First Priority", data?.first_priority_school, true); // Capitalize
-      addRow("Second Priority", data?.second_priority_school, true); // Capitalize
-      addRow("Third Priority", data?.third_priority_school, true); // Capitalize
+
+      if (priority_school && priority_school?.length > 0) {
+        priority_school?.forEach((item, index) => {
+          const priorityNumber = index + 1;
+          const ordinal = priorityNumber === 1 ? "First" :
+            priorityNumber === 2 ? "Second" :
+              priorityNumber === 3 ? "Third" :
+                priorityNumber === 4 ? "Fourth" :
+                  `${priorityNumber}th`;
+          addRow(`${ordinal} Priority`, item.schoolName, true);
+        });
+      } else {
+        addRow("No Priority", "No school priorities selected", false);
+      }
+      // addRow("First Priority", data?.first_priority_school, true); // Capitalize
+      // addRow("Second Priority", data?.second_priority_school, true); // Capitalize
+      // addRow("Third Priority", data?.third_priority_school, true); // Capitalize
 
       y += 12;
 

@@ -27,7 +27,6 @@ export function useAddApplicantInfo() {
         timeout: 30000,
       }),
     onSuccess: (data) => {
-      toast.success("Success");
       dispatch(setFormStatus({ formStatus: 'guardian-info-2' }))
       navigate("/form/guardian-info-2");
       queryClient.invalidateQueries({
@@ -56,7 +55,6 @@ export function useAddApplicantGuardianInfo() {
     mutationFn: async (data) =>
       await api.put(`${API_ROUTE.applicant.addApplicantGuardianInfo}`, data),
     onSuccess: (data) => {
-      toast.success("Success");
       dispatch(setFormStatus({ formStatus: 'address-3' }))
       navigate("/form/address-3");
       queryClient.invalidateQueries({
@@ -86,7 +84,6 @@ export function useAddApplicantAddressInfo() {
     mutationFn: async (data) =>
       await api.put(`${API_ROUTE.applicant.addApplicantAddressInfo}`, data),
     onSuccess: (data) => {
-      toast.success("Success");
       dispatch(setFormStatus({ formStatus: 'school-info-4' }))
       navigate("/form/school-info-4");
       queryClient.invalidateQueries({
@@ -116,7 +113,6 @@ export function useAddApplicantSchoolInfo() {
     mutationFn: async (data) =>
       await api.put(`${API_ROUTE.applicant.addApplicantSchoolInfo}`, data),
     onSuccess: (data) => {
-      toast.success("Success");
       dispatch(setFormStatus({ formStatus: 'document-upload-5' }))
       navigate("/form/document-upload-5");
       queryClient.invalidateQueries({
@@ -151,7 +147,6 @@ export function useAddApplicantDocument() {
         timeout: 30000,
       }),
     onSuccess: (data) => {
-      toast.success("Success");
       dispatch(setFormStatus({ formStatus: 'test-preference-6' }))
       navigate("/form/school-preference-6");
       queryClient.invalidateQueries({
@@ -180,7 +175,6 @@ export function useAddApplicantSchoolPreference() {
     mutationFn: async (data) =>
       await api.put(`${API_ROUTE.applicant.addApplicantSchoolPreference}`, data),
     onSuccess: (data) => {
-      toast.success("Success");
       dispatch(setFormStatus({ formStatus: 'completed' }))
       navigate("/form/complete");
       queryClient.invalidateQueries({
@@ -298,6 +292,7 @@ export function useGetApplicantPDFinfo() {
   return {
     data: data?.data?.data,
     previous_school: data?.data?.previous_school,
+    priority_school: data?.data?.priority_school,
     isSuccess,
     isPending,
     isError,

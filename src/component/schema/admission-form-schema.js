@@ -223,18 +223,28 @@ export const step2Schema = yup.object().shape({
 });
 
 // Validation schema for Step 5 only
+
 export const step5Schema = yup.object().shape({
-
-  first_priority_school: yup.string().required('School 1 is required'),
-  second_priority_school: yup.string().required('School 2 is required'),
-  third_priority_school: yup.string().required('School 3 is required'),
-
-  // testMedium: yup.string().required('Test medium is required'),
-  // division: yup.string().required('Division is required'),
-  // acknowledgment: yup
-  //   .boolean()
-  //   .oneOf([true], 'You must acknowledge the terms'),
+  priority: yup.array().of(
+    yup.object().shape({
+      schoolName: yup.string().required('School is required'),
+      priority: yup.number().required('Priority is required'),
+    })
+  ).min(1, 'At least one school must be selected'),
 });
+
+// export const step5Schema = yup.object().shape({
+
+//   first_priority_school: yup.string().required('School 1 is required'),
+//   second_priority_school: yup.string().required('School 2 is required'),
+//   third_priority_school: yup.string().required('School 3 is required'),
+
+//   testMedium: yup.string().required('Test medium is required'),
+//   division: yup.string().required('Division is required'),
+//   acknowledgment: yup
+//     .boolean()
+//     .oneOf([true], 'You must acknowledge the terms'),
+// });
 
 
 export const loginSchema = yup.object().shape({

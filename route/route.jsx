@@ -57,7 +57,9 @@ export const router = createBrowserRouter([
     path: "/form/school-info-4",
     element: (
       <ProtectedRoute>
-        <Form4 />
+        <ProtectedRouteForm>
+          <Form4 />
+        </ProtectedRouteForm>
       </ProtectedRoute>
     ),
   },
@@ -65,7 +67,9 @@ export const router = createBrowserRouter([
     path: "/form/document-upload-5",
     element: (
       <ProtectedRoute>
-        <Form5 />
+        <ProtectedRouteForm>
+          <Form5 />
+        </ProtectedRouteForm>
       </ProtectedRoute>
     ),
   },
@@ -73,7 +77,9 @@ export const router = createBrowserRouter([
     path: "/form/school-preference-6",
     element: (
       <ProtectedRoute>
-        <Form6 />
+        <ProtectedRouteForm>
+          <Form6 />
+        </ProtectedRouteForm>
       </ProtectedRoute>
     ),
   },
@@ -82,7 +88,9 @@ export const router = createBrowserRouter([
     path: "/form/complete",
     element: withSuspense(
       <ProtectedRoute>
-        <ApplicationSubmitted />
+        <ProtectedRoute>
+          <ApplicationSubmitted />
+        </ProtectedRoute>
       </ProtectedRoute>
     ),
   },
