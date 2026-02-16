@@ -23,17 +23,6 @@ export const step1Schema = yup.object().shape({
   .string()
   .required("Please select an option"),
 
-sefSiblingCount: yup
-  .number()
-  .when("sefSiblingStudying", {
-    is: "yes",
-    then: (schema) =>
-      schema
-        .required("Please enter number of siblings")
-        .min(1, "Minimum 1")
-        .max(2, "Maximum allowed is 2"),
-    otherwise: (schema) => schema.notRequired(),
-  }),
 
 
   studentBForm: yup
@@ -236,6 +225,19 @@ export const step2Schema = yup.object().shape({
     .string()
     .required("WhatsApp number is required")
     .matches(phoneRegex, "WhatsApp number must start with 03 and be 11 digits"),
+
+    sefSiblingCount: yup
+  .number()
+  .when("sefSiblingStudying", {
+    is: "yes",
+    then: (schema) =>
+      schema
+        .required("Please enter number of siblings")
+        .min(1, "Minimum 1")
+        .max(2, "Maximum allowed is 2"),
+    otherwise: (schema) => schema.notRequired(),
+  }),
+
 });
 
 // Validation schema for Step 5 only

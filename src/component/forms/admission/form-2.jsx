@@ -11,6 +11,8 @@ import { districts } from "../../../../data/new-district";
 import Select from "react-select";
 import { customSelectStyles } from "../../../styles/custom-styles";
 import { guardianrelation } from "../../../../data/form-data";
+import { useEffect } from "react";
+import { ControlledRadioGroup } from "../../Radio-button";
 
 export const Form2 = () => {
   
@@ -26,6 +28,8 @@ export const Form2 = () => {
     handleSubmit,
     control,
     formState: { errors },
+    watch,
+    setValue,
   } = useForm({
     resolver: yupResolver(step2Schema),
     defaultValues: {
@@ -36,12 +40,22 @@ export const Form2 = () => {
       guardianannualIncome: "",
       relation: "",
       guardianContactNumber: "",
-      guardianContactWhattsappNumber: ""
+      guardianContactWhattsappNumber: "",
+      siblings_under_sef:  "",  
+      no_siblings_under_sef:  "",      
     },
   });
 
+  
+      const watchSefSibling = watch("siblings_under_sef");
+  
+    useEffect(() => {
+    if (watchSefSibling !== "yes") {
+      setValue("no_siblings_under_sef", "");
+    }
+  }, [watchSefSibling, setValue]);
   const onSubmit = (data) => {
-    // console.log('Step 2 - Father/Guardian Information:', data);
+    console.log('Step 2 - Father/Guardian Information:', data);
     addApplicantGuardian(data)
   };
 
@@ -174,6 +188,37 @@ export const Form2 = () => {
                 errors={errors}
                 helpText="Must start with 03"
               />
+            </div>
+
+                    {/* SEF Sibling Question */}
+            <div className="space-y-4">
+              <ControlledRadioGroup
+                name="siblings_under_sef"
+                control={control}
+                label="Are your siblings currently studying under the SEF scholarship program?"
+                options={[
+                  { value: "yes", label: "Yes" },
+                  { value: "no", label: "No" },
+                ]}
+                required
+                errors={errors}
+              />
+            
+              {watchSefSibling === "yes" && (
+                <ControlledInputField
+                  name="no_siblings_under_sef"
+                  control={control}
+                  label="How many siblings? (Maximum 2)"
+                  type="number"
+                  placeholder="Enter number (Max 2)"
+                  required
+                  errors={errors}
+                  inputProps={{
+                    min: 1,
+                    max: 2,
+                  }}
+                />
+              )}
             </div>
           </div>
         </div>
