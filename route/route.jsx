@@ -16,6 +16,7 @@ import ProtectedRouteForm from "../utils/protected-route-form";
 import ApplicationSubmitted from "../src/component/applicationSubmitted";
 import CandidatePDFDownloader from "../src/component/template/pdf-template";
 import NotFound from "../src/component/not-found";
+import AdminLogin from "../src/component/admin-login";
 
 export const router = createBrowserRouter([
   {
@@ -110,6 +111,13 @@ export const router = createBrowserRouter([
     element: withSuspense(
       // <ProtectedRoute>
       <Dashboard />
+      // </ProtectedRoute>
+    )},
+    {
+    path: "/admin-login",
+    element: withSuspense(
+      // <ProtectedRoute>
+        <AdminLogin />
       // </ProtectedRoute>
     ),
   },
