@@ -10,7 +10,7 @@ const ProtectedRouteAmin = ({ allowedRoles, children }) => {
     return <Navigate to="/admin/login" replace />;
   }
 
-  if (!allowedRoles.includes(role)) {
+  if (allowedRoles && !allowedRoles.includes(role)) {
     return <Navigate to="/admin/login" replace />;
   }
 
