@@ -3,6 +3,61 @@ import api from "../axios";
 import API_ROUTE from "../endPoints";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useNavigate } from "react-router-dom";
+import { useDispatch } from "react-redux";
+
+export function useAdminLogin() {
+  const navigate = useNavigate();
+  const dispatch = useDispatch()
+  const {
+    mutate: adminLogin,
+    isSuccess,
+    isPending,
+    isError,
+    reset,
+    error,
+    data,
+  } = useMutation({
+    mutationFn: (data) => api.post(API_ROUTE.admin.signIn, data),
+    onSuccess: (response) => {
+      dispatch(setUser(response?.data?.data))
+    },
+  });
+
+  return {
+    adminLogin,
+    isSuccess,
+    isPending,
+    isError,
+    reset,
+    error: error?.response?.data?.message,
+    data,
+  };
+}
+
+export function useAdminSignUp(options = {}) {
+  const {
+    mutate: adminSignUp,
+    isSuccess,
+    isPending,
+    isError,
+    reset,
+    error,
+    data,
+  } = useMutation({
+    mutationFn: (data) => api.post(API_ROUTE.admin.signUp, data),
+    ...options,
+  });
+
+  return {
+    adminSignUp,
+    isSuccess,
+    isPending,
+    isError,
+    reset,
+    error: error?.response?.data?.message,
+    data,
+  };
+}
 
 export function useGetDashbaordData() {
   const { data, isSuccess, isPending, isError, isLoading } = useQuery({
