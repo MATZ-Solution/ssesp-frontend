@@ -296,9 +296,17 @@ Welcome to the Scholarship Portal               </h2>
                 </div>
 
                 {/* Footer note */}
-                <p className="text-center text-xs text-gray-400 mt-4">
-                  Protected by enterprise-grade security
-                </p>
+               {/* Help / Query Email */}
+<p className="text-center text-xs text-gray-400 mt-3">
+  For any queries related to filling up this application form, send an email to{" "}
+  <a
+    href="mailto:scholarship@sef.org.pk"
+    className="text-[#4BA54F] hover:text-emerald-400 underline transition-colors duration-300"
+  >
+    scholarship@sef.org.pk
+  </a>
+</p>
+
               </form>
             </div>
           </div>
