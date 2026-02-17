@@ -36,10 +36,13 @@ export const Form1 = ({ initialData = {} }) => {
       religion: initialData.religion || null,
       files: initialData.files || null,
       noBForm: initialData.noBForm || false,
+
     },
   });
 
+
   const watchNoBForm = watch("noBForm");
+
 
   const files = watch("files");
 
@@ -152,7 +155,11 @@ export const Form1 = ({ initialData = {} }) => {
                   />
                   {errors.religion && <span className="text-red-500 text-xs mt-1">{errors.religion.message}</span>}
                 </div>
+
+        
               </div>
+
+
 
               {/* Photo Upload */}
               <div className="lg:col-span-1">
