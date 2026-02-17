@@ -166,7 +166,7 @@ export const step4Schema = yup.object().shape({
           return true;
         }),
     })
-  ).min(4, "All 4 class records are required").required("Previous school records are required"),
+  ).min(3, "All 3 class records are required").required("Previous school records are required"),
 });
 
 // Validation schema for Step 2 only
