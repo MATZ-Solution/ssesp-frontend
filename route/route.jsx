@@ -11,7 +11,7 @@ import Form6 from "../src/component/forms/admission/form-6";
 
 import Dashboard from "../src/component/Dashbaord/dashboard";
 import Signup from "../src/component/signup/signup";
-import ProtectedRoute from "../utils/protectRoute";
+import ProtectedRouteApplicant from "../utils/protect-route-applicant";
 import ProtectedRouteForm from "../utils/protected-route-form";
 import ApplicationSubmitted from "../src/component/applicationSubmitted";
 import CandidatePDFDownloader from "../src/component/template/pdf-template";
@@ -26,72 +26,72 @@ export const router = createBrowserRouter([
   {
     path: "/form/student-info-1",
     element: (
-      <ProtectedRoute>
+      <ProtectedRouteApplicant allowedRoles={['applicant']}>
         <ProtectedRouteForm>
           <Form1 />
         </ProtectedRouteForm>
-      </ProtectedRoute>
+      </ProtectedRouteApplicant>
     ),
   },
   {
     path: "/form/guardian-info-2",
     element: (
-      <ProtectedRoute>
+      <ProtectedRouteApplicant allowedRoles={['applicant']}>
         <ProtectedRouteForm>
           <Form2 />
         </ProtectedRouteForm>
-      </ProtectedRoute>
+      </ProtectedRouteApplicant>
     ),
   },
   {
     path: "/form/address-3",
     element: (
-      <ProtectedRoute>
+      <ProtectedRouteApplicant allowedRoles={['applicant']}>
         <ProtectedRouteForm>
           <Form3 />
         </ProtectedRouteForm>
-      </ProtectedRoute>
+      </ProtectedRouteApplicant>
     ),
   },
   {
     path: "/form/school-info-4",
     element: (
-      <ProtectedRoute>
+      <ProtectedRouteApplicant allowedRoles={['applicant']}>
         <ProtectedRouteForm>
           <Form4 />
         </ProtectedRouteForm>
-      </ProtectedRoute>
+      </ProtectedRouteApplicant>
     ),
   },
   {
     path: "/form/document-upload-5",
     element: (
-      <ProtectedRoute>
+      <ProtectedRouteApplicant allowedRoles={['applicant']}>
         <ProtectedRouteForm>
           <Form5 />
         </ProtectedRouteForm>
-      </ProtectedRoute>
+      </ProtectedRouteApplicant>
     ),
   },
   {
     path: "/form/school-preference-6",
     element: (
-      <ProtectedRoute>
+      <ProtectedRouteApplicant allowedRoles={['applicant']}>
         <ProtectedRouteForm>
           <Form6 />
         </ProtectedRouteForm>
-      </ProtectedRoute>
+      </ProtectedRouteApplicant>
     ),
   },
 
   {
     path: "/form/complete",
     element: withSuspense(
-      <ProtectedRoute>
-        <ProtectedRoute>
+      <ProtectedRouteApplicant allowedRoles={['applicant']}>
+        <ProtectedRouteForm>
           <ApplicationSubmitted />
-        </ProtectedRoute>
-      </ProtectedRoute>
+        </ProtectedRouteForm>
+      </ProtectedRouteApplicant>
     ),
   },
 
@@ -109,7 +109,7 @@ export const router = createBrowserRouter([
     path: "/dashboard",
     element: withSuspense(
       // <ProtectedRoute>
-        <Dashboard />
+      <Dashboard />
       // </ProtectedRoute>
     ),
   },
