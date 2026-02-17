@@ -166,7 +166,7 @@ export const step4Schema = yup.object().shape({
           return true;
         }),
     })
-  ).min(4, "All 4 class records are required").required("Previous school records are required"),
+  ).min(3, "All 3 class records are required").required("Previous school records are required"),
 });
 
 // Validation schema for Step 2 only
@@ -208,9 +208,7 @@ export const step2Schema = yup.object().shape({
     .integer("Annual income must be a whole number")
     .min(0, "Annual income cannot be negative"),
 
-  relation: yup
-    .string()
-    .optional(),
+  relation: yup.string().optional(),
 
   guardianContactNumber: yup
     .string()
@@ -222,18 +220,27 @@ export const step2Schema = yup.object().shape({
     .required("WhatsApp number is required")
     .matches(phoneRegex, "WhatsApp number must start with 03 and be 11 digits"),
 
-    sefSiblingCount: yup
-  .number()
-  .when("sefSiblingStudying", {
+  // ✅ FIXED SEF SIBLING VALIDATION
+  siblings_under_sef: yup
+    .string()
+    .required("Please select Yes or No"),
+
+no_siblings_under_sef: yup
+  .mixed()  // ← Use mixed() instead of number()
+  .nullable()
+  .when("siblings_under_sef", {
     is: "yes",
     then: (schema) =>
       schema
         .required("Please enter number of siblings")
-        .oneOf([1, 2], "Only 1 or 2 siblings are allowed"),
-    otherwise: (schema) => schema.notRequired(),
+        .test("is-1-or-2", "Only 1 or 2 siblings are allowed", (val) =>
+          val === 1 || val === 2
+        ),
+    otherwise: (schema) => schema.nullable().notRequired().transform(() => null),
   }),
 
 });
+
 
 // Validation schema for Step 5 only
 

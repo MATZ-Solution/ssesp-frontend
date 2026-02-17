@@ -105,14 +105,14 @@ export const router = createBrowserRouter([
     element: withSuspense(<NotFound />),
   },
 
-  // {
-  //   path: "/dashboard",
-  //   element: withSuspense(
-  //     <ProtectedRoute>
-  //       <Dashboard />
-  //     </ProtectedRoute>
-  //   ),
-  // },
+  {
+    path: "/dashboard",
+    element: withSuspense(
+      // <ProtectedRoute>
+        <Dashboard />
+      // </ProtectedRoute>
+    ),
+  },
   {
     path: "/signup",
     element: withSuspense(<Signup />),

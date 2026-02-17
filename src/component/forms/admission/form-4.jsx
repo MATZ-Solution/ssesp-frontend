@@ -36,22 +36,21 @@ export const Form4 = () => {
     formState: { errors },
   } = useForm({
     resolver: yupResolver(step4Schema),
-    defaultValues: {
-      schoolName: "",
-      schoolCategory: "",
-      schoolSemisCode: "",
-      studyingInClass: null,
-      enrollmentYear: "",
-      schoolGRNo: "",
-      headmasterName: "",
-      // Tabular data for classes 5-8
-      previous_school: [
-        { class: "5", schoolCategory: "", semisCode: "", district: "", yearOfPassing: "" },
-        { class: "6", schoolCategory: "", semisCode: "", district: "", yearOfPassing: "" },
-        { class: "7", schoolCategory: "", semisCode: "", district: "", yearOfPassing: "" },
-        { class: "8", schoolCategory: "", semisCode: "", district: "", yearOfPassing: "" },
-      ],
-    },
+   defaultValues: {
+  schoolName: "",
+  schoolCategory: "",
+  schoolSemisCode: "",
+  studyingInClass: null,
+  enrollmentYear: "",
+  schoolGRNo: "",
+  headmasterName: "",
+  previous_school: [
+    { class: "5", schoolCategory: "", semisCode: "", district: "", yearOfPassing: "" },
+    { class: "6", schoolCategory: "", semisCode: "", district: "", yearOfPassing: "" },
+    { class: "7", schoolCategory: "", semisCode: "", district: "", yearOfPassing: "" },
+  ],
+},
+
   });
 
   const { fields } = useFieldArray({
