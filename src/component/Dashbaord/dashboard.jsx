@@ -110,12 +110,12 @@ export default function Dashboard() {
       className="flex min-h-screen bg-slate-50"
       style={{ fontFamily: "'DM Sans', 'Helvetica Neue', sans-serif" }}
     >
-      <Sidebar
+      {/* <Sidebar
         activeNav={activeNav}
         setActiveNav={setActiveNav}
         open={sidebarOpen}
         onClose={() => setSidebarOpen(false)}
-      />
+      /> */}
 
       <main className="flex-1 min-w-0 overflow-auto flex flex-col">
         <Header onMenuClick={() => setSidebarOpen(true)} />
