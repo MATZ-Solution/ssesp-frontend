@@ -225,17 +225,20 @@ export const step2Schema = yup.object().shape({
     .string()
     .required("Please select Yes or No"),
 
-  no_siblings_under_sef: yup
-    .number()
-    .typeError("Please enter number of siblings")
-    .when("siblings_under_sef", {
-      is: "yes",
-      then: (schema) =>
-        schema
-          .required("Please enter number of siblings")
-          .oneOf([1, 2], "Only 1 or 2 siblings are allowed"),
-      otherwise: (schema) => schema.notRequired(),
-    }),
+no_siblings_under_sef: yup
+  .mixed()  // ← Use mixed() instead of number()
+  .nullable()
+  .when("siblings_under_sef", {
+    is: "yes",
+    then: (schema) =>
+      schema
+        .required("Please enter number of siblings")
+        .test("is-1-or-2", "Only 1 or 2 siblings are allowed", (val) =>
+          val === 1 || val === 2
+        ),
+    otherwise: (schema) => schema.nullable().notRequired().transform(() => null),
+  }),
+
 });
 
 
