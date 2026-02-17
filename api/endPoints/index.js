@@ -22,6 +22,11 @@ const API_ROUTE = {
     getApplicantSchoolPreference: "/api/applicant/getApplicantSchoolPreference",
     getApplicantPDFinfo: "/api/applicant/getApplicantPDFinfo"
   },
+
+  admin: {
+    getDashbaordData: "/api/admin/getDashbaordData",
+    getDashbaordApplicantData: "/api/admin/getDashbaordApplicantData",
+  }
 };
 
 export default API_ROUTE;
