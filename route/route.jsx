@@ -9,7 +9,7 @@ import { Form4 } from "../src/component/forms/admission/form-4";
 import Form5 from "../src/component/forms/admission/form-5";
 import Form6 from "../src/component/forms/admission/form-6";
 
-import Dashboard from "../src/component/Dashbaord/dashboard";
+import Dashboard from "../src/component/Dashbaord/tabs/dashboard";
 import Signup from "../src/component/signup/signup";
 import ProtectedRouteApplicant from "../utils/protect-route-applicant";
 import ProtectedRouteForm from "../utils/protected-route-form";
@@ -17,6 +17,9 @@ import ApplicationSubmitted from "../src/component/applicationSubmitted";
 import CandidatePDFDownloader from "../src/component/template/pdf-template";
 import NotFound from "../src/component/not-found";
 import AdminLogin from "../src/component/admin-login";
+import AdminTemplate from "../src/Templates/admin-template";
+import NewAdminTemplate from "../src/Templates/new-admin";
+import Applications from "../src/component/Dashbaord/tabs/applications";
 
 export const router = createBrowserRouter([
   {
@@ -107,10 +110,22 @@ export const router = createBrowserRouter([
   },
 
   {
-    path: "/dashboard",
+    path: "admin/dashboard",
     element: withSuspense(
       // <ProtectedRoute>
+      <NewAdminTemplate>
       <Dashboard />
+      </NewAdminTemplate>
+      // </ProtectedRoute>
+    )},
+
+      {
+    path: "admin/applications",
+    element: withSuspense(
+      // <ProtectedRoute>
+      <NewAdminTemplate>
+      <Applications />
+      </NewAdminTemplate>
       // </ProtectedRoute>
     )},
     {

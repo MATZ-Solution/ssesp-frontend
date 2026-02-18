@@ -5,7 +5,7 @@ import {
  
 } from "lucide-react";
 
-function StatCard({ label, value, change, up, color, icon: Icon, sub }) {
+export default function StatCard({ label, value, change, up, color, icon: Icon, sub }) {
   const colors = {
     green: { bg: "bg-emerald-500", light: "bg-emerald-50", text: "text-emerald-600" },
     blue:  { bg: "bg-blue-500",    light: "bg-blue-50",    text: "text-blue-600" },
@@ -37,4 +37,3 @@ function StatCard({ label, value, change, up, color, icon: Icon, sub }) {
   );
 }
 
-export default StatCard;

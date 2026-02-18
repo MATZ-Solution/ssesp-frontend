@@ -1,20 +1,18 @@
 import { useState } from "react";
 import {
- 
   FileTextIcon,
   CheckCircle2Icon,
   ClockIcon,
   UsersIcon,
-
 } from "lucide-react";
-import Header from "../header/dashboard-header";
-import StatCard from "../cards/stats-card-dashboard";
-import ApplicationsByGrade from "../charts/application-by-grade";
-import MonthlyTrendsChart from "../charts/monthly-trends";
-import Sidebar from "./sidebar";
-import RecentApplicationsTable from "../cards/RecentApplicationsTable";
-import QuickActions from "./QuickActions";
-import SessionOverview from "./SessionOverview";
+import Header from "../../header/dashboard-header";
+import StatCard from "../../cards/stats-card-dashboard";
+import ApplicationsByGrade from "../../charts/application-by-grade";
+import MonthlyTrendsChart from "../../charts/monthly-trends";
+import Sidebar from "../sidebar";
+import RecentApplicationsTable from "../../cards/RecentApplicationsTable";
+import QuickActions from "../QuickActions";
+import SessionOverview from "../SessionOverview";
 
 const stats = {
   totalApplications: 2847,
@@ -94,12 +92,10 @@ const monthlyData = [
 ];
 
 const approvalRate = Math.round(
-  (stats.approved / stats.totalApplications) * 100,
+  (stats.approved / stats.totalApplications) * 100
 );
 const enrollmentRate = Math.round((stats.enrolled / stats.approved) * 100);
 const pendingPct = Math.round((stats.pending / stats.totalApplications) * 100);
-
-
 
 export default function Dashboard() {
   const [activeNav, setActiveNav] = useState("dashboard");
@@ -110,17 +106,11 @@ export default function Dashboard() {
       className="flex min-h-screen bg-slate-50"
       style={{ fontFamily: "'DM Sans', 'Helvetica Neue', sans-serif" }}
     >
-      {/* <Sidebar
-        activeNav={activeNav}
-        setActiveNav={setActiveNav}
-        open={sidebarOpen}
-        onClose={() => setSidebarOpen(false)}
-      /> */}
+    
 
       <main className="flex-1 min-w-0 overflow-auto flex flex-col">
-        <Header onMenuClick={() => setSidebarOpen(true)} />
 
-        <div className="p-4 sm:p-6 lg:p-8 space-y-5 flex-1">
+        <div className="">
           {/* ── Stat Cards ── */}
           <div className="grid grid-cols-2 xl:grid-cols-4 gap-3 sm:gap-4">
             <StatCard
