@@ -18,6 +18,25 @@ import {
 import Button from "../../button";
 import { divisionData } from "../../../../data/districtData";
 
+// Class options restricted to 8 and 7 only
+const studyingClassOptions = [
+  { label: "Class 8", value: "8" },
+  { label: "Class 7", value: "7" },
+];
+
+// Class 7 => records for Class 5, 6, 7
+// Class 8 => records for Class 6, 7, 8
+const getPreviousClassDefaults = (studyingClass) => {
+  const classes = studyingClass === "7" ? ["5", "6", "7"] : ["6", "7", "8"];
+  return classes.map((cls) => ({
+    class: cls,
+    schoolCategory: "",
+    semisCode: "",
+    district: "",
+    yearOfPassing: "",
+  }));
+};
+
 export const Form4 = () => {
   const navigate = useNavigate();
 
@@ -25,41 +44,51 @@ export const Form4 = () => {
     useAddApplicantSchoolInfo();
   const { data, isLoading } = useGetApplicantSchoolInfo();
 
-  // Map divisionData into an array of all districts
   const districtOptions = divisionData
-    .flatMap(d => d.districts)
-    .map(d => ({ label: d.district, value: d.district }));
+    .flatMap((d) => d.districts)
+    .map((d) => ({ label: d.district, value: d.district }));
 
   const {
     handleSubmit,
     control,
+    watch,
+    setValue,
     formState: { errors },
   } = useForm({
     resolver: yupResolver(step4Schema),
-   defaultValues: {
-  schoolName: "",
-  schoolCategory: "",
-  schoolSemisCode: "",
-  studyingInClass: null,
-  enrollmentYear: "",
-  schoolGRNo: "",
-  headmasterName: "",
-  previous_school: [
-    { class: "5", schoolCategory: "", semisCode: "", district: "", yearOfPassing: "" },
-    { class: "6", schoolCategory: "", semisCode: "", district: "", yearOfPassing: "" },
-    { class: "7", schoolCategory: "", semisCode: "", district: "", yearOfPassing: "" },
-  ],
-},
-
+    defaultValues: {
+      schoolName: "",
+      schoolCategory: "",
+      schoolSemisCode: "",
+      studyingInClass: null,
+      enrollmentYear: "",
+      schoolGRNo: "",
+      headmasterName: "",
+      previous_school: [],
+    },
   });
 
-  const { fields } = useFieldArray({
+  const { fields, replace } = useFieldArray({
     control,
     name: "previous_school",
   });
 
+  // Watch the studyingInClass field
+  const selectedClass = watch("studyingInClass");
+
+  // When studyingInClass changes, replace previous_school rows accordingly
+  const handleClassChange = (value) => {
+    setValue("studyingInClass", value);
+    if (value === "8" || value === "7") {
+      replace(getPreviousClassDefaults(value));
+    } else {
+      replace([]);
+    }
+  };
+
   const onSubmit = (data) => {
     addApplicantSchool(data);
+    console.log("Form 4 Data:", data);
   };
 
   return (
@@ -99,9 +128,7 @@ export const Form4 = () => {
                 type="text"
                 maxLength={9}
                 onInput={(e) => {
-                  e.target.value = e.target.value
-                    .replace(/\D/g, "")
-                    .slice(0, 9);
+                  e.target.value = e.target.value.replace(/\D/g, "").slice(0, 9);
                 }}
               />
             </div>
@@ -117,23 +144,24 @@ export const Form4 = () => {
                   control={control}
                   render={({ field }) => (
                     <Select
-                      options={classOptions}
+                      options={studyingClassOptions}
                       styles={customSelectStyles(errors)}
                       placeholder="Select class"
                       isClearable
                       menuPortalTarget={document.body}
                       menuPosition="fixed"
                       value={
-                        classOptions.find((opt) => opt.value === field.value) ||
-                        null
+                        studyingClassOptions.find(
+                          (opt) => opt.value === field.value
+                        ) || null
                       }
-                      onChange={(option) =>
-                        field.onChange(option ? option.value : "")
-                      }
+                      onChange={(option) => {
+                        const val = option ? option.value : null;
+                        handleClassChange(val);
+                      }}
                     />
                   )}
                 />
-
                 {errors.studyingInClass && (
                   <span className="text-red-500 text-xs mt-1">
                     {errors.studyingInClass.message}
@@ -173,284 +201,340 @@ export const Form4 = () => {
               />
             </div>
 
-            {/* Tabular Form - Class 5 to 8 Records */}
+            {/* Tabular Form - Dynamic Previous Class Records */}
             <div className="mt-6 sm:mt-8">
               <h3 className="text-base sm:text-lg font-bold text-gray-800 mb-3 sm:mb-4">
-                Previous Class Records (Class 5 to 8) <span className="text-red-500">*</span>
+                Previous Class Records{" "}
+                {selectedClass === "8"
+                  ? "(Class 6 to 8)"
+                  : selectedClass === "7"
+                  ? "(Class 5 to 7)"
+                  : "(Class 5 to 7 / 6 to 8)"}
+                <span className="text-red-500"> *</span>
               </h3>
 
-              {/* Desktop/Tablet Table View */}
-              <div className="hidden md:block -mx-4 sm:mx-0">
-                <div className="inline-block min-w-full align-middle">
-                  <div className="overflow-x-auto">
-                    <table className="min-w-full border-collapse border border-gray-300">
-                      <thead>
-                        <tr className="bg-gray-100">
-                          <th className="border border-gray-300 px-3 lg:px-4 py-2 lg:py-3 text-left text-xs lg:text-sm font-semibold text-gray-700 whitespace-nowrap">
-                            Class
-                          </th>
-                          <th className="border border-gray-300 px-3 lg:px-4 py-2 lg:py-3 text-left text-xs lg:text-sm font-semibold text-gray-700 whitespace-nowrap">
-                            School Category  <span className="text-red-500">*</span>
-                          </th>
-                          <th className="border border-gray-300 px-3 lg:px-4 py-2 lg:py-3 text-left text-xs lg:text-sm font-semibold text-gray-700 whitespace-nowrap">
-                            School / SEMIS Code <span className="text-red-500">*</span>
-                          </th>
-                          <th className="border border-gray-300 px-3 lg:px-4 py-2 lg:py-3 text-left text-xs lg:text-sm font-semibold text-gray-700 whitespace-nowrap">
-                            District <span className="text-red-500">*</span>
-                          </th>
-                          <th className="border border-gray-300 px-3 lg:px-4 py-2 lg:py-3 text-left text-xs lg:text-sm font-semibold text-gray-700 whitespace-nowrap">
-                            Year of Passing <span className="text-red-500">*</span>
-                          </th>
-                        </tr>
-                      </thead>
-                      <tbody>
-                        {fields.map((field, index) => (
-                          <tr key={field.id} className="hover:bg-gray-50">
-                            <td className="border border-gray-300 px-3 lg:px-4 py-2 lg:py-3">
-                              <span className="font-semibold text-gray-700 text-sm lg:text-base">
-                                Class {field.class}
-                              </span>
-                            </td>
-                            <td className="border border-gray-300 px-3 lg:px-4 py-2 lg:py-3">
-                              <Controller
-                                name={`previous_school.${index}.schoolCategory`}
-                                control={control}
-                                render={({ field }) => (
-                                  <Select
-                                    {...field}
-                                    options={schoolCategoryOptions}
-                                    styles={customSelectStyles(errors)}
-                                    placeholder="Select"
-                                    isClearable
-                                    menuPortalTarget={document.body}
-                                    menuPosition="fixed"
-                                    value={
-                                      schoolCategoryOptions.find(
-                                        (opt) => opt.value === field.value
-                                      ) || null
-                                    }
-                                    onChange={(option) =>
-                                      field.onChange(option ? option.value : "")
-                                    }
-                                  />
-                                )}
-                              />
-                              {errors.previous_school?.[index]?.schoolCategory && (
-                                <span className="text-red-500 text-xs mt-1 block">
-                                  {errors.previous_school[index].schoolCategory.message}
-                                </span>
-                              )}
-                            </td>
-                            <td className="border border-gray-300 px-3 lg:px-4 py-2 lg:py-3">
-                              <Controller
-                                name={`previous_school.${index}.semisCode`}
-                                control={control}
-                                render={({ field }) => (
-                                  <input
-                                    {...field}
-                                    type="text"
-                                    placeholder="SEMIS Code"
-                                    maxLength={9}
-                                    onInput={(e) => {
-                                      e.target.value = e.target.value
-                                        .replace(/\D/g, "")
-                                        .slice(0, 9);
-                                    }}
-                                    className="w-full px-2 lg:px-3 py-1.5 lg:py-2 text-sm lg:text-base border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
-                                  />
-                                )}
-                              />
-                              {errors.previous_school?.[index]?.semisCode && (
-                                <span className="text-red-500 text-xs mt-1 block">
-                                  {errors.previous_school[index].semisCode.message}
-                                </span>
-                              )}
-                            </td>
-                            <td className="border border-gray-300 px-3 lg:px-4 py-2 lg:py-3">
-                              <Controller
-                                name={`previous_school.${index}.district`}
-                                control={control}
-                                render={({ field }) => (
-                                  <Select
-                                    {...field}
-                                    options={districtOptions}
-                                    styles={customSelectStyles(errors)}
-                                    placeholder="Select District"
-                                    isClearable
-                                    menuPortalTarget={document.body}
-                                    menuPosition="fixed"
-                                    value={districtOptions.find(opt => opt.value === field.value) || null}
-                                    onChange={(option) => field.onChange(option ? option.value : "")}
-                                  />
-                                )}
-                              />
-                              {errors.previous_school?.[index]?.district && (
-                                <span className="text-red-500 text-xs mt-1 block">
-                                  {errors.previous_school[index].district.message}
-                                </span>
-                              )}
-                            </td>
+              {fields.length === 0 && (
+                <p className="text-sm text-gray-500 italic">
+                  Please select a class above to load previous class records.
+                </p>
+              )}
 
-                            <td className="border border-gray-300 px-3 lg:px-4 py-2 lg:py-3">
-                              <Controller
-                                name={`previous_school.${index}.yearOfPassing`}
-                                control={control}
-                                render={({ field }) => (
-                                  <input
-                                    {...field}
-                                    type="tel"
-                                    placeholder="2023"
-                                    maxLength={4}
-                                    className="w-full px-2 lg:px-3 py-1.5 lg:py-2 text-sm lg:text-base border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
-                                  />
-                                )}
-                              />
-                              {errors.previous_school?.[index]?.yearOfPassing && (
-                                <span className="text-red-500 text-xs mt-1 block">
-                                  {errors.previous_school[index].yearOfPassing.message}
-                                </span>
-                              )}
-                            </td>
+              {/* Desktop/Tablet Table View */}
+              {fields.length > 0 && (
+                <div className="hidden md:block -mx-4 sm:mx-0">
+                  <div className="inline-block min-w-full align-middle">
+                    <div className="overflow-x-auto">
+                      <table className="min-w-full border-collapse border border-gray-300">
+                        <thead>
+                          <tr className="bg-gray-100">
+                            <th className="border border-gray-300 px-3 lg:px-4 py-2 lg:py-3 text-left text-xs lg:text-sm font-semibold text-gray-700 whitespace-nowrap">
+                              Class
+                            </th>
+                            <th className="border border-gray-300 px-3 lg:px-4 py-2 lg:py-3 text-left text-xs lg:text-sm font-semibold text-gray-700 whitespace-nowrap">
+                              School Category{" "}
+                              <span className="text-red-500">*</span>
+                            </th>
+                            <th className="border border-gray-300 px-3 lg:px-4 py-2 lg:py-3 text-left text-xs lg:text-sm font-semibold text-gray-700 whitespace-nowrap">
+                              School / SEMIS Code{" "}
+                              <span className="text-red-500">*</span>
+                            </th>
+                            <th className="border border-gray-300 px-3 lg:px-4 py-2 lg:py-3 text-left text-xs lg:text-sm font-semibold text-gray-700 whitespace-nowrap">
+                              District <span className="text-red-500">*</span>
+                            </th>
+                            <th className="border border-gray-300 px-3 lg:px-4 py-2 lg:py-3 text-left text-xs lg:text-sm font-semibold text-gray-700 whitespace-nowrap">
+                              Year of Passing{" "}
+                              <span className="text-red-500">*</span>
+                            </th>
                           </tr>
-                        ))}
-                      </tbody>
-                    </table>
+                        </thead>
+                        <tbody>
+                          {fields.map((field, index) => (
+                            <tr key={field.id} className="hover:bg-gray-50">
+                              <td className="border border-gray-300 px-3 lg:px-4 py-2 lg:py-3">
+                                <span className="font-semibold text-gray-700 text-sm lg:text-base">
+                                  Class {field.class}
+                                </span>
+                              </td>
+                              <td className="border border-gray-300 px-3 lg:px-4 py-2 lg:py-3">
+                                <Controller
+                                  name={`previous_school.${index}.schoolCategory`}
+                                  control={control}
+                                  render={({ field }) => (
+                                    <Select
+                                      {...field}
+                                      options={schoolCategoryOptions}
+                                      styles={customSelectStyles(errors)}
+                                      placeholder="Select"
+                                      isClearable
+                                      menuPortalTarget={document.body}
+                                      menuPosition="fixed"
+                                      value={
+                                        schoolCategoryOptions.find(
+                                          (opt) => opt.value === field.value
+                                        ) || null
+                                      }
+                                      onChange={(option) =>
+                                        field.onChange(
+                                          option ? option.value : ""
+                                        )
+                                      }
+                                    />
+                                  )}
+                                />
+                                {errors.previous_school?.[index]
+                                  ?.schoolCategory && (
+                                  <span className="text-red-500 text-xs mt-1 block">
+                                    {
+                                      errors.previous_school[index]
+                                        .schoolCategory.message
+                                    }
+                                  </span>
+                                )}
+                              </td>
+                              <td className="border border-gray-300 px-3 lg:px-4 py-2 lg:py-3">
+                                <Controller
+                                  name={`previous_school.${index}.semisCode`}
+                                  control={control}
+                                  render={({ field }) => (
+                                    <input
+                                      {...field}
+                                      type="text"
+                                      placeholder="SEMIS Code"
+                                      maxLength={7}
+                                      onInput={(e) => {
+                                        e.target.value = e.target.value
+                                          .replace(/\D/g, "")
+                                          .slice(0, 7);
+                                      }}
+                                      className="w-full px-2 lg:px-3 py-1.5 lg:py-2 text-sm lg:text-base border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
+                                    />
+                                  )}
+                                />
+                                {errors.previous_school?.[index]?.semisCode && (
+                                  <span className="text-red-500 text-xs mt-1 block">
+                                    {
+                                      errors.previous_school[index].semisCode
+                                        .message
+                                    }
+                                  </span>
+                                )}
+                              </td>
+                              <td className="border border-gray-300 px-3 lg:px-4 py-2 lg:py-3">
+                                <Controller
+                                  name={`previous_school.${index}.district`}
+                                  control={control}
+                                  render={({ field }) => (
+                                    <Select
+                                      {...field}
+                                      options={districtOptions}
+                                      styles={customSelectStyles(errors)}
+                                      placeholder="Select District"
+                                      isClearable
+                                      menuPortalTarget={document.body}
+                                      menuPosition="fixed"
+                                      value={
+                                        districtOptions.find(
+                                          (opt) => opt.value === field.value
+                                        ) || null
+                                      }
+                                      onChange={(option) =>
+                                        field.onChange(
+                                          option ? option.value : ""
+                                        )
+                                      }
+                                    />
+                                  )}
+                                />
+                                {errors.previous_school?.[index]?.district && (
+                                  <span className="text-red-500 text-xs mt-1 block">
+                                    {
+                                      errors.previous_school[index].district
+                                        .message
+                                    }
+                                  </span>
+                                )}
+                              </td>
+                              <td className="border border-gray-300 px-3 lg:px-4 py-2 lg:py-3">
+                                <Controller
+                                  name={`previous_school.${index}.yearOfPassing`}
+                                  control={control}
+                                  render={({ field }) => (
+                                    <input
+                                      {...field}
+                                      type="tel"
+                                      placeholder="2023"
+                                      maxLength={4}
+                                      className="w-full px-2 lg:px-3 py-1.5 lg:py-2 text-sm lg:text-base border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
+                                    />
+                                  )}
+                                />
+                                {errors.previous_school?.[index]
+                                  ?.yearOfPassing && (
+                                  <span className="text-red-500 text-xs mt-1 block">
+                                    {
+                                      errors.previous_school[index].yearOfPassing
+                                        .message
+                                    }
+                                  </span>
+                                )}
+                              </td>
+                            </tr>
+                          ))}
+                        </tbody>
+                      </table>
+                    </div>
                   </div>
                 </div>
-              </div>
+              )}
 
               {/* Mobile Card View */}
-              <div className="md:hidden space-y-4">
-                {fields.map((field, index) => (
-                  <div
-                    key={field.id}
-                    className="border border-gray-300 rounded-lg p-4 bg-gray-50"
-                  >
-                    <div className="mb-3 pb-2 border-b border-gray-300">
-                      <span className="font-bold text-gray-800 text-base">
-                        Class {field.class}
-                      </span>
-                    </div>
+              {fields.length > 0 && (
+                <div className="md:hidden space-y-4">
+                  {fields.map((field, index) => (
+                    <div
+                      key={field.id}
+                      className="border border-gray-300 rounded-lg p-4 bg-gray-50"
+                    >
+                      <div className="mb-3 pb-2 border-b border-gray-300">
+                        <span className="font-bold text-gray-800 text-base">
+                          Class {field.class}
+                        </span>
+                      </div>
 
-                    <div className="space-y-4">
-                      <div>
-                        <label className="block text-xs font-semibold text-gray-700 mb-1.5">
-                          School Category <span className="text-red-500">*</span>
-                        </label>
-                        <Controller
-                          name={`previous_school.${index}.schoolCategory`}
-                          control={control}
-                          render={({ field }) => (
-                            <Select
-                              {...field}
-                              options={schoolCategoryOptions}
-                              styles={customSelectStyles(errors)}
-                              placeholder="Select"
-                              isClearable
-                              menuPortalTarget={document.body}
-                              menuPosition="fixed"
-                              value={
-                                schoolCategoryOptions.find(
-                                  (opt) => opt.value === field.value
-                                ) || null
+                      <div className="space-y-4">
+                        <div>
+                          <label className="block text-xs font-semibold text-gray-700 mb-1.5">
+                            School Category{" "}
+                            <span className="text-red-500">*</span>
+                          </label>
+                          <Controller
+                            name={`previous_school.${index}.schoolCategory`}
+                            control={control}
+                            render={({ field }) => (
+                              <Select
+                                {...field}
+                                options={schoolCategoryOptions}
+                                styles={customSelectStyles(errors)}
+                                placeholder="Select"
+                                isClearable
+                                menuPortalTarget={document.body}
+                                menuPosition="fixed"
+                                value={
+                                  schoolCategoryOptions.find(
+                                    (opt) => opt.value === field.value
+                                  ) || null
+                                }
+                                onChange={(option) =>
+                                  field.onChange(option ? option.value : "")
+                                }
+                              />
+                            )}
+                          />
+                          {errors.previous_school?.[index]?.schoolCategory && (
+                            <span className="text-red-500 text-xs mt-1 block">
+                              {
+                                errors.previous_school[index].schoolCategory
+                                  .message
                               }
-                              onChange={(option) =>
-                                field.onChange(option ? option.value : "")
+                            </span>
+                          )}
+                        </div>
+
+                        <div>
+                          <label className="block text-xs font-semibold text-gray-700 mb-1.5">
+                            SEMIS Code <span className="text-red-500">*</span>
+                          </label>
+                          <Controller
+                            name={`previous_school.${index}.semisCode`}
+                            control={control}
+                            render={({ field }) => (
+                              <input
+                                {...field}
+                                type="text"
+                                placeholder="Enter SEMIS Code"
+                                maxLength={7}
+                                onInput={(e) => {
+                                  e.target.value = e.target.value
+                                    .replace(/\D/g, "")
+                                    .slice(0, 7);
+                                }}
+                                className="w-full px-3 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
+                              />
+                            )}
+                          />
+                          {errors.previous_school?.[index]?.semisCode && (
+                            <span className="text-red-500 text-xs mt-1 block">
+                              {errors.previous_school[index].semisCode.message}
+                            </span>
+                          )}
+                        </div>
+
+                        <div>
+                          <label className="block text-xs font-semibold text-gray-700 mb-1.5">
+                            District <span className="text-red-500">*</span>
+                          </label>
+                          <Controller
+                            name={`previous_school.${index}.district`}
+                            control={control}
+                            render={({ field }) => (
+                              <Select
+                                {...field}
+                                options={districtOptions}
+                                styles={customSelectStyles(errors)}
+                                placeholder="Select District"
+                                isClearable
+                                menuPortalTarget={document.body}
+                                menuPosition="fixed"
+                                value={
+                                  districtOptions.find(
+                                    (opt) => opt.value === field.value
+                                  ) || null
+                                }
+                                onChange={(option) =>
+                                  field.onChange(option ? option.value : "")
+                                }
+                              />
+                            )}
+                          />
+                          {errors.previous_school?.[index]?.district && (
+                            <span className="text-red-500 text-xs mt-1 block">
+                              {errors.previous_school[index].district.message}
+                            </span>
+                          )}
+                        </div>
+
+                        <div>
+                          <label className="block text-xs font-semibold text-gray-700 mb-1.5">
+                            Year of Passing{" "}
+                            <span className="text-red-500">*</span>
+                          </label>
+                          <Controller
+                            name={`previous_school.${index}.yearOfPassing`}
+                            control={control}
+                            render={({ field }) => (
+                              <input
+                                {...field}
+                                type="tel"
+                                placeholder="2023"
+                                maxLength={4}
+                                className="w-full px-3 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
+                              />
+                            )}
+                          />
+                          {errors.previous_school?.[index]?.yearOfPassing && (
+                            <span className="text-red-500 text-xs mt-1 block">
+                              {
+                                errors.previous_school[index].yearOfPassing
+                                  .message
                               }
-                            />
+                            </span>
                           )}
-                        />
-                        {errors.previous_school?.[index]?.schoolCategory && (
-                          <span className="text-red-500 text-xs mt-1 block">
-                            {errors.previous_school[index].schoolCategory.message}
-                          </span>
-                        )}
-                      </div>
-
-                      <div>
-                        <label className="block text-xs font-semibold text-gray-700 mb-1.5">
-                          SEMIS Code <span className="text-red-500">*</span>
-                        </label>
-                        <Controller
-                          name={`previous_school.${index}.semisCode`}
-                          control={control}
-                          render={({ field }) => (
-                            <input
-                              {...field}
-                              type="text"
-                              placeholder="Enter SEMIS Code"
-                              maxLength={9}
-                              onInput={(e) => {
-                                e.target.value = e.target.value
-                                  .replace(/\D/g, "")
-                                  .slice(0, 9);
-                              }}
-                              className="w-full px-3 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
-                            />
-                          )}
-                        />
-                        {errors.previous_school?.[index]?.semisCode && (
-                          <span className="text-red-500 text-xs mt-1 block">
-                            {errors.previous_school[index].semisCode.message}
-                          </span>
-                        )}
-                      </div>
-
-                      <div>
-                        <label className="block text-xs font-semibold text-gray-700 mb-1.5">
-                          District <span className="text-red-500">*</span>
-                        </label>
-                        <Controller
-                          name={`previous_school.${index}.district`}
-                          control={control}
-                          render={({ field }) => (
-                            <Select
-                              {...field}
-                              options={districtOptions}
-                              styles={customSelectStyles(errors)}
-                              placeholder="Select District"
-                              isClearable
-                              menuPortalTarget={document.body}
-                              menuPosition="fixed"
-                              value={districtOptions.find(opt => opt.value === field.value) || null}
-                              onChange={(option) => field.onChange(option ? option.value : "")}
-                            />
-                          )}
-                        />
-                        {errors.previous_school?.[index]?.district && (
-                          <span className="text-red-500 text-xs mt-1 block">
-                            {errors.previous_school[index].district.message}
-                          </span>
-                        )}
-                      </div>
-
-                      <div>
-                        <label className="block text-xs font-semibold text-gray-700 mb-1.5">
-                          Year of Passing <span className="text-red-500">*</span>
-                        </label>
-                        <Controller
-                          name={`previous_school.${index}.yearOfPassing`}
-                          control={control}
-                          render={({ field }) => (
-                            <input
-                              {...field}
-                              type="tel"
-                              placeholder="2023"
-                              maxLength={4}
-                              className="w-full px-3 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
-                            />
-                          )}
-                        />
-                        {errors.previous_school?.[index]?.yearOfPassing && (
-                          <span className="text-red-500 text-xs mt-1 block">
-                            {errors.previous_school[index].yearOfPassing.message}
-                          </span>
-                        )}
+                        </div>
                       </div>
                     </div>
-                  </div>
-                ))}
-              </div>
+                  ))}
+                </div>
+              )}
             </div>
           </div>
         </div>
