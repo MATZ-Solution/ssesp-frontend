@@ -4,6 +4,7 @@ import API_ROUTE from "../endPoints";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useNavigate } from "react-router-dom";
 import { useDispatch } from "react-redux";
+import { setUser } from "../../redux/slices/authSlice";
 
 export function useAdminLogin() {
   const navigate = useNavigate();
@@ -19,8 +20,13 @@ export function useAdminLogin() {
   } = useMutation({
     mutationFn: (data) => api.post(API_ROUTE.admin.signIn, data),
     onSuccess: (response) => {
+      console.log("1")
       dispatch(setUser(response?.data?.data))
+      navigate("/admin/dashboard")
     },
+    onError: (err) => {
+      console.log("err: ", err)
+    }
   });
 
   return {

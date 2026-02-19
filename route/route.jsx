@@ -17,6 +17,7 @@ import ApplicationSubmitted from "../src/component/applicationSubmitted";
 import CandidatePDFDownloader from "../src/component/template/pdf-template";
 import NotFound from "../src/component/not-found";
 import AdminLogin from "../src/component/admin-login";
+import ProtectedRouteAdmin from "../utils/protected-route-admin";
 
 export const router = createBrowserRouter([
   {
@@ -107,18 +108,25 @@ export const router = createBrowserRouter([
   },
 
   {
-    path: "/dashboard",
+    path: "/admin/dashboard",
     element: withSuspense(
-      // <ProtectedRoute>
-      <Dashboard />
-      // </ProtectedRoute>
-    )},
-    {
-    path: "/admin-login",
+      <ProtectedRouteAdmin allowedRoles={['admin']}>
+        <Dashboard />
+      </ProtectedRouteAdmin>
+    )
+  },
+   {
+    path: "/admin/applicant",
     element: withSuspense(
-      // <ProtectedRoute>
-        <AdminLogin />
-      // </ProtectedRoute>
+      <ProtectedRouteAdmin allowedRoles={['admin']}>
+        <Dashboard />
+      </ProtectedRouteAdmin>
+    )
+  },
+  {
+    path: "/admin/login",
+    element: withSuspense(
+      <AdminLogin />
     ),
   },
   {

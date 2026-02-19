@@ -22,7 +22,7 @@ import {
   TrendingUp,
 } from "lucide-react";
 import { useNavigate } from "react-router-dom";
-// import { useAdminLogin } from "../../../api/client/user";
+import { useAdminLogin } from "../../api/client/admin";
 import Button from "./button";
 
 const AdminLogin = () => {
@@ -49,10 +49,10 @@ const AdminLogin = () => {
     mode: "onChange",
   });
 
-//   const { adminLogin, isPending, isError, error } = useAdminLogin();
+  const { adminLogin, isPending, isError, error, reset, isSuccess } = useAdminLogin();
 
   const onSubmit = async (data) => {
-    // adminLogin(data);
+    adminLogin(data);
   };
 
   const floatingElements = [
@@ -264,12 +264,12 @@ const AdminLogin = () => {
                 </div>
 
                 {/* API error */}
-                {/* {isError && (
+                {isError && (
                   <div className="bg-red-50 text-red-700 px-4 py-3 rounded-xl border border-red-200 flex items-center gap-2 text-sm">
                     <AlertTriangle className="w-4 h-4 flex-shrink-0 text-red-500" />
                     <span className="font-medium">{error}</span>
                   </div>
-                )} */}
+                )}
 
                 {/* Forgot */}
                 <div className="flex justify-end">
@@ -283,7 +283,7 @@ const AdminLogin = () => {
 
                 {/* Submit */}
                 <Button
-                //   isLoading={isPending}
+                  isLoading={isPending}
                   type="submit"
                   className="w-full bg-gradient-to-r from-[#4BA54F] to-emerald-500 hover:from-[#3d8f41] hover:to-emerald-600 text-white font-bold py-3 rounded-xl transition-all duration-300 hover:scale-[1.02] shadow-lg shadow-green-200 text-sm"
                 >
