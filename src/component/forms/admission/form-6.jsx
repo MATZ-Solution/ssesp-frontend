@@ -140,7 +140,7 @@ export const Form6 = () => {
               <div className="flex justify-between">
                 <button
                   type="button"
-                  onClick={() => navigate("/form/document-upload-6")}
+                  onClick={() => navigate("/form/document-upload-5")}
                   className="px-8 py-3 bg-gray-200 text-gray-700 font-bold rounded-lg shadow hover:shadow-lg hover:bg-gray-300 transform hover:-translate-y-0.5 transition-all duration-200"
                 >
                   ← Previous

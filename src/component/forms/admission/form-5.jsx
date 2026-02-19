@@ -6,6 +6,7 @@ import FormTemplate from "../../template/form-template";
 import { documentUploadSchema } from "../../schema/admission-form-schema";
 import { useAddApplicantDocument } from "../../../../api/client/applicant";
 import Button from "../../button";
+import { useNavigate } from "react-router-dom";
 
 const DocumentUploadItem = ({
   name,
@@ -18,6 +19,7 @@ const DocumentUploadItem = ({
 }) => {
   const [showModal, setShowModal] = useState(false);
 
+  
   return (
     <div className="bg-white border border-gray-200 rounded-lg p-5 shadow-sm hover:shadow-md transition-shadow">
       <label className="text-sm font-semibold text-gray-700 mb-2 block">
@@ -240,6 +242,9 @@ const DocumentUploadItem = ({
 };
 
 const Form5 = ({ initialData = {} }) => {
+  
+  const navigate = useNavigate()
+
   const [doc1Preview, setDoc1Preview] = useState(null);
   const [doc2Preview, setDoc2Preview] = useState(null);
   const [doc3Preview, setDoc3Preview] = useState(null);
@@ -281,8 +286,6 @@ const Form5 = ({ initialData = {} }) => {
     documentsArray.forEach((item, index) => {
       formData.append(item.name, item.file);
     });
-    // Your submission logic here
-    console.log("Submitting documents:", documentsArray);
     addDocument(formData);
   };
 
