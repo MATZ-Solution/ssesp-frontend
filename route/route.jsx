@@ -20,6 +20,7 @@ import AdminLogin from "../src/component/admin-login";
 import AdminTemplate from "../src/Templates/admin-template";
 import NewAdminTemplate from "../src/Templates/new-admin";
 import Applications from "../src/component/Dashbaord/tabs/applications";
+import ProtectedRouteAdmin from "../utils/protected-route-admin";
 
 export const router = createBrowserRouter([
   {
@@ -112,28 +113,28 @@ export const router = createBrowserRouter([
   {
     path: "admin/dashboard",
     element: withSuspense(
-      // <ProtectedRoute>
-      <NewAdminTemplate>
-      <Dashboard />
-      </NewAdminTemplate>
-      // </ProtectedRoute>
-    )},
+      <ProtectedRouteAdmin allowedRoles={['admin']}>
+        <NewAdminTemplate>
+          <Dashboard />
+        </NewAdminTemplate>
+      </ProtectedRouteAdmin>
+    )
+  },
 
-      {
+  {
     path: "admin/applications",
     element: withSuspense(
-      // <ProtectedRoute>
-      <NewAdminTemplate>
-      <Applications />
-      </NewAdminTemplate>
-      // </ProtectedRoute>
-    )},
-    {
-    path: "/admin-login",
+      <ProtectedRouteAdmin allowedRoles={['admin']}>
+        <NewAdminTemplate>
+          <Applications />
+        </NewAdminTemplate>
+      </ProtectedRouteAdmin>
+    )
+  },
+  {
+    path: "/admin/login",
     element: withSuspense(
-      // <ProtectedRoute>
-        <AdminLogin />
-      // </ProtectedRoute>
+      <AdminLogin />
     ),
   },
   {

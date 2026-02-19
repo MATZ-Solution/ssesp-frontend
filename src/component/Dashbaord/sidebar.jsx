@@ -7,16 +7,30 @@ import {
   Settings,
   LogOut,
 } from "lucide-react";
+import { removeUser } from "../../../redux/slices/authSlice";
+import { useNavigate } from "react-router-dom";
+import { useDispatch } from "react-redux";
 
 const menuItems = [
   { title: "Dashboard", icon: LayoutDashboard, path: "/admin/dashboard" },
   { title: "Applications", icon: FileText, path: "/admin/applications" },
 ];
 
+
+
 const Sidebar = () => {
+
+  const navigate = useNavigate()
+  const dispatch = useDispatch()
+
+  const handleLogout = () => {
+    dispatch(removeUser());
+    navigate("/admin/login", { replace: true });
+  };
+
   return (
     <div className="w-64 h-screen bg-gray-50 text-gray-800 flex flex-col shadow-lg">
-      
+
       {/* Logo */}
       <div className="p-6 text-2xl font-extrabold border-b border-gray-200 text-green-600">
         Admin Panel
@@ -30,10 +44,9 @@ const Sidebar = () => {
               to={item.path}
               className={({ isActive }) =>
                 `flex items-center gap-4 p-3 rounded-xl transition-all duration-300
-                ${
-                  isActive
-                    ? "bg-gradient-to-r from-green-500 to-green-600 text-white shadow-md"
-                    : "hover:bg-green-100 text-gray-700 hover:text-green-600"
+                ${isActive
+                  ? "bg-gradient-to-r from-green-500 to-green-600 text-white shadow-md"
+                  : "hover:bg-green-100 text-gray-700 hover:text-green-600"
                 }`
               }
             >
@@ -46,7 +59,7 @@ const Sidebar = () => {
 
       {/* Logout */}
       <div className="p-4 border-t border-gray-200">
-        <button className="w-full flex items-center gap-3 p-3 rounded-xl hover:bg-red-600 hover:text-white transition-all duration-300 shadow-sm">
+        <button onClick={handleLogout} className="cursor-pointer w-full flex items-center gap-3 p-3 rounded-xl hover:bg-red-600 hover:text-white transition-all duration-300 shadow-sm">
           <LogOut size={20} />
           <span className="font-medium">Logout</span>
         </button>

@@ -4,9 +4,9 @@ import { Navigate } from "react-router-dom";
 const ProtectedRouteAdmin = ({ allowedRoles, children }) => {
 
   const user = useSelector(state => state.auth.user);
-  const { id, role } = user || {}; 
+  const { token, role } = user || {}; 
 
-  if (!id || !role) {
+  if (!token || !role) {
     return <Navigate to="/admin/login" replace />;
   }
 

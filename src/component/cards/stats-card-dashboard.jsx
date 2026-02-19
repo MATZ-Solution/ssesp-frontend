@@ -25,13 +25,13 @@ export default function StatCard({ label, value, change, up, color, icon: Icon, 
         <p className="text-3xl font-bold text-slate-800 tracking-tight">
           {value.toLocaleString()}
         </p>
-        <div className="flex items-center gap-1.5 mt-1.5">
+        {/* <div className="flex items-center gap-1.5 mt-1.5">
           <span className={`flex items-center gap-0.5 text-xs font-semibold ${up ? "text-emerald-600" : "text-red-500"}`}>
             {up ? <TrendingUpIcon size={12} /> : <TrendingDownIcon size={12} />}
             {change}
           </span>
           <span className="text-xs text-slate-400">{sub}</span>
-        </div>
+        </div> */}
       </div>
     </div>
   );

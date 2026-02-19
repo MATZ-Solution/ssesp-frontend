@@ -100,7 +100,7 @@ export const step4Schema = yup.object().shape({
   studyingInClass: yup
     .string()
     .nullable()
-    .oneOf(["8", "9"], "Please select either Class 8 or Class 9")
+    .oneOf(["7", "8"], "Please select either Class 7 or Class 8")
     .required("Currently studying class is required"),
 
   enrollmentYear: yup
@@ -142,8 +142,8 @@ export const step4Schema = yup.object().shape({
         semisCode: yup
           .string()
           .required("SEMIS Code is required for this class")
-          .matches(/^\d{7}$/, "SEMIS Code must be exactly 7 digits")
-          .length(7, "SEMIS Code must be exactly 7 digits"),
+          .matches(/^\d{9}$/, "SEMIS Code must be exactly 9 digits")
+          .length(9, "SEMIS Code must be exactly 9 digits"),
 
         district: yup
           .string()
@@ -180,7 +180,7 @@ export const step4Schema = yup.object().shape({
         // Class 8 selected => previous records: 6, 7, 8
         // Class 7 selected => previous records: 5, 6, 7
         const expectedClasses =
-          studyingInClass === "8" ? ["6", "7", "8"] : ["5", "6", "7"];
+          studyingInClass === "8" ? ["5", "6", "7"] : ["4", "5", "6"];
 
         return records.every(
           (record, index) => record?.class === expectedClasses[index]

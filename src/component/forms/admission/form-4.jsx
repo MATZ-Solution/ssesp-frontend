@@ -27,7 +27,7 @@ const studyingClassOptions = [
 // Class 7 => records for Class 5, 6, 7
 // Class 8 => records for Class 6, 7, 8
 const getPreviousClassDefaults = (studyingClass) => {
-  const classes = studyingClass === "7" ? ["5", "6", "7"] : ["6", "7", "8"];
+  const classes = studyingClass === "7" ? ["4", "5", "6"] : ["5", "6", "7"];
   return classes.map((cls) => ({
     class: cls,
     schoolCategory: "",
@@ -40,8 +40,7 @@ const getPreviousClassDefaults = (studyingClass) => {
 export const Form4 = () => {
   const navigate = useNavigate();
 
-  const { addApplicantSchool, isSuccess, isPending, isError, error } =
-    useAddApplicantSchoolInfo();
+  const { addApplicantSchool, isSuccess, isPending, isError, error } = useAddApplicantSchoolInfo();
   const { data, isLoading } = useGetApplicantSchoolInfo();
 
   const districtOptions = divisionData
@@ -94,6 +93,8 @@ export const Form4 = () => {
   addApplicantSchool(formattedData);
   console.log("Form 4 Data:", formattedData);
 };
+
+  console.log("errors: ", errors)
 
   return (
     <FormTemplate>
@@ -210,10 +211,10 @@ export const Form4 = () => {
               <h3 className="text-base sm:text-lg font-bold text-gray-800 mb-3 sm:mb-4">
                 Previous Class Records{" "}
                 {selectedClass === "8"
-                  ? "(Class 6 to 8)"
-                  : selectedClass === "7"
                   ? "(Class 5 to 7)"
-                  : "(Class 5 to 7 / 6 to 8)"}
+                  : selectedClass === "7"
+                  ? "(Class 4 to 6)"
+                  : "(Class 4 to 6 / 5 to 7)"}
                 <span className="text-red-500"> *</span>
               </h3>
 
