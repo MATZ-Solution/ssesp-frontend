@@ -94,16 +94,14 @@ const onSubmit = (data) => {
 
     previous_school: data.previous_school.map((item) => ({
       ...item,
-      class: `Class ${item.class}`,
+      class: `${item.class}`,
     })),
   };
 
+  // console.log("data: ",  formattedData)
   addApplicantSchool(formattedData);
-  console.log("Form 4 Data:", formattedData);
 };
 
-
-  console.log("errors: ", errors)
 
   return (
     <FormTemplate>
