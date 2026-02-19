@@ -22,8 +22,8 @@ import {
   TrendingUp,
 } from "lucide-react";
 import { useNavigate } from "react-router-dom";
-import { useAdminLogin } from "../../api/client/admin";
 import Button from "./button";
+import { useAdminLogin } from '../../api/client/admin';
 
 const AdminLogin = () => {
   const [showPassword, setShowPassword] = useState(false);
@@ -49,7 +49,7 @@ const AdminLogin = () => {
     mode: "onChange",
   });
 
-  const { adminLogin, isPending, isError, error, reset, isSuccess } = useAdminLogin();
+  const { adminLogin, isPending, isError, error } = useAdminLogin();
 
   const onSubmit = async (data) => {
     adminLogin(data);
@@ -272,14 +272,14 @@ const AdminLogin = () => {
                 )}
 
                 {/* Forgot */}
-                <div className="flex justify-end">
+                {/* <div className="flex justify-end">
                   <Link
                     to="/admin/forgot-password"
                     className="text-xs font-semibold text-[#4BA54F] hover:text-emerald-600 transition-colors"
                   >
                     Forgot Password?
                   </Link>
-                </div>
+                </div> */}
 
                 {/* Submit */}
                 <Button

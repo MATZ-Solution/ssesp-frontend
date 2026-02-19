@@ -12,67 +12,10 @@ const statusStyles = {
   rejected: "bg-red-50 text-red-700 ring-1 ring-red-200",
 };
 
-const PAGE_SIZE_OPTIONS = [5, 10, 20];
-
 function RecentApplicationsTable({ applications }) {
-  const [currentPage, setCurrentPage] = useState(1);
-  const [pageSize, setPageSize] = useState(5);
-
-  const totalPages = Math.max(1, Math.ceil(applications.length / pageSize));
-
-  // Clamp currentPage when pageSize changes
-  const safePage = Math.min(currentPage, totalPages);
-
-  const paginated = applications.slice(
-    (safePage - 1) * pageSize,
-    safePage * pageSize
-  );
-
-  function goTo(page) {
-    setCurrentPage(Math.max(1, Math.min(page, totalPages)));
-  }
-
-  function handlePageSize(e) {
-    setPageSize(Number(e.target.value));
-    setCurrentPage(1);
-  }
-
-  // Build page number pills: always show first, last, current ± 1, with ellipsis
-  function pageNumbers() {
-    const pages = [];
-    const delta = 1;
-    const range = new Set([
-      1,
-      totalPages,
-      safePage,
-      safePage - delta,
-      safePage + delta,
-    ]);
-    const filtered = [...range]
-      .filter((p) => p >= 1 && p <= totalPages)
-      .sort((a, b) => a - b);
-
-    let prev = null;
-    for (const p of filtered) {
-      if (prev !== null && p - prev > 1) pages.push("...");
-      pages.push(p);
-      prev = p;
-    }
-    return pages;
-  }
-
-  const start = (safePage - 1) * pageSize + 1;
-  const end = Math.min(safePage * pageSize, applications.length);
 
   return (
-    <div className="bg-white rounded-2xl shadow-sm border border-slate-100 overflow-hidden mb-5">
-      {/* Header */}
-      <div className="flex items-center justify-between p-5 border-b border-slate-100">
-        <h3 className="font-semibold text-slate-800">Recent Applications</h3>
-        <button className="flex items-center gap-1 text-xs text-teal-600 font-medium hover:underline">
-          View all <ChevronRightIcon size={12} />
-        </button>
-      </div>
+    <div className=" bg-white rounded-2xl shadow-sm border border-slate-100 overflow-hidden mb-5">
 
       {/* Desktop table */}
       <div className="hidden md:block overflow-x-auto">

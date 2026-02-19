@@ -21,12 +21,16 @@ function FormHeader() {
                 <div className="text-center">
                     {/* Application Details Badge */}
                     <div className="mb-4">
-                        <div className="bg-white/20 backdrop-blur-sm rounded-lg py-2 px-4 inline-block border border-white/20">
-                            <p className="text-sm sm:text-base">
-                                Application Form for Students of Government and SEF Schools in Grade 8
+                        <div className="bg-white/20 backdrop-blur-sm rounded-lg py-3 px-5 inline-block border border-white/20">
+                            <p className="text-sm sm:text-base font-semibold">
+                                Scholarship Application for Students of Government and SEF Schools  Grades 8 
+                            </p>
+                            <p className="text-xs sm:text-sm mt-1 opacity-90">
+                                Eligibility: Students currently enrolled in Grades 7 and 8 may apply.
                             </p>
                         </div>
                     </div>
+
 
                     {/* Main Heading */}
                     <div className="space-y-1">

@@ -27,6 +27,7 @@ const API_ROUTE = {
     signIn: "/api/admin/signIn",
     signUp: "/api/admin/signUp",
     getDashbaordData: "/api/admin/getDashbaordData",
+    getDashbaordApplicantRecentData: "/api/admin/getDashbaordApplicantRecentData",
     getDashbaordApplicantData: "/api/admin/getDashbaordApplicantData",
   }
 };

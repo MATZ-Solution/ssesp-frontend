@@ -1,10 +1,17 @@
-import { ChevronLeft, ChevronRight } from "lucide-react";
 import { memo } from "react";
+import { useSearchParams } from "react-router-dom";
+import { ChevronLeft, ChevronRight } from "lucide-react";
 
 function Pagination({ currentPage, totalPages, onPageChange }) {
 
   const isFirst = currentPage === 1;
   const isLast = currentPage === totalPages;
+
+  const [searchParams, setSearchParams] = useSearchParams();
+
+  const changePage = (page) => {
+    setSearchParams({ page: page.toString() });
+  };
 
   return (
     <div className="flex items-center justify-center py-6">
@@ -12,7 +19,10 @@ function Pagination({ currentPage, totalPages, onPageChange }) {
         {/* Prev Button */}
         <button
           disabled={isFirst}
-          onClick={() => onPageChange(currentPage - 1)}
+          onClick={() => {
+            onPageChange(currentPage - 1)
+            changePage(currentPage - 1)
+          }}
           className={`flex items-center justify-center w-9 h-9 rounded-full transition-all duration-300 
             ${isFirst
               ? "bg-gray-100 text-gray-400 cursor-not-allowed"
@@ -32,7 +42,10 @@ function Pagination({ currentPage, totalPages, onPageChange }) {
         {/* Next Button */}
         <button
           disabled={isLast}
-          onClick={() => onPageChange(currentPage + 1)}
+          onClick={() => {
+            onPageChange(currentPage + 1)
+            changePage(currentPage + 1)
+          }}
           className={`flex items-center justify-center w-9 h-9 rounded-full transition-all duration-300 
             ${isLast
               ? "bg-gray-100 text-gray-400 cursor-not-allowed"
