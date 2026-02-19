@@ -85,14 +85,23 @@ export const Form4 = () => {
     }
   };
 
- const onSubmit = (data) => {
+const onSubmit = (data) => {
   const formattedData = {
     ...data,
-    studyingInClass: data.studyingInClass ? `Class ${data.studyingInClass}` : null,
+    studyingInClass: data.studyingInClass
+      ? `Class ${data.studyingInClass}`
+      : null,
+
+    previous_school: data.previous_school.map((item) => ({
+      ...item,
+      class: `Class ${item.class}`,
+    })),
   };
+
   addApplicantSchool(formattedData);
   console.log("Form 4 Data:", formattedData);
 };
+
 
   console.log("errors: ", errors)
 
