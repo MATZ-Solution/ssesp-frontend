@@ -1,36 +1,46 @@
 import { useSelector } from "react-redux";
-import { Navigate } from "react-router-dom";
-import { useLocation } from "react-router-dom";
+import { Navigate, useLocation } from "react-router-dom";
 
 const ProtectedRouteForm = ({ children }) => {
 
-    const location = useLocation().pathname
-    const formPath = location.split("/")[2];
-    const formNumber = formPath.split("-")[2];
+  const location = useLocation().pathname;
+  const formPath = location.split("/")[2];
 
-    const currentStepName = useSelector(state => state.auth.user.formStatus)
-    const currentStepNumber = formPath.split("-")[2];
+  // ✅ Guard against undefined formPath
+  if (!formPath) {
+    return <Navigate to="/form/personal-info-1" replace />;
+  }
 
-    console.log("currentStepName: ", currentStepName)
+  const formName = formPath.split("-");
+  const formNumber = formName[formName.length - 1];
 
-    // initially if form status is null navigate form 1
-    if (!currentStepName) {
-        if (formPath !== "student-info-1") {
-            return <Navigate to={`/form/student-info-1`} replace />
-        }
-        return children;
+  const currentStepPath = useSelector(state => state.auth.user?.formStatus);
+
+  // ✅ If no formStatus, allow access (or redirect to first step)
+  if (!currentStepPath) {
+    return children;
+  }
+
+  // ✅ CHECK IF COMPLETED FIRST - before splitting
+  if (currentStepPath === "completed") {
+    // If user is on /form/complete, allow it
+    if (formPath === "complete") {
+      return children;
     }
+    // Otherwise redirect to complete page
+    return <Navigate to="/form/complete" replace />;
+  }
 
-    if (currentStepName === 'completed') {
-        return <Navigate to={`/form/complete`} replace />
-    }
+  // ✅ Only split if NOT completed
+  const currentStepName = currentStepPath.split("-");
+  const currentStepNumber = currentStepName[currentStepName.length - 1];
 
-    if (currentStepName && (Number(formNumber) <= Number(currentStepNumber))) {
-        return children;
-    }
+  // ✅ Prevent skipping steps
+  if (Number(formNumber) > Number(currentStepNumber)) {
+    return <Navigate to={`/form/${currentStepPath}`} replace />;
+  }
 
-    <Navigate to={`/form/${currentStepName}`} replace />;
-    return children
+  return children;
 };
 
 export default ProtectedRouteForm;

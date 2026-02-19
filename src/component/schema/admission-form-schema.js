@@ -76,6 +76,9 @@ export const step3Schema = yup.object().shape({
 });
 // Validation schema for Step 4 only
 
+
+const currentYear = new Date().getFullYear();
+
 export const step4Schema = yup.object().shape({
   // Current School Information
   schoolName: yup
@@ -97,6 +100,7 @@ export const step4Schema = yup.object().shape({
   studyingInClass: yup
     .string()
     .nullable()
+    .oneOf(["7", "8"], "Please select either Class 7 or Class 8")
     .required("Currently studying class is required"),
 
   enrollmentYear: yup
@@ -106,7 +110,6 @@ export const step4Schema = yup.object().shape({
     .test("valid-year", "Please enter a valid year", (value) => {
       if (!value) return false;
       const year = parseInt(value);
-      const currentYear = new Date().getFullYear();
       return year >= 1950 && year <= currentYear;
     }),
 
@@ -122,51 +125,68 @@ export const step4Schema = yup.object().shape({
     .matches(/^[a-zA-Z\s]+$/, "Name should only contain letters")
     .trim(),
 
-  // Previous School Records (Class 5 to 8)
-  previous_school: yup.array().of(
-    yup.object().shape({
-      class: yup
-        .string()
-        .required("Class is required"),
+  // Previous School Records — dynamic based on studyingInClass (8 → classes 5,6,7 | 9 → classes 6,7,8)
+  
+  previous_school: yup
+    .array()
+    .of(
+      yup.object().shape({
+        class: yup
+          .string()
+          .required("Class is required"),
 
-      schoolCategory: yup
-        .string()
-        .required("School category is required for this class"),
+        schoolCategory: yup
+          .string()
+          .required("School category is required for this class"),
 
-      semisCode: yup
-        .string()
-        .required("SEMIS Code is required for this class")
-        .matches(/^\d{9}$/, "SEMIS Code must be exactly 9 digits")
-        .length(9, "SEMIS Code must be exactly 9 digits"),
+        semisCode: yup
+          .string()
+          .required("SEMIS Code is required for this class")
+          .matches(/^\d{9}$/, "SEMIS Code must be exactly 9 digits")
+          .length(9, "SEMIS Code must be exactly 9 digits"),
 
-      district: yup
-        .string()
-        .required("District is required for this class"),
+        district: yup
+          .string()
+          .required("District is required for this class"),
 
-      yearOfPassing: yup
-        .string()
-        .required("Year of passing is required for this class")
-        .matches(/^\d{4}$/, "Year must be 4 digits")
-        .test("valid-year", "Please enter a valid year", (value) => {
-          if (!value) return false;
-          const year = parseInt(value);
-          const currentYear = new Date().getFullYear();
-          return year >= 1950 && year <= currentYear;
-        })
-        .test("chronological-order", "Year should match class progression", function (value) {
-          const { class: className } = this.parent;
-          if (!value || !className) return true;
+        yearOfPassing: yup
+          .string()
+          .required("Year of passing is required for this class")
+          .matches(/^\d{4}$/, "Year must be 4 digits")
+          .test("valid-year", "Please enter a valid year", (value) => {
+            if (!value) return false;
+            const year = parseInt(value);
+            return year >= 1950 && year <= currentYear;
+          })
+          .test(
+            "not-future-year",
+            "Year of passing cannot be in the future",
+            (value) => {
+              if (!value) return true;
+              return parseInt(value) <= currentYear;
+            }
+          ),
+      })
+    )
+    .length(3, "All 3 class records are required")
+    .required("Previous school records are required")
+    .test(
+      "classes-match-selected-class",
+      "Previous class records do not match the selected class",
+      function (records) {
+        const studyingInClass = this.parent.studyingInClass;
+        if (!studyingInClass || !records || records.length !== 3) return true;
 
-          const year = parseInt(value);
-          const currentYear = new Date().getFullYear();
+        // Class 8 selected => previous records: 6, 7, 8
+        // Class 7 selected => previous records: 5, 6, 7
+        const expectedClasses =
+          studyingInClass === "8" ? ["5", "6", "7"] : ["4", "5", "6"];
 
-          // Year should not be in the future
-          if (year > currentYear) return false;
-
-          return true;
-        }),
-    })
-  ).min(3, "All 3 class records are required").required("Previous school records are required"),
+        return records.every(
+          (record, index) => record?.class === expectedClasses[index]
+        );
+      }
+    ),
 });
 
 // Validation schema for Step 2 only

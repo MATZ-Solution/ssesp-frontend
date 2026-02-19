@@ -9,13 +9,18 @@ import { Form4 } from "../src/component/forms/admission/form-4";
 import Form5 from "../src/component/forms/admission/form-5";
 import Form6 from "../src/component/forms/admission/form-6";
 
-import Dashboard from "../src/component/Dashbaord/dashboard";
+import Dashboard from "../src/component/Dashbaord/tabs/dashboard";
 import Signup from "../src/component/signup/signup";
-import ProtectedRoute from "../utils/protectRoute";
+import ProtectedRouteApplicant from "../utils/protect-route-applicant";
 import ProtectedRouteForm from "../utils/protected-route-form";
 import ApplicationSubmitted from "../src/component/applicationSubmitted";
 import CandidatePDFDownloader from "../src/component/template/pdf-template";
 import NotFound from "../src/component/not-found";
+import AdminLogin from "../src/component/admin-login";
+import AdminTemplate from "../src/Templates/admin-template";
+import NewAdminTemplate from "../src/Templates/new-admin";
+import Applications from "../src/component/Dashbaord/tabs/applications";
+import ProtectedRouteAdmin from "../utils/protected-route-admin";
 
 export const router = createBrowserRouter([
   {
@@ -26,72 +31,72 @@ export const router = createBrowserRouter([
   {
     path: "/form/student-info-1",
     element: (
-      <ProtectedRoute>
+      <ProtectedRouteApplicant allowedRoles={['applicant']}>
         <ProtectedRouteForm>
           <Form1 />
         </ProtectedRouteForm>
-      </ProtectedRoute>
+      </ProtectedRouteApplicant>
     ),
   },
   {
     path: "/form/guardian-info-2",
     element: (
-      <ProtectedRoute>
+      <ProtectedRouteApplicant allowedRoles={['applicant']}>
         <ProtectedRouteForm>
           <Form2 />
         </ProtectedRouteForm>
-      </ProtectedRoute>
+      </ProtectedRouteApplicant>
     ),
   },
   {
     path: "/form/address-3",
     element: (
-      <ProtectedRoute>
+      <ProtectedRouteApplicant allowedRoles={['applicant']}>
         <ProtectedRouteForm>
           <Form3 />
         </ProtectedRouteForm>
-      </ProtectedRoute>
+      </ProtectedRouteApplicant>
     ),
   },
   {
     path: "/form/school-info-4",
     element: (
-      <ProtectedRoute>
+      <ProtectedRouteApplicant allowedRoles={['applicant']}>
         <ProtectedRouteForm>
           <Form4 />
         </ProtectedRouteForm>
-      </ProtectedRoute>
+      </ProtectedRouteApplicant>
     ),
   },
   {
     path: "/form/document-upload-5",
     element: (
-      <ProtectedRoute>
+      <ProtectedRouteApplicant allowedRoles={['applicant']}>
         <ProtectedRouteForm>
           <Form5 />
         </ProtectedRouteForm>
-      </ProtectedRoute>
+      </ProtectedRouteApplicant>
     ),
   },
   {
     path: "/form/school-preference-6",
     element: (
-      <ProtectedRoute>
+      <ProtectedRouteApplicant allowedRoles={['applicant']}>
         <ProtectedRouteForm>
           <Form6 />
         </ProtectedRouteForm>
-      </ProtectedRoute>
+      </ProtectedRouteApplicant>
     ),
   },
 
   {
     path: "/form/complete",
     element: withSuspense(
-      <ProtectedRoute>
-        <ProtectedRoute>
+      <ProtectedRouteApplicant allowedRoles={['applicant']}>
+        <ProtectedRouteForm>
           <ApplicationSubmitted />
-        </ProtectedRoute>
-      </ProtectedRoute>
+        </ProtectedRouteForm>
+      </ProtectedRouteApplicant>
     ),
   },
 
@@ -106,11 +111,30 @@ export const router = createBrowserRouter([
   },
 
   {
-    path: "/dashboard",
+    path: "admin/dashboard",
     element: withSuspense(
-      // <ProtectedRoute>
-        <Dashboard />
-      // </ProtectedRoute>
+      <ProtectedRouteAdmin allowedRoles={['admin']}>
+        <NewAdminTemplate>
+          <Dashboard />
+        </NewAdminTemplate>
+      </ProtectedRouteAdmin>
+    )
+  },
+
+  {
+    path: "admin/applications",
+    element: withSuspense(
+      <ProtectedRouteAdmin allowedRoles={['admin']}>
+        <NewAdminTemplate>
+          <Applications />
+        </NewAdminTemplate>
+      </ProtectedRouteAdmin>
+    )
+  },
+  {
+    path: "/admin/login",
+    element: withSuspense(
+      <AdminLogin />
     ),
   },
   {
