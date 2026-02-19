@@ -46,7 +46,7 @@ const Navbar = () => {
   };
 
   return (
-    <nav className={`bg-gradient-to-r from-green-700 via-green-600 to-green-800 shadow-2xl sticky top-0 z-50 backdrop-blur-lg w-full transition-transform duration-300 ${
+    <nav className={`rounded-lg bg-gradient-to-r from-green-700 via-green-600 to-green-800 shadow-2xl sticky top-0 z-50 backdrop-blur-lg w-full transition-transform duration-300 ${
       isVisible ? 'translate-y-0' : '-translate-y-full'
     }`}>
       <div className="w-full px-3 sm:px-4 md:px-6 lg:max-w-7xl lg:mx-auto">
