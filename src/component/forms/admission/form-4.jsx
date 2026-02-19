@@ -86,10 +86,14 @@ export const Form4 = () => {
     }
   };
 
-  const onSubmit = (data) => {
-    addApplicantSchool(data);
-    console.log("Form 4 Data:", data);
+ const onSubmit = (data) => {
+  const formattedData = {
+    ...data,
+    studyingInClass: data.studyingInClass ? `Class ${data.studyingInClass}` : null,
   };
+  addApplicantSchool(formattedData);
+  console.log("Form 4 Data:", formattedData);
+};
 
   return (
     <FormTemplate>
@@ -300,11 +304,11 @@ export const Form4 = () => {
                                       {...field}
                                       type="text"
                                       placeholder="SEMIS Code"
-                                      maxLength={7}
+                                      maxLength={9}
                                       onInput={(e) => {
                                         e.target.value = e.target.value
                                           .replace(/\D/g, "")
-                                          .slice(0, 7);
+                                          .slice(0, 9);
                                       }}
                                       className="w-full px-2 lg:px-3 py-1.5 lg:py-2 text-sm lg:text-base border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
                                     />
@@ -452,11 +456,11 @@ export const Form4 = () => {
                                 {...field}
                                 type="text"
                                 placeholder="Enter SEMIS Code"
-                                maxLength={7}
+                                maxLength={9}
                                 onInput={(e) => {
                                   e.target.value = e.target.value
                                     .replace(/\D/g, "")
-                                    .slice(0, 7);
+                                    .slice(0, 9);
                                 }}
                                 className="w-full px-3 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
                               />
