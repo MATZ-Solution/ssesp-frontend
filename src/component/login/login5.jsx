@@ -260,7 +260,7 @@ Welcome to the Scholarship Portal               </h2>
                 <div className="flex justify-end">
                   <Link
                     to="/signup"
-                    className="text-sm text-[#4BA54F] hover:text-emerald-400 transition-colors duration-300"
+                    className="text-sm underline text-white hover:text-emerald-400 transition-colors duration-300"
                   >
                     Sign Up
                   </Link>
