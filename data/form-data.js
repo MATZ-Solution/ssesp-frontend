@@ -26,6 +26,7 @@
   ];
 
      export const guardianrelation = [
+    { value: 'Father', label: 'Father' },
     { value: 'Brother', label: 'Brother' },
     { value: 'Mother', label: 'Mother' },
     { value: 'Uncle', label: 'Uncle' },

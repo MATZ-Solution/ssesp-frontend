@@ -69,6 +69,8 @@ export function useGetDashbaordData() {
   const { data, isSuccess, isPending, isError, isLoading } = useQuery({
     queryKey: [API_ROUTE.admin.getDashbaordData],
     queryFn: async () => await api.get(`${API_ROUTE.admin.getDashbaordData}`),
+    staleTime: 60 * 1000 * 5,
+    retry: 1
     // enabled: id !== undefined && id !== null
   });
   return {
@@ -88,6 +90,8 @@ export function useGetDashbaordApplicantRecentData(params = {}) {
   const { data, isSuccess, isPending, isError, isLoading } = useQuery({
     queryKey: [API_ROUTE.admin.getDashbaordApplicantData, params],
     queryFn: async () => await api.get(`${API_ROUTE.admin.getDashbaordApplicantData}?${constructQueryString(params)}`),
+    staleTime: 60 * 1000 * 5,
+    retry: 1
   });
   return {
     data: data?.data?.data,
@@ -107,10 +111,139 @@ export function useGetDashbaordApplicantData(params = {}) {
   const { data, isSuccess, isPending, isError, isLoading } = useQuery({
     queryKey: [API_ROUTE.admin.getDashbaordApplicantData, params],
     queryFn: async () => await api.get(`${API_ROUTE.admin.getDashbaordApplicantData}?${constructQueryString(params)}`),
+    // staleTime: 60 * 1000 * 5,
+    // refetchOnWindowFocus: false,
+    // retry: 1
   });
   return {
     data: data?.data?.data,
     totalPages: data?.data?.totalPages,
+    isSuccess,
+    isPending,
+    isError,
+    isLoading,
+  };
+}
+
+export function useGetApplicantInfo(params = {}) {
+   const constructQueryString = (params) => {
+    const query = new URLSearchParams(params).toString();
+    return query ? `&${query}` : "";
+  };
+  const { data, isSuccess, isPending, isError, isLoading } = useQuery({
+    queryKey: [API_ROUTE.admin.getApplicantInfo],
+    queryFn: async () =>
+      await api.get(`${API_ROUTE.admin.getApplicantInfo}?${constructQueryString(params)}`),
+    // enabled: id !== undefined && id !== null,
+    // staleTime: 60 * 1000 * 5, 
+    retry: 1,
+  });
+  return {
+    data: data?.data?.data,
+    isSuccess,
+    isPending,
+    isError,
+    isLoading,
+  };
+}
+
+export function useGetApplicantGuardianInfo(params = {}) {
+    const constructQueryString = (params) => {
+    const query = new URLSearchParams(params).toString();
+    return query ? `&${query}` : "";
+  };
+  const { data, isSuccess, isPending, isError, isLoading } = useQuery({
+    queryKey: [API_ROUTE.admin.getApplicantGuardianInfo],
+    queryFn: async () =>
+      await api.get(`${API_ROUTE.admin.getApplicantGuardianInfo}?${constructQueryString(params)}`),
+    // enabled: id !== undefined && id !== null,
+    staleTime: 60 * 1000 * 5, 
+    refetchOnWindowFocus: false,
+    retry: 1,
+  });
+  return {
+    data: data?.data?.data,
+    isSuccess,
+    isPending,
+    isError,
+    isLoading,
+  };
+}
+
+export function useGetApplicantDocument(params = {}) {
+    const constructQueryString = (params) => {
+    const query = new URLSearchParams(params).toString();
+    return query ? `&${query}` : "";
+  };
+  const { data, isSuccess, isPending, isError, isLoading } = useQuery({
+    queryKey: [API_ROUTE.admin.getApplicantDocuments],
+    queryFn: async () =>
+      await api.get(`${API_ROUTE.admin.getApplicantDocuments}?${constructQueryString(params)}`),
+    // enabled: id !== undefined && id !== null,
+    // staleTime: 60 * 1000 * 5,
+    refetchOnWindowFocus: false,
+    retry: 1,
+  });
+  return {
+    data: data?.data?.data,
+    isSuccess,
+    isPending,
+    isError,
+    isLoading,
+  };
+}
+
+export function useGetApplicantAddressInfo(params = {}) {
+   const constructQueryString = (params) => {
+    const query = new URLSearchParams(params).toString();
+    return query ? `&${query}` : "";
+  };
+  const { data, isSuccess, isPending, isError, isLoading } = useQuery({
+    queryKey: [API_ROUTE.admin.getApplicantAddressInfo],
+    queryFn: async () =>
+      await api.get(`${API_ROUTE.admin.getApplicantAddressInfo}?${constructQueryString(params)}`),
+    // enabled: id !== undefined && id !== null,
+    staleTime: 60 * 1000 * 5, // 5 minute,
+    retry: 1,
+  });
+  return {
+    data: data?.data?.data,
+    isSuccess,
+    isPending,
+    isError,
+    isLoading,
+  };
+}
+
+export function useGetApplicantSchoolInfo() {
+  const { data, isSuccess, isPending, isError, isLoading } = useQuery({
+    queryKey: [API_ROUTE.admin.getApplicantSchoolInfo],
+    queryFn: async () =>
+      await api.get(`${API_ROUTE.admin.getApplicantSchoolInfo}`),
+    // enabled: id !== undefined && id !== null,
+    staleTime: 60 * 1000 * 5, // 5 minute,
+    retry: 1,
+  });
+  return {
+    data: data?.data?.data,
+    isSuccess,
+    isPending,
+    isError,
+    isLoading,
+  };
+}
+
+export function useGetApplicantSchoolPreference() {
+  const { data, isSuccess, isPending, isError, isLoading } = useQuery({
+    queryKey: [API_ROUTE.admin.getApplicantTestPreference],
+    queryFn: async () =>
+      await api.get(`${API_ROUTE.admin.getApplicantSchoolPreference}`),
+    // enabled: id !== undefined && id !== null,
+    staleTime: 60 * 1000 * 5, // 5 minute,
+    retry: 1,
+  });
+  return {
+    data: data?.data?.data,
     isSuccess,
     isPending,
     isError,
