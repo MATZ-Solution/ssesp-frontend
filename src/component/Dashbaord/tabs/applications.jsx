@@ -1,26 +1,41 @@
 import Pagination from "../../pagination";
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import RecentApplicationsTable from "../../cards/RecentApplicationsTable";
+import ApplicationFilters from "../ApplicationFilters";
 import ApplicantsTable from "../../cards/applicants-table";
-import { useGetDashbaordApplicantData } from "../../../../api/client/admin"
-import ViewFormModal from "../../modal/view-form-modal";
+import { useGetDashbaordApplicantData } from "../../../../api/client/admin";
 
 const Applications = () => {
+  
+  const navigate = useNavigate();
+  const [page, setPage] = useState(1);
+  const [filters, setFilters] = useState({
+    class: "",
+    schoolType: "",
+    gender: "",
+  });
 
-  const navigate = useNavigate()
-  let [page, setPage] = useState(1)
-  const { data: applicantData, isLoading: applicantIsLoading, totalPages } = useGetDashbaordApplicantData({ page })
+  const { data: applicantData, isLoading: applicantIsLoading, totalPages } =
+    useGetDashbaordApplicantData({
+      page,
+      class: filters.class,
+      schoolType: filters.schoolType,
+      gender: filters.gender,
+    });
 
   useEffect(() => {
     navigate("?page=1", { replace: true });
   }, []);
 
-  if (applicantIsLoading) return <p>loading...</p>
+  const handleFilterChange = (newFilters) => {
+    setFilters(newFilters);
+    setPage(1);
+  };
+
+  if (applicantIsLoading) return <p>loading...</p>;
 
   return (
     <div>
-      {" "}
       <main className="flex-1 p-5 md:p-7 space-y-6">
         {/* Welcome */}
         <div className="flex items-start justify-between gap-4">
@@ -32,30 +47,25 @@ const Applications = () => {
               Here's what's happening with applications today.
             </p>
           </div>
-          {/* <button className="hidden sm:flex items-center gap-2 bg-teal-600 text-white text-sm font-medium px-4 py-2.5 rounded-xl hover:bg-teal-700 transition-colors shadow-sm">
-            <Filter size={14} />
-            Export Report
-          </button> */}
         </div>
 
-        {/* Stat cards */}
-        {/* <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-4">
-          {STATS.map((stat) => (
-            <StatCard key={stat.label} stat={stat} />
-          ))}
-        </div> */}
+        {/* Filters */}
+        <ApplicationFilters filters={filters} onChange={handleFilterChange} />
 
         {/* Table */}
-        <ApplicantsTable applications={applicantData} />
+        {applicantData?.length === 0 ?
+          <p>No Data Found.</p> :
+          (<ApplicantsTable applications={applicantData} />)}
 
         {/* <ViewFormModal isOpen={true} title='Student Information'/> */}
 
-        <Pagination
-          currentPage={page}
-          totalPages={totalPages}
-          onPageChange={(newPage) => setPage(newPage)}
-        />
-
+        {applicantData?.length > 0 &&
+          <Pagination
+            currentPage={page}
+            totalPages={totalPages}
+            onPageChange={(newPage) => setPage(newPage)}
+          />
+        }
       </main>
     </div>
   );

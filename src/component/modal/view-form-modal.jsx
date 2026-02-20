@@ -8,7 +8,7 @@ import { Form4View } from "../forms/admission/view-form-4";
 import Form5View from "../forms/admission/view-form-5";
 import Form6View from "../forms/admission/view-form-6";
 
-const ViewFormModal = ({ isOpen, onClose }) => {
+const ViewFormModal = ({ isOpen, onClose, applicantID }) => {
 
   const [title, setTitle] = useState('Student Information')
   const handleTitle = (title) => setTitle(title)
@@ -66,12 +66,12 @@ const ViewFormModal = ({ isOpen, onClose }) => {
 
         {/* Scrollable Content */}
         <div className="overflow-y-auto ">
-          {title === "Student Information" && <Form1View handleTitle={handleTitle} />}
-          {title === "Guardian Information" && <Form2View handleTitle={handleTitle} />}
-          {title === "Address Information" && <Form3View handleTitle={handleTitle} />}
-          {title === "School Information" && <Form4View handleTitle={handleTitle} />}
-          {title === "Document Information" && <Form5View handleTitle={handleTitle} />}
-          {title === "School Preference Information" && <Form6View handleTitle={handleTitle} />}
+          {title === "Student Information" && <Form1View applicantID={applicantID} handleTitle={handleTitle} />}
+          {title === "Guardian Information" && <Form2View applicantID={applicantID} handleTitle={handleTitle} />}
+          {title === "Address Information" && <Form3View applicantID={applicantID} handleTitle={handleTitle} />}
+          {title === "School Information" && <Form4View applicantID={applicantID} handleTitle={handleTitle} />}
+          {title === "Document Information" && <Form5View applicantID={applicantID} handleTitle={handleTitle} />}
+          {title === "School Preference Information" && <Form6View applicantID={applicantID} handleTitle={handleTitle} />}
 
         </div>
       </div>

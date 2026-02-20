@@ -10,12 +10,13 @@ const statusStyles = {
 function ApplicantsTable({ applications }) {
 
     const [isOpenModal, setModal] = useState(false)
+    const [applicantID, setApplicantID] = useState(false)
     const onClose = ()=> setModal(false)
 
     return (
         <div className=" bg-white rounded-2xl shadow-sm border border-slate-100 overflow-hidden mb-5">
 
-            {isOpenModal && <ViewFormModal isOpen={isOpenModal} onClose={onClose}/>}
+            {isOpenModal && <ViewFormModal isOpen={isOpenModal} onClose={onClose} applicantID={applicantID}/>}
 
             {/* Desktop table */}
             <div className="hidden md:block overflow-x-auto">
@@ -34,7 +35,7 @@ function ApplicantsTable({ applications }) {
                     <tbody>
                         {applications?.map((app, i) => (
                             <tr
-                                key={app.id}
+                                key={i}
                                 className={`border-t border-slate-50 hover:bg-slate-50/70 transition-colors ${i % 2 === 0 ? "" : "bg-slate-50/30"
                                     }`}
                             >
@@ -57,9 +58,12 @@ function ApplicantsTable({ applications }) {
                                         {app.status}
                                     </span>
                                 </td>
-                                <td className="px-5 py-3.5 text-right">
+                                {/* <td className="px-5 py-3.5 text-right">
                                     <button
-                                    onClick={() => setModal(true)}
+                                    onClick={() => {
+                                        setModal(true)
+                                        setApplicantID(app.applicantID)
+                                    }}
                                         className=" cursor-pointer
                                     inline-flex items-center gap-2
                                     px-4 py-1.5
@@ -76,8 +80,7 @@ function ApplicantsTable({ applications }) {
                                     >
                                         👁 View
                                     </button>
-                                </td>
-
+                                </td> */}
                             </tr>
                         ))}
                     </tbody>
@@ -86,9 +89,9 @@ function ApplicantsTable({ applications }) {
 
             {/* Mobile card list */}
             <div className="md:hidden divide-y divide-slate-100">
-                {applications?.map((app) => (
+                {applications?.map((app, i) => (
                     <div
-                        key={app.id}
+                        key={i}
                         className="p-4 flex items-start justify-between gap-3"
                     >
                         <div>

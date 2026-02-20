@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import Button from "../../button";
+import { useGetApplicantInfo } from "../../../../api/client/admin";
 
 const Field = ({ label, value }) => (
   <div>
@@ -12,8 +13,12 @@ const Field = ({ label, value }) => (
   </div>
 );
 
-export const Form1View = ({ data = {}, handleTitle }) => {
+export const Form1View = ({ applicantID, handleTitle }) => {
   const [showPhotoModal, setShowPhotoModal] = useState(false);
+  const { data: studentInfo, isSuccess, isPending, isError, isLoading } = useGetApplicantInfo({ userId: applicantID })
+  const data = studentInfo?.[0] || []
+
+  if(isLoading) return <p>Loading...</p>
 
   return (
     <div>
@@ -37,7 +42,7 @@ export const Form1View = ({ data = {}, handleTitle }) => {
                   Student Photo
                 </p>
 
-                {data.photoPreview ? (
+                {data?.fileUrl && (
                   <div className="flex flex-col items-center gap-2">
                     <div
                       className="
@@ -47,42 +52,12 @@ export const Form1View = ({ data = {}, handleTitle }) => {
                         cursor-pointer bg-gray-50 flex items-center justify-center
                         hover:border-blue-400 transition-colors
                       "
-                      onClick={() => setShowPhotoModal(true)}
                     >
                       <img
-                        src={data.photoPreview}
+                        src={data?.fileUrl}
                         alt="Student"
                         className="w-full h-full object-cover"
                       />
-                    </div>
-                    <p className="text-xs text-gray-400 text-center">
-                      Tap photo to enlarge
-                    </p>
-                  </div>
-                ) : (
-                  <div
-                    className="
-                      w-36 h-36 sm:w-48 sm:h-48 md:w-56 md:h-56
-                      lg:w-full lg:h-auto lg:aspect-square
-                      border-2 border-dashed border-gray-200 rounded-lg
-                      flex items-center justify-center bg-gray-50 mx-auto lg:mx-0
-                    "
-                  >
-                    <div className="text-center p-4">
-                      <svg
-                        className="w-10 h-10 sm:w-12 sm:h-12 text-gray-300 mx-auto mb-2"
-                        fill="none"
-                        stroke="currentColor"
-                        viewBox="0 0 24 24"
-                      >
-                        <path
-                          strokeLinecap="round"
-                          strokeLinejoin="round"
-                          strokeWidth="1.5"
-                          d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"
-                        />
-                      </svg>
-                      <p className="text-xs text-gray-400">No photo uploaded</p>
                     </div>
                   </div>
                 )}
@@ -116,10 +91,10 @@ export const Form1View = ({ data = {}, handleTitle }) => {
                     value={
                       data.dob
                         ? new Date(data.dob).toLocaleDateString("en-PK", {
-                            day: "2-digit",
-                            month: "long",
-                            year: "numeric",
-                          })
+                          day: "2-digit",
+                          month: "long",
+                          year: "numeric",
+                        })
                         : "—"
                     }
                   />
@@ -147,7 +122,7 @@ export const Form1View = ({ data = {}, handleTitle }) => {
       </div>
 
       {/* Photo Enlarge Modal */}
-      {showPhotoModal && data.photoPreview && (
+      {showPhotoModal && data?.fileUrl && (
         <div
           className="fixed inset-0 bg-black bg-opacity-80 flex items-center justify-center z-50 p-4"
           onClick={() => setShowPhotoModal(false)}

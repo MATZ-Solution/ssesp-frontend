@@ -1,5 +1,6 @@
 import React from "react";
 import Button from "../../button";
+import { useGetApplicantGuardianInfo } from "../../../../api/client/admin";
 
 const Field = ({ label, value }) => (
     <div>
@@ -12,7 +13,11 @@ const Field = ({ label, value }) => (
     </div>
 );
 
-export const Form2View = ({ data = {}, handleTitle }) => {
+export const Form2View = ({ applicantID, handleTitle }) => {
+    const { data: guardianInfo, isSuccess, isPending, isError, isLoading } = useGetApplicantGuardianInfo({ userId: applicantID })
+    const data = guardianInfo?.[0] || []
+    if (isLoading) return <p>Loading...</p>
+    
     return (
         <div className="bg-white shadow-xl p-4 sm:p-6 md:p-8 lg:p-10 w-full">
             <div className="flex flex-col gap-4 sm:gap-5">

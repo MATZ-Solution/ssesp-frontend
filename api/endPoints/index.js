@@ -26,9 +26,17 @@ const API_ROUTE = {
   admin: {
     signIn: "/api/admin/signIn",
     signUp: "/api/admin/signUp",
+
     getDashbaordData: "/api/admin/getDashbaordData",
     getDashbaordApplicantRecentData: "/api/admin/getDashbaordApplicantRecentData",
     getDashbaordApplicantData: "/api/admin/getDashbaordApplicantData",
+    getApplicantInfo: "/api/admin/getApplicantInfo",
+    getApplicantGuardianInfo: "/api/admin/getApplicantGuardianInfo",
+    getApplicantDocuments: "/api/admin/getApplicantDocuments",
+    getApplicantAddressInfo: "/api/admin/getApplicantAddressInfo",
+    getApplicantSchoolInfo: "/api/admin/getApplicantSchoolInfo",
+    getApplicantSchoolPreference: "/api/admin/getApplicantSchoolPreference",
+
   }
 };
 

@@ -1,15 +1,6 @@
 import React, { useState } from "react";
 import Button from "../../button";
-
-const PdfIcon = () => (
-  <svg className="w-12 h-12 text-red-500 mb-2" fill="currentColor" viewBox="0 0 20 20">
-    <path
-      fillRule="evenodd"
-      d="M4 4a2 2 0 012-2h4.586A2 2 0 0112 2.586L15.414 6A2 2 0 0116 7.414V16a2 2 0 01-2 2H6a2 2 0 01-2-2V4zm2 6a1 1 0 011-1h6a1 1 0 110 2H7a1 1 0 01-1-1zm1 3a1 1 0 100 2h6a1 1 0 100-2H7z"
-      clipRule="evenodd"
-    />
-  </svg>
-);
+import { useGetApplicantDocument } from "../../../../api/client/admin";
 
 const DocumentViewItem = ({ label, description, preview }) => {
   const [showModal, setShowModal] = useState(false);
@@ -26,29 +17,17 @@ const DocumentViewItem = ({ label, description, preview }) => {
       <div
         className={`w-full h-44 sm:h-48 rounded-lg border-2 flex items-center justify-center overflow-hidden
           ${preview
-            ? preview.type === "pdf"
-              ? "border-red-200 bg-red-50"
-              : "border-green-200 bg-green-50 cursor-pointer hover:border-blue-400 transition-colors"
+            ? "border-green-200 bg-green-50 cursor-pointer hover:border-blue-400 transition-colors"
             : "border-dashed border-gray-200 bg-gray-50"
           }`}
-        onClick={() => {
-          if (preview?.type === "image") setShowModal(true);
-        }}
+        onClick={() => { if (preview) setShowModal(true); }}
       >
         {preview ? (
-          preview.type === "pdf" ? (
-            <div className="flex flex-col items-center justify-center text-center px-3">
-              <PdfIcon />
-              <p className="text-sm font-medium text-gray-700 break-all">{preview.name}</p>
-              <p className="text-xs text-gray-400 mt-1">PDF Document</p>
-            </div>
-          ) : (
-            <img
-              src={preview.url}
-              alt={label}
-              className="w-full h-full object-contain"
-            />
-          )
+          <img
+            src={preview}
+            alt={label}
+            className="w-full h-full object-contain"
+          />
         ) : (
           <div className="flex flex-col items-center justify-center text-center px-3">
             <svg className="w-10 h-10 text-gray-300 mb-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -69,16 +48,13 @@ const DocumentViewItem = ({ label, description, preview }) => {
                 d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"
                 clipRule="evenodd" />
             </svg>
-            Document uploaded
-            {preview.type === "image" && (
-              <span className="text-green-600 ml-1">· Tap to enlarge</span>
-            )}
+            Document uploaded · <span className="text-green-600">Tap to enlarge</span>
           </p>
         </div>
       )}
 
       {/* Image Modal */}
-      {showModal && preview?.type === "image" && (
+      {showModal && preview && (
         <div
           className="fixed inset-0 bg-black bg-opacity-80 flex items-center justify-center z-50 p-4"
           onClick={() => setShowModal(false)}
@@ -93,7 +69,7 @@ const DocumentViewItem = ({ label, description, preview }) => {
               </svg>
             </button>
             <img
-              src={preview.url}
+              src={preview}
               alt={`${label} enlarged`}
               className="w-full max-h-[85vh] object-contain rounded-lg shadow-2xl"
               onClick={(e) => e.stopPropagation()}
@@ -105,31 +81,45 @@ const DocumentViewItem = ({ label, description, preview }) => {
   );
 };
 
-const Form5View = ({ data = {}, handleTitle }) => {
+const Form5View = ({ applicantID, handleTitle }) => {
+  const { data: documentInfo, isLoading } = useGetApplicantDocument({ userId: applicantID });
+
+  if (isLoading) {
+    return (
+      <div className="flex flex-col items-center justify-center py-10">
+        <div className="relative w-12 h-12">
+          <div className="absolute inset-0 border-4 border-gray-200 rounded-full" />
+          <div className="absolute inset-0 border-4 border-blue-500 rounded-full animate-spin border-t-transparent" />
+        </div>
+        <p className="mt-4 text-sm text-gray-500">Loading documents...</p>
+      </div>
+    );
+  }
+
   const documents = [
     {
       name: "document1",
       label: "Birth Certificate (B-Form)",
       description: "Student's NADRA B-Form or Birth Certificate",
-      preview: data.doc1Preview || null,
+      preview: documentInfo?.find((item) => item.documentName === "Birth Certificate")?.fileUrl || null,
     },
     {
       name: "document2",
       label: "Parent/Guardian Domicile",
       description: "Copy of parent or guardian's Domicile",
-      preview: data.doc2Preview || null,
+      preview: documentInfo?.find((item) => item.documentName === "Guardian Doimicile")?.fileUrl || null,
     },
     {
       name: "document3",
       label: "Parent/Guardian CNIC",
       description: "Copy of parent or guardian's CNIC",
-      preview: data.doc3Preview || null,
+      preview: documentInfo?.find((item) => item.documentName === "Guardian CNIC")?.fileUrl || null,
     },
     {
       name: "document4",
       label: "Parent/Guardian PRC",
       description: "Copy of parent or guardian's PRC",
-      preview: data.doc4Preview || null,
+      preview: documentInfo?.find((item) => item.documentName === "Guardian PRC")?.fileUrl || null,
     },
   ];
 
