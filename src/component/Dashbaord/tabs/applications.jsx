@@ -2,7 +2,9 @@ import Pagination from "../../pagination";
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import RecentApplicationsTable from "../../cards/RecentApplicationsTable";
+import ApplicantsTable from "../../cards/applicants-table";
 import { useGetDashbaordApplicantData } from "../../../../api/client/admin"
+import ViewFormModal from "../../modal/view-form-modal";
 
 const Applications = () => {
 
@@ -44,7 +46,9 @@ const Applications = () => {
         </div> */}
 
         {/* Table */}
-        <RecentApplicationsTable applications={applicantData} />
+        <ApplicantsTable applications={applicantData} />
+
+        {/* <ViewFormModal isOpen={true} title='Student Information'/> */}
 
         <Pagination
           currentPage={page}

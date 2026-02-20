@@ -112,6 +112,7 @@ export function useGetDashbaordApplicantData(params = {}) {
     queryKey: [API_ROUTE.admin.getDashbaordApplicantData, params],
     queryFn: async () => await api.get(`${API_ROUTE.admin.getDashbaordApplicantData}?${constructQueryString(params)}`),
     staleTime: 60 * 1000 * 5,
+    // refetchOnWindowFocus: false,
     retry: 1
   });
   return {

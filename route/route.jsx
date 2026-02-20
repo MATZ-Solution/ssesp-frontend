@@ -21,6 +21,7 @@ import AdminTemplate from "../src/Templates/admin-template";
 import NewAdminTemplate from "../src/Templates/new-admin";
 import Applications from "../src/component/Dashbaord/tabs/applications";
 import ProtectedRouteAdmin from "../utils/protected-route-admin";
+import { Form1View } from "../src/component/forms/admission/view-form-1";
 
 export const router = createBrowserRouter([
   {
@@ -140,5 +141,9 @@ export const router = createBrowserRouter([
   {
     path: "/signup",
     element: withSuspense(<Signup />),
+  },
+  {
+    path: "/view-form",
+    element: withSuspense(<Form1View />),
   },
 ]);
