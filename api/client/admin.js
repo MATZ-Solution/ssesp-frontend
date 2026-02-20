@@ -69,6 +69,8 @@ export function useGetDashbaordData() {
   const { data, isSuccess, isPending, isError, isLoading } = useQuery({
     queryKey: [API_ROUTE.admin.getDashbaordData],
     queryFn: async () => await api.get(`${API_ROUTE.admin.getDashbaordData}`),
+    staleTime: 60 * 1000 * 5,
+    retry: 1
     // enabled: id !== undefined && id !== null
   });
   return {
@@ -88,6 +90,8 @@ export function useGetDashbaordApplicantRecentData(params = {}) {
   const { data, isSuccess, isPending, isError, isLoading } = useQuery({
     queryKey: [API_ROUTE.admin.getDashbaordApplicantData, params],
     queryFn: async () => await api.get(`${API_ROUTE.admin.getDashbaordApplicantData}?${constructQueryString(params)}`),
+    staleTime: 60 * 1000 * 5,
+    retry: 1
   });
   return {
     data: data?.data?.data,
@@ -107,6 +111,8 @@ export function useGetDashbaordApplicantData(params = {}) {
   const { data, isSuccess, isPending, isError, isLoading } = useQuery({
     queryKey: [API_ROUTE.admin.getDashbaordApplicantData, params],
     queryFn: async () => await api.get(`${API_ROUTE.admin.getDashbaordApplicantData}?${constructQueryString(params)}`),
+    staleTime: 60 * 1000 * 5,
+    retry: 1
   });
   return {
     data: data?.data?.data,
