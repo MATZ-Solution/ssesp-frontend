@@ -36,7 +36,7 @@ const Applications = () => {
 
   return (
     <div>
-      <main className="flex-1 p-5 md:p-7 space-y-6">
+      <main className="flex-1  space-y-6">
         {/* Welcome */}
         <div className="flex items-start justify-between gap-4">
           <div>

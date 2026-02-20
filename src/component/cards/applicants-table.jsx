@@ -40,7 +40,7 @@ function ApplicantsTable({ applications }) {
                                     }`}
                             >
                                 <td className="px-5 py-3.5 font-mono text-xs text-slate-600">
-                                    {app.applicantID}
+                                    {'SSESP'+app.applicantID}
                                 </td>
                                 <td className="px-5 py-3.5 font-medium text-slate-800">
                                     {app.studentName}
