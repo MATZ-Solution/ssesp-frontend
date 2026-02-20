@@ -14,6 +14,7 @@ const Applications = () => {
     class: "",
     schoolType: "",
     gender: "",
+    district: ""
   });
 
   const { data: applicantData, isLoading: applicantIsLoading, totalPages } =
