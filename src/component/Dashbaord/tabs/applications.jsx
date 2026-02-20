@@ -4,6 +4,7 @@ import { useNavigate } from "react-router-dom";
 import ApplicationFilters from "../ApplicationFilters";
 import ApplicantsTable from "../../cards/applicants-table";
 import { useGetDashbaordApplicantData } from "../../../../api/client/admin";
+import { districts } from "../../../../data/new-district";
 
 const Applications = () => {
   
@@ -21,6 +22,7 @@ const Applications = () => {
       class: filters.class,
       schoolType: filters.schoolType,
       gender: filters.gender,
+      district: filters.district
     });
 
   useEffect(() => {
@@ -33,6 +35,8 @@ const Applications = () => {
   };
 
   if (applicantIsLoading) return <p>loading...</p>;
+
+  console.log("filter: ", filters)
 
   return (
     <div>
