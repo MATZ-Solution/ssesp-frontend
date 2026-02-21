@@ -59,7 +59,7 @@ function ApplicantsTable({ applications }) {
                                         {app.status}
                                     </span>
                                 </td>
-                                <td className="px-5 py-3.5 text-right">
+                                {/* <td className="px-5 py-3.5 text-right">
                                     <button
                                         onClick={() => {
                                             // setModal(true)
@@ -82,7 +82,7 @@ function ApplicantsTable({ applications }) {
                                     >
                                         👁 View
                                     </button>
-                                </td>
+                                </td> */}
                             </tr>
                         ))}
                     </tbody>
