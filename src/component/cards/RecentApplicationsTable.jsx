@@ -34,12 +34,12 @@ function RecentApplicationsTable({ applications }) {
           <tbody>
             {applications?.map((app, i) => (
               <tr
-                key={app.id}
+                key={i}
                 className={`border-t border-slate-50 hover:bg-slate-50/70 transition-colors ${i % 2 === 0 ? "" : "bg-slate-50/30"
                   }`}
               >
                 <td className="px-5 py-3.5 font-mono text-xs text-slate-600">
-                  {app.applicantID}
+                  {'SSESP'+app.applicantID}
                 </td>
                 <td className="px-5 py-3.5 font-medium text-slate-800">
                   {app.studentName}
@@ -70,9 +70,9 @@ function RecentApplicationsTable({ applications }) {
 
       {/* Mobile card list */}
       <div className="md:hidden divide-y divide-slate-100">
-        {applications?.map((app) => (
+        {applications?.map((app,i) => (
           <div
-            key={app.id}
+            key={i}
             className="p-4 flex items-start justify-between gap-3"
           >
             <div>
