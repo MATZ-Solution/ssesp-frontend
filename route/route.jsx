@@ -22,6 +22,9 @@ import NewAdminTemplate from "../src/Templates/new-admin";
 import Applications from "../src/component/Dashbaord/tabs/applications";
 import ProtectedRouteAdmin from "../utils/protected-route-admin";
 import { Form1View } from "../src/component/forms/admission/view-form-1";
+import { Form2View } from "../src/component/forms/admission/view-form-2";
+import { Form3View } from "../src/component/forms/admission/view-form-3";
+import Form4View from "../src/component/forms/admission/view-form-4";
 
 export const router = createBrowserRouter([
   {
@@ -112,7 +115,7 @@ export const router = createBrowserRouter([
   },
 
   {
-    path: "admin/dashboard",
+    path: "/admin/dashboard",
     element: withSuspense(
       <ProtectedRouteAdmin allowedRoles={['admin']}>
         <NewAdminTemplate>
@@ -123,11 +126,52 @@ export const router = createBrowserRouter([
   },
 
   {
-    path: "admin/applications",
+    path: "/admin/applications",
     element: withSuspense(
       <ProtectedRouteAdmin allowedRoles={['admin']}>
         <NewAdminTemplate>
           <Applications />
+        </NewAdminTemplate>
+      </ProtectedRouteAdmin>
+    )
+  },
+
+  {
+    path: "/admin/applications/view-form-1",  // separate route
+    element: withSuspense(
+      <ProtectedRouteAdmin allowedRoles={['admin']}>
+        <NewAdminTemplate>
+          <Form1View />
+        </NewAdminTemplate>
+      </ProtectedRouteAdmin>
+    )
+  },
+  {
+    path: "/admin/applications/view-form-2",
+    element: withSuspense(
+      <ProtectedRouteAdmin allowedRoles={['admin']}>
+        <NewAdminTemplate>
+          <Form2View />
+        </NewAdminTemplate>
+      </ProtectedRouteAdmin>
+    )
+  },
+  {
+    path: "/admin/applications/view-form-3",
+    element: withSuspense(
+      <ProtectedRouteAdmin allowedRoles={['admin']}>
+        <NewAdminTemplate>
+          <Form3View />
+        </NewAdminTemplate>
+      </ProtectedRouteAdmin>
+    )
+  },
+  {
+    path: "/admin/applications/view-form-4",
+    element: withSuspense(
+      <ProtectedRouteAdmin allowedRoles={['admin']}>
+        <NewAdminTemplate>
+          <Form4View />
         </NewAdminTemplate>
       </ProtectedRouteAdmin>
     )

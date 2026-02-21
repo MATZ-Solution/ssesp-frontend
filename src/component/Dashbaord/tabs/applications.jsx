@@ -7,7 +7,7 @@ import { useGetDashbaordApplicantData } from "../../../../api/client/admin";
 import { districts } from "../../../../data/new-district";
 
 const Applications = () => {
-  
+
   const navigate = useNavigate();
   const [page, setPage] = useState(1);
   const [filters, setFilters] = useState({
