@@ -254,7 +254,6 @@ const Form5 = ({ initialData = {} }) => {
       { name: "Guardian PRC", file: data.document4 },
       { name: "Parents / Guardian Income Certficaition", file: data.document5 },
     ];
-    console.log("Submitting documents:", documentsArray);
 
     const formData = new FormData();
     documentsArray.forEach((item) => {

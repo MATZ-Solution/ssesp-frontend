@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import Button from "../../button";
+import { useSearchParams, useNavigate } from "react-router-dom";
 import { useGetApplicantInfo } from "../../../../api/client/admin";
 
 const Field = ({ label, value }) => (
@@ -13,16 +14,20 @@ const Field = ({ label, value }) => (
   </div>
 );
 
-export const Form1View = ({ applicantID, handleTitle }) => {
+export const Form1View = () => {
+
+  const navigate = useNavigate()
+  const [searchParams] = useSearchParams();
+  const applicantID = searchParams.get("applicantID");
   const [showPhotoModal, setShowPhotoModal] = useState(false);
   const { data: studentInfo, isSuccess, isPending, isError, isLoading } = useGetApplicantInfo({ userId: applicantID })
   const data = studentInfo?.[0] || []
 
-  if(isLoading) return <p>Loading...</p>
+  if (isLoading) return <p>Loading...</p>
 
   return (
     <div>
-      <div className="bg-white px-4 sm:px-6 md:px-8 lg:px-10 w-full">
+      <div className="bg-white p-4 sm:p-6 md:p-8 lg:p-10 w-full">
         <div className="mb-6 sm:mb-8">
           <div className="flex flex-col gap-4 sm:gap-5">
 
@@ -112,7 +117,7 @@ export const Form1View = ({ applicantID, handleTitle }) => {
         {/* Next Button */}
         <div className="flex py-4">
           <Button
-            onClick={() => handleTitle("Guardian Information")}
+            onClick={() => navigate(`/admin/applications/view-form-2?applicantID=${applicantID}`)}
             type="button"
             className="px-4 py-2 bg-gradient-to-r from-blue-600 to-blue-500 text-white font-bold rounded-lg shadow-lg hover:shadow-xl transform hover:-translate-y-0.5 transition-all duration-200"
           >
