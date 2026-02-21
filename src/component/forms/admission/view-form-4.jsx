@@ -6,13 +6,11 @@ import { Document, Page, pdfjs } from "react-pdf";
 import "react-pdf/dist/Page/AnnotationLayer.css";
 import "react-pdf/dist/Page/TextLayer.css";
 
-// ✅ Required worker
 pdfjs.GlobalWorkerOptions.workerSrc = new URL(
   "pdfjs-dist/build/pdf.worker.min.mjs",
   import.meta.url
 ).toString();
 
-// ─── Detect PDF ────────────────────────────────────────────────────────────
 const isPDF = (url) => {
   if (!url) return false;
   return (
@@ -21,20 +19,68 @@ const isPDF = (url) => {
   );
 };
 
+const DOCUMENT_ERROR_MESSAGES = {
+  document1: "Invalid Birth Certificate — Document must be a valid NADRA B-Form or Birth Certificate",
+  document2: "Invalid Domicile — Document must be a valid Parent/Guardian Domicile",
+  document3: "Invalid CNIC — Document must be a valid Parent/Guardian CNIC",
+  document4: "Invalid PRC — Document must be a valid Parent/Guardian PRC",
+};
+
+// ─── Status Toggle ─────────────────────────────────────────────────────────
+const StatusToggle = ({ fieldKey, status, onToggle }) => (
+  <div className="flex items-center gap-2">
+    <button
+      type="button"
+      onClick={() => onToggle(fieldKey, "correct")}
+      className={`flex items-center gap-1 text-xs font-semibold px-2 py-1 rounded-full border transition-all ${
+        status === "correct"
+          ? "bg-green-500 border-green-500 text-white"
+          : "bg-white border-gray-300 text-gray-400 hover:border-green-400 hover:text-green-500"
+      }`}
+    >
+      <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M5 13l4 4L19 7" />
+      </svg>
+      Correct
+    </button>
+    <button
+      type="button"
+      onClick={() => onToggle(fieldKey, "wrong")}
+      className={`flex items-center gap-1 text-xs font-semibold px-2 py-1 rounded-full border transition-all ${
+        status === "wrong"
+          ? "bg-red-500 border-red-500 text-white"
+          : "bg-white border-gray-300 text-gray-400 hover:border-red-400 hover:text-red-500"
+      }`}
+    >
+      <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M6 18L18 6M6 6l12 12" />
+      </svg>
+      Wrong
+    </button>
+  </div>
+);
+
 // ─── Document Item Card ────────────────────────────────────────────────────
-const DocumentViewItem = ({ label, description, preview }) => {
+const DocumentViewItem = ({ name, label, description, preview, status, onToggle }) => {
   const [showModal, setShowModal] = useState(false);
   const [numPages, setNumPages] = useState(null);
   const [pageNumber, setPageNumber] = useState(1);
   const isFilePDF = isPDF(preview);
 
   return (
-    <div className="bg-white border border-gray-200 rounded-lg p-4 sm:p-5 shadow-sm">
-      {/* Label */}
-      <p className="text-sm font-semibold text-gray-700 mb-1">{label}</p>
-      {description && (
-        <p className="text-xs text-gray-500 mb-3">{description}</p>
-      )}
+    <div className={`bg-white border rounded-lg p-4 sm:p-5 shadow-sm transition-colors ${
+      status === "correct"
+        ? "border-green-300"
+        : status === "wrong"
+        ? "border-red-300"
+        : "border-gray-200"
+    }`}>
+      {/* Label + Toggle */}
+      <div className="flex items-start justify-between gap-2 mb-1 flex-wrap">
+        <p className="text-sm font-semibold text-gray-700">{label}</p>
+        <StatusToggle fieldKey={name} status={status} onToggle={onToggle} />
+      </div>
+      {description && <p className="text-xs text-gray-500 mb-3">{description}</p>}
 
       {/* Preview Box */}
       <div
@@ -47,7 +93,6 @@ const DocumentViewItem = ({ label, description, preview }) => {
       >
         {preview ? (
           isFilePDF ? (
-            // ✅ Renders first page of PDF as thumbnail
             <Document
               file={preview}
               onLoadSuccess={({ numPages }) => setNumPages(numPages)}
@@ -66,20 +111,10 @@ const DocumentViewItem = ({ label, description, preview }) => {
                 </div>
               }
             >
-              <Page
-                pageNumber={1}
-                height={176}
-                renderTextLayer={false}
-                renderAnnotationLayer={false}
-              />
+              <Page pageNumber={1} height={176} renderTextLayer={false} renderAnnotationLayer={false} />
             </Document>
           ) : (
-            // ✅ Image preview (unchanged)
-            <img
-              src={preview}
-              alt={label}
-              className="w-full h-full object-contain"
-            />
+            <img src={preview} alt={label} className="w-full h-full object-contain" />
           )
         ) : (
           <div className="flex flex-col items-center justify-center text-center px-3">
@@ -106,7 +141,7 @@ const DocumentViewItem = ({ label, description, preview }) => {
         </div>
       )}
 
-      {/* Modal — same for both, PDF gets page controls */}
+      {/* Modal */}
       {showModal && preview && (
         <div
           className="fixed inset-0 bg-black bg-opacity-80 flex items-center justify-center z-50 p-4"
@@ -116,7 +151,6 @@ const DocumentViewItem = ({ label, description, preview }) => {
             className="relative w-full max-w-xs sm:max-w-sm md:max-w-lg lg:max-w-2xl xl:max-w-4xl flex flex-col items-center"
             onClick={(e) => e.stopPropagation()}
           >
-            {/* Close Button */}
             <button
               onClick={() => setShowModal(false)}
               className="absolute -top-3 -right-3 sm:-top-4 sm:-right-4 bg-white text-gray-800 rounded-full p-1.5 sm:p-2 hover:bg-gray-100 shadow-lg z-10"
@@ -128,7 +162,6 @@ const DocumentViewItem = ({ label, description, preview }) => {
 
             {isFilePDF ? (
               <>
-                {/* ✅ Full PDF in modal */}
                 <div className="bg-white rounded-lg shadow-2xl overflow-auto max-h-[85vh] w-full flex justify-center">
                   <Document
                     file={preview}
@@ -147,8 +180,6 @@ const DocumentViewItem = ({ label, description, preview }) => {
                     />
                   </Document>
                 </div>
-
-                {/* Page Controls — only shown if PDF has multiple pages */}
                 {numPages && numPages > 1 && (
                   <div className="mt-3 flex items-center gap-4 bg-white rounded-full px-4 py-2 shadow-lg">
                     <button
@@ -160,9 +191,7 @@ const DocumentViewItem = ({ label, description, preview }) => {
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15 19l-7-7 7-7" />
                       </svg>
                     </button>
-                    <span className="text-sm font-medium text-gray-700">
-                      Page {pageNumber} of {numPages}
-                    </span>
+                    <span className="text-sm font-medium text-gray-700">Page {pageNumber} of {numPages}</span>
                     <button
                       onClick={() => setPageNumber((p) => Math.min(numPages, p + 1))}
                       disabled={pageNumber >= numPages}
@@ -176,12 +205,10 @@ const DocumentViewItem = ({ label, description, preview }) => {
                 )}
               </>
             ) : (
-              // ✅ Image modal (unchanged from your original)
               <img
                 src={preview}
                 alt={`${label} enlarged`}
                 className="w-full max-h-[85vh] object-contain rounded-lg shadow-2xl"
-                onClick={(e) => e.stopPropagation()}
               />
             )}
           </div>
@@ -191,24 +218,12 @@ const DocumentViewItem = ({ label, description, preview }) => {
   );
 };
 
-// ─── Main Form5View (unchanged) ────────────────────────────────────────────
+// ─── Main Form5View ────────────────────────────────────────────────────────
 const Form5View = () => {
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
   const applicantID = searchParams.get("applicantID");
   const { data: documentInfo, isLoading } = useGetApplicantDocument({ userId: applicantID });
-
-  if (isLoading) {
-    return (
-      <div className="flex flex-col items-center justify-center py-10">
-        <div className="relative w-12 h-12">
-          <div className="absolute inset-0 border-4 border-gray-200 rounded-full" />
-          <div className="absolute inset-0 border-4 border-blue-500 rounded-full animate-spin border-t-transparent" />
-        </div>
-        <p className="mt-4 text-sm text-gray-500">Loading documents...</p>
-      </div>
-    );
-  }
 
   const documents = [
     {
@@ -237,29 +252,85 @@ const Form5View = () => {
     },
   ];
 
+  const DOC_KEYS = documents.map((d) => d.name);
+
+  const [checklist, setChecklist] = useState(
+    Object.fromEntries(DOC_KEYS.map((key) => [key, null]))
+  );
+
+  const handleToggle = (fieldKey, value) => {
+    const newStatus = checklist[fieldKey] === value ? null : value;
+    setChecklist((prev) => ({ ...prev, [fieldKey]: newStatus }));
+  };
+
+  const allReviewed  = DOC_KEYS.every((key) => checklist[key] !== null);
+  const correctCount = DOC_KEYS.filter((key) => checklist[key] === "correct").length;
+  const wrongCount   = DOC_KEYS.filter((key) => checklist[key] === "wrong").length;
+  const reviewedCount = DOC_KEYS.filter((key) => checklist[key] !== null).length;
+
+  const handleSubmit = () => {
+    if (!allReviewed) return;
+
+    console.log("✅ Submitting application:", {
+      documentChecklist: Object.fromEntries(
+        documents.map((d) => [d.label, checklist[d.name]])
+      ),
+      wrongDocuments: documents
+        .filter((d) => checklist[d.name] === "wrong")
+        .map((d) => ({ document: d.label, error: DOCUMENT_ERROR_MESSAGES[d.name] })),
+    });
+    // TODO: submit API call here
+  };
+
+  if (isLoading) {
+    return (
+      <div className="flex flex-col items-center justify-center py-10">
+        <div className="relative w-12 h-12">
+          <div className="absolute inset-0 border-4 border-gray-200 rounded-full" />
+          <div className="absolute inset-0 border-4 border-blue-500 rounded-full animate-spin border-t-transparent" />
+        </div>
+        <p className="mt-4 text-sm text-gray-500">Loading documents...</p>
+      </div>
+    );
+  }
+
   return (
     <div className="bg-white p-4 sm:p-6 md:p-8 lg:p-10 w-full">
       <div className="mb-6 sm:mb-8">
         <div className="flex flex-col gap-4 sm:gap-5">
-          <div className="bg-blue-50 border-l-4 border-blue-500 p-3 sm:p-4 rounded-r-lg">
+
+          {/* Header */}
+          <div className="bg-blue-50 border-l-4 border-blue-500 p-3 sm:p-4 rounded-r-lg flex items-center justify-between flex-wrap gap-2">
             <p className="text-xs sm:text-sm text-blue-800 font-medium">
               Document Uploads — View Only
             </p>
+            <div className="flex items-center gap-2 text-xs font-semibold">
+              <span className="bg-green-100 text-green-700 px-2 py-1 rounded-full">✓ {correctCount} Correct</span>
+              <span className="bg-red-100 text-red-700 px-2 py-1 rounded-full">✗ {wrongCount} Wrong</span>
+              <span className="bg-gray-100 text-gray-500 px-2 py-1 rounded-full">{reviewedCount}/{DOC_KEYS.length} Reviewed</span>
+            </div>
           </div>
+
+          {/* Document Cards */}
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-6">
             {documents.map(({ name, label, description, preview }) => (
               <DocumentViewItem
                 key={name}
+                name={name}
                 label={label}
                 description={description}
                 preview={preview}
+                status={checklist[name]}
+                onToggle={handleToggle}
               />
             ))}
           </div>
+
         </div>
       </div>
 
-      <div className="mt-4 flex items-center justify-between py-4">
+      {/* Navigation */}
+      <div className="mt-4 flex items-center justify-between py-4 gap-4 flex-wrap">
         <Button
           onClick={() => navigate(`/admin/applications/view-form-3?applicantID=${applicantID}`)}
           type="button"
@@ -267,12 +338,26 @@ const Form5View = () => {
         >
           ← Previous Step
         </Button>
-        <Button
-          type="button"
-          className="px-4 py-2 bg-gradient-to-r from-blue-600 to-blue-500 text-white font-bold rounded-lg shadow-lg hover:shadow-xl transform hover:-translate-y-0.5 transition-all duration-200"
-        >
-          Submit
-        </Button>
+
+        <div className="flex items-center gap-3">
+          {!allReviewed && (
+            <p className="text-xs text-gray-400 font-medium">
+              Please review all documents ({reviewedCount}/{DOC_KEYS.length})
+            </p>
+          )}
+          <Button
+            onClick={handleSubmit}
+            type="button"
+            disabled={!allReviewed}
+            className={`px-4 py-2 font-bold rounded-lg shadow-lg transition-all duration-200 ${
+              !allReviewed
+                ? "bg-gray-300 text-gray-500 cursor-not-allowed shadow-none"
+                : "bg-gradient-to-r from-blue-600 to-blue-500 text-white hover:shadow-xl transform hover:-translate-y-0.5 cursor-pointer"
+            }`}
+          >
+            Submit
+          </Button>
+        </div>
       </div>
     </div>
   );
