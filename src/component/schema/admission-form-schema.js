@@ -299,49 +299,26 @@ export const loginSchema = yup.object().shape({
     .min(6, 'Password must be at least 6 characters'),
 });
 
+const allowedTypes = ["image/jpeg", "image/jpg", "image/png"];
+const maxSize = 1 * 1024 * 1024; // 1MB
+
+const documentField = (label) =>
+  yup
+    .mixed()
+    .required(`${label} is required`)
+    .test("fileSize", "File size must not exceed 1MB", (value) => {
+      if (!value) return true;
+      return value.size <= maxSize;
+    })
+    .test("fileType", "Only JPG, JPEG, and PNG files are allowed", (value) => {
+      if (!value) return true;
+      return allowedTypes.includes(value.type);
+    });
+
 export const documentUploadSchema = yup.object().shape({
-  document1: yup
-    .mixed()
-    .required("Document 1 is required")
-    .test("fileSize", "File size must not exceed 5MB", (value) => {
-      if (!value) return true;
-      return value.size <= 1 * 1024 * 1024;
-    })
-    .test("fileType", "Only PDF, JPG, JPEG, and PNG files are allowed", (value) => {
-      if (!value) return true;
-      return ["application/pdf", "image/jpeg", "image/jpg", "image/png"].includes(value.type);
-    }),
-  document2: yup
-    .mixed()
-    .required("Document 2 is required")
-    .test("fileSize", "File size must not exceed 5MB", (value) => {
-      if (!value) return true;
-      return value.size <= 1 * 1024 * 1024;
-    })
-    .test("fileType", "Only PDF, JPG, JPEG, and PNG files are allowed", (value) => {
-      if (!value) return true;
-      return ["application/pdf", "image/jpeg", "image/jpg", "image/png"].includes(value.type);
-    }),
-  document3: yup
-    .mixed()
-    .required("Document 3 is required")
-    .test("fileSize", "File size must not exceed 5MB", (value) => {
-      if (!value) return true;
-      return value.size <= 1 * 1024 * 1024;
-    })
-    .test("fileType", "Only PDF, JPG, JPEG, and PNG files are allowed", (value) => {
-      if (!value) return true;
-      return ["application/pdf", "image/jpeg", "image/jpg", "image/png"].includes(value.type);
-    }),
-  document4: yup
-    .mixed()
-    .required("Document 4 is required")
-    .test("fileSize", "File size must not exceed 5MB", (value) => {
-      if (!value) return true;
-      return value.size <= 1 * 1024 * 1024;
-    })
-    .test("fileType", "Only PDF, JPG, JPEG, and PNG files are allowed", (value) => {
-      if (!value) return true;
-      return ["application/pdf", "image/jpeg", "image/jpg", "image/png"].includes(value.type);
-    }),
+  document1: documentField("Birth Certificate (B-Form)"),
+  document2: documentField("Parent/Guardian Domicile"),
+  document3: documentField("Parent/Guardian CNIC"),
+  document4: documentField("Parent/Guardian PRC"),
+  document5: documentField("Parents/Guardian Income Certification"),
 });

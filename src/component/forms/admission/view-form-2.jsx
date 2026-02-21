@@ -1,5 +1,6 @@
 import React from "react";
 import Button from "../../button";
+import { useSearchParams, useNavigate } from "react-router-dom";
 import { useGetApplicantGuardianInfo } from "../../../../api/client/admin";
 
 const Field = ({ label, value }) => (
@@ -13,11 +14,15 @@ const Field = ({ label, value }) => (
     </div>
 );
 
-export const Form2View = ({ applicantID, handleTitle }) => {
+export const Form2View = () => {
+
+    const navigate = useNavigate()
+    const [searchParams] = useSearchParams();
+    const applicantID = searchParams.get("applicantID");
     const { data: guardianInfo, isSuccess, isPending, isError, isLoading } = useGetApplicantGuardianInfo({ userId: applicantID })
     const data = guardianInfo?.[0] || []
     if (isLoading) return <p>Loading...</p>
-    
+
     return (
         <div className="bg-white shadow-xl p-4 sm:p-6 md:p-8 lg:p-10 w-full">
             <div className="flex flex-col gap-4 sm:gap-5">
@@ -106,14 +111,14 @@ export const Form2View = ({ applicantID, handleTitle }) => {
             </div>
             <div className="mt-4 flex items-center justify-between py-4">
                 <Button
-                    onClick={() => handleTitle("Student Information")}
+                    onClick={() => navigate(`/admin/applications/view-form-1?applicantID=${applicantID}`)}
                     type="button"
                     className="px-4 py-2 bg-gradient-to-r from-blue-600 to-blue-500 text-white font-bold rounded-lg shadow-lg hover:shadow-xl transform hover:-translate-y-0.5 transition-all duration-200"
                 >
                     Previous Step →
                 </Button>
                 <Button
-                    onClick={() => handleTitle("Address Information")}
+                    onClick={() => navigate(`/admin/applications/view-form-3?applicantID=${applicantID}`)}
                     type="button"
                     className="px-4 py-2 bg-gradient-to-r from-blue-600 to-blue-500 text-white font-bold rounded-lg shadow-lg hover:shadow-xl transform hover:-translate-y-0.5 transition-all duration-200"
                 >

@@ -126,7 +126,7 @@ export function useGetDashbaordApplicantData(params = {}) {
 }
 
 export function useGetApplicantInfo(params = {}) {
-   const constructQueryString = (params) => {
+  const constructQueryString = (params) => {
     const query = new URLSearchParams(params).toString();
     return query ? `&${query}` : "";
   };
@@ -135,7 +135,8 @@ export function useGetApplicantInfo(params = {}) {
     queryFn: async () =>
       await api.get(`${API_ROUTE.admin.getApplicantInfo}?${constructQueryString(params)}`),
     // enabled: id !== undefined && id !== null,
-    // staleTime: 60 * 1000 * 5, 
+    refetchOnWindowFocus: false,
+    staleTime: 60 * 1000 * 5,
     retry: 1,
   });
   return {
@@ -148,7 +149,7 @@ export function useGetApplicantInfo(params = {}) {
 }
 
 export function useGetApplicantGuardianInfo(params = {}) {
-    const constructQueryString = (params) => {
+  const constructQueryString = (params) => {
     const query = new URLSearchParams(params).toString();
     return query ? `&${query}` : "";
   };
@@ -157,7 +158,8 @@ export function useGetApplicantGuardianInfo(params = {}) {
     queryFn: async () =>
       await api.get(`${API_ROUTE.admin.getApplicantGuardianInfo}?${constructQueryString(params)}`),
     // enabled: id !== undefined && id !== null,
-    staleTime: 60 * 1000 * 5, 
+    refetchOnWindowFocus: false,
+    staleTime: 60 * 1000 * 5,
     refetchOnWindowFocus: false,
     retry: 1,
   });
@@ -171,7 +173,7 @@ export function useGetApplicantGuardianInfo(params = {}) {
 }
 
 export function useGetApplicantDocument(params = {}) {
-    const constructQueryString = (params) => {
+  const constructQueryString = (params) => {
     const query = new URLSearchParams(params).toString();
     return query ? `&${query}` : "";
   };
@@ -180,7 +182,7 @@ export function useGetApplicantDocument(params = {}) {
     queryFn: async () =>
       await api.get(`${API_ROUTE.admin.getApplicantDocuments}?${constructQueryString(params)}`),
     // enabled: id !== undefined && id !== null,
-    // staleTime: 60 * 1000 * 5,
+    staleTime: 60 * 1000 * 5,
     refetchOnWindowFocus: false,
     retry: 1,
   });
@@ -193,21 +195,23 @@ export function useGetApplicantDocument(params = {}) {
   };
 }
 
-export function useGetApplicantAddressInfo(params = {}) {
-   const constructQueryString = (params) => {
+export function useGetApplicantSchoolInfo(params = {}) {
+  const constructQueryString = (params) => {
     const query = new URLSearchParams(params).toString();
     return query ? `&${query}` : "";
   };
   const { data, isSuccess, isPending, isError, isLoading } = useQuery({
-    queryKey: [API_ROUTE.admin.getApplicantAddressInfo],
+    queryKey: [API_ROUTE.admin.getApplicantSchoolInfo],
     queryFn: async () =>
-      await api.get(`${API_ROUTE.admin.getApplicantAddressInfo}?${constructQueryString(params)}`),
+      await api.get(`${API_ROUTE.admin.getApplicantSchoolInfo}?${constructQueryString(params)}`),
     // enabled: id !== undefined && id !== null,
     staleTime: 60 * 1000 * 5, // 5 minute,
+    refetchOnWindowFocus: false,
     retry: 1,
   });
   return {
     data: data?.data?.data,
+    previousSchool: data?.data?.previousSchool,
     isSuccess,
     isPending,
     isError,
@@ -215,11 +219,15 @@ export function useGetApplicantAddressInfo(params = {}) {
   };
 }
 
-export function useGetApplicantSchoolInfo() {
+export function useGetApplicantAddressInfo(params = {}) {
+  const constructQueryString = (params) => {
+    const query = new URLSearchParams(params).toString();
+    return query ? `&${query}` : "";
+  };
   const { data, isSuccess, isPending, isError, isLoading } = useQuery({
-    queryKey: [API_ROUTE.admin.getApplicantSchoolInfo],
+    queryKey: [API_ROUTE.admin.getApplicantAddressInfo],
     queryFn: async () =>
-      await api.get(`${API_ROUTE.admin.getApplicantSchoolInfo}`),
+      await api.get(`${API_ROUTE.admin.getApplicantAddressInfo}?${constructQueryString(params)}`),
     // enabled: id !== undefined && id !== null,
     staleTime: 60 * 1000 * 5, // 5 minute,
     retry: 1,

@@ -1,5 +1,5 @@
 import { useState } from "react";
-import ViewFormModal from "../modal/view-form-modal";
+import { useNavigate } from "react-router-dom";
 
 const statusStyles = {
     approved: "bg-emerald-50 text-emerald-700 ring-1 ring-emerald-200",
@@ -9,14 +9,15 @@ const statusStyles = {
 
 function ApplicantsTable({ applications }) {
 
+    const navigate = useNavigate()
     const [isOpenModal, setModal] = useState(false)
     const [applicantID, setApplicantID] = useState(false)
-    const onClose = ()=> setModal(false)
+    const onClose = () => setModal(false)
 
     return (
         <div className=" bg-white rounded-2xl shadow-sm border border-slate-100 overflow-hidden mb-5">
 
-            {isOpenModal && <ViewFormModal isOpen={isOpenModal} onClose={onClose} applicantID={applicantID}/>}
+            {isOpenModal && <ViewFormModal isOpen={isOpenModal} onClose={onClose} applicantID={applicantID} />}
 
             {/* Desktop table */}
             <div className="hidden md:block overflow-x-auto">
@@ -40,7 +41,7 @@ function ApplicantsTable({ applications }) {
                                     }`}
                             >
                                 <td className="px-5 py-3.5 font-mono text-xs text-slate-600">
-                                    {'SSESP'+app.applicantID}
+                                    {'SSESP' + app.applicantID}
                                 </td>
                                 <td className="px-5 py-3.5 font-medium text-slate-800">
                                     {app.studentName}
@@ -60,10 +61,11 @@ function ApplicantsTable({ applications }) {
                                 </td>
                                 {/* <td className="px-5 py-3.5 text-right">
                                     <button
-                                    onClick={() => {
-                                        setModal(true)
-                                        setApplicantID(app.applicantID)
-                                    }}
+                                        onClick={() => {
+                                            // setModal(true)
+                                            navigate(`/admin/applications/view-form-1?applicantID=${app.applicantID}`)
+                                            setApplicantID(app.applicantID)
+                                        }}
                                         className=" cursor-pointer
                                     inline-flex items-center gap-2
                                     px-4 py-1.5

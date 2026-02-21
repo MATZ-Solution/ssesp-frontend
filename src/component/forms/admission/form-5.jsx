@@ -19,7 +19,6 @@ const DocumentUploadItem = ({
 }) => {
   const [showModal, setShowModal] = useState(false);
 
-  
   return (
     <div className="bg-white border border-gray-200 rounded-lg p-5 shadow-sm hover:shadow-md transition-shadow">
       <label className="text-sm font-semibold text-gray-700 mb-2 block">
@@ -48,37 +47,15 @@ const DocumentUploadItem = ({
                 <div className="flex flex-col items-center justify-center p-4 w-full h-full">
                   {preview ? (
                     <div className="relative w-full h-full flex items-center justify-center">
-                      {preview.type === "pdf" ? (
-                        <div className="flex flex-col items-center justify-center">
-                          <svg
-                            className="w-16 h-16 text-red-500 mb-2"
-                            fill="currentColor"
-                            viewBox="0 0 20 20"
-                          >
-                            <path
-                              fillRule="evenodd"
-                              d="M4 4a2 2 0 012-2h4.586A2 2 0 0112 2.586L15.414 6A2 2 0 0116 7.414V16a2 2 0 01-2 2H6a2 2 0 01-2-2V4zm2 6a1 1 0 011-1h6a1 1 0 110 2H7a1 1 0 01-1-1zm1 3a1 1 0 100 2h6a1 1 0 100-2H7z"
-                              clipRule="evenodd"
-                            />
-                          </svg>
-                          <p className="text-sm font-medium text-gray-700 text-center">
-                            {preview.name}
-                          </p>
-                          <p className="text-xs text-gray-500 mt-1">
-                            PDF Document
-                          </p>
-                        </div>
-                      ) : (
-                        <img
-                          src={preview.url}
-                          alt={`${label} preview`}
-                          className="max-w-full max-h-full object-contain rounded-lg shadow-md cursor-pointer"
-                          onClick={(e) => {
-                            e.preventDefault();
-                            setShowModal(true);
-                          }}
-                        />
-                      )}
+                      <img
+                        src={preview.url}
+                        alt={`${label} preview`}
+                        className="max-w-full max-h-full object-contain rounded-lg shadow-md cursor-pointer"
+                        onClick={(e) => {
+                          e.preventDefault();
+                          setShowModal(true);
+                        }}
+                      />
                       <button
                         type="button"
                         onClick={(e) => {
@@ -122,7 +99,7 @@ const DocumentUploadItem = ({
                         <span className="font-semibold">Click to upload</span>
                       </p>
                       <p className="text-xs text-gray-500 text-center">
-                        PDF, JPG, JPEG, PNG
+                        JPG, JPEG, PNG
                       </p>
                       <p className="text-xs text-gray-500 text-center">
                         (MAX. 1MB)
@@ -133,41 +110,34 @@ const DocumentUploadItem = ({
                 <input
                   {...field}
                   type="file"
-                  accept="application/pdf,image/jpeg,image/jpg,image/png"
+                  accept="image/jpeg,image/jpg,image/png"
                   className="hidden"
                   onChange={(e) => {
                     const file = e.target.files?.[0];
                     if (file) {
-                      if (file.size > 5 * 1024 * 1024) {
+                      if (file.size > 1 * 1024 * 1024) {
                         alert("File size must not exceed 1MB");
                         return;
                       }
 
                       if (
-                        ![
-                          "application/pdf",
-                          "image/jpeg",
-                          "image/jpg",
-                          "image/png",
-                        ].includes(file.type)
+                        !["image/jpeg", "image/jpg", "image/png"].includes(
+                          file.type
+                        )
                       ) {
-                        alert("Only PDF, JPG, JPEG, and PNG files are allowed");
+                        alert("Only JPG, JPEG, and PNG files are allowed");
                         return;
                       }
 
-                      if (file.type === "application/pdf") {
-                        setPreview({ type: "pdf", name: file.name });
-                      } else {
-                        const reader = new FileReader();
-                        reader.onloadend = () => {
-                          setPreview({
-                            type: "image",
-                            url: reader.result,
-                            name: file.name,
-                          });
-                        };
-                        reader.readAsDataURL(file);
-                      }
+                      const reader = new FileReader();
+                      reader.onloadend = () => {
+                        setPreview({
+                          type: "image",
+                          url: reader.result,
+                          name: file.name,
+                        });
+                      };
+                      reader.readAsDataURL(file);
 
                       onChange(file);
                     }
@@ -242,13 +212,13 @@ const DocumentUploadItem = ({
 };
 
 const Form5 = ({ initialData = {} }) => {
-  
-  const navigate = useNavigate()
+  const navigate = useNavigate();
 
   const [doc1Preview, setDoc1Preview] = useState(null);
   const [doc2Preview, setDoc2Preview] = useState(null);
   const [doc3Preview, setDoc3Preview] = useState(null);
   const [doc4Preview, setDoc4Preview] = useState(null);
+  const [doc5Preview, setDoc5Preview] = useState(null);
 
   const {
     handleSubmit,
@@ -261,6 +231,7 @@ const Form5 = ({ initialData = {} }) => {
       document2: initialData.document2 || null,
       document3: initialData.document3 || null,
       document4: initialData.document4 || null,
+      document5: initialData.document5 || null,
     },
   });
 
@@ -269,6 +240,7 @@ const Form5 = ({ initialData = {} }) => {
     if (initialData.doc2Preview) setDoc2Preview(initialData.doc2Preview);
     if (initialData.doc3Preview) setDoc3Preview(initialData.doc3Preview);
     if (initialData.doc4Preview) setDoc4Preview(initialData.doc4Preview);
+    if (initialData.doc5Preview) setDoc5Preview(initialData.doc5Preview);
   }, [initialData]);
 
   const { addDocument, isSuccess, isPending, isError, error } =
@@ -280,10 +252,11 @@ const Form5 = ({ initialData = {} }) => {
       { name: "Guardian Doimicile", file: data.document2 },
       { name: "Guardian CNIC", file: data.document3 },
       { name: "Guardian PRC", file: data.document4 },
+      { name: "Parents / Guardian Income Certficaition", file: data.document5 },
     ];
 
     const formData = new FormData();
-    documentsArray.forEach((item, index) => {
+    documentsArray.forEach((item) => {
       formData.append(item.name, item.file);
     });
     addDocument(formData);
@@ -293,7 +266,7 @@ const Form5 = ({ initialData = {} }) => {
     {
       name: "document1",
       label: "Birth Certificate (B-Form)",
-      description: "Upload student's NADRA B-Form or Birth Certificate",
+      description: "If the Birth Certificate is not available, you may upload the NADRA slip instead.",
       preview: doc1Preview,
       setPreview: setDoc1Preview,
     },
@@ -318,6 +291,13 @@ const Form5 = ({ initialData = {} }) => {
       preview: doc4Preview,
       setPreview: setDoc4Preview,
     },
+    {
+      name: "document5",
+      label: "Parents/Guardian Income Certification",
+      description: "Upload copy of parent or guardian's Income Certification",
+      preview: doc5Preview,
+      setPreview: setDoc5Preview,
+    },
   ];
 
   return (
@@ -333,8 +313,7 @@ const Form5 = ({ initialData = {} }) => {
                 Document Upload
               </h2>
               <p className="text-sm text-gray-600">
-                Please upload all required documents in PDF, JPG, JPEG, or PNG
-                format
+                Please upload all required documents in JPG, JPEG, or PNG format
               </p>
             </div>
 
@@ -371,7 +350,7 @@ const Form5 = ({ initialData = {} }) => {
               >
                 ← Previous Step
               </button>
-            
+
               <Button
                 isLoading={isPending}
                 type="submit"
