@@ -195,11 +195,15 @@ export function useGetApplicantDocument(params = {}) {
   };
 }
 
-export function useGetApplicantSchoolInfo() {
+export function useGetApplicantSchoolInfo(params = {}) {
+  const constructQueryString = (params) => {
+    const query = new URLSearchParams(params).toString();
+    return query ? `&${query}` : "";
+  };
   const { data, isSuccess, isPending, isError, isLoading } = useQuery({
     queryKey: [API_ROUTE.admin.getApplicantSchoolInfo],
     queryFn: async () =>
-      await api.get(`${API_ROUTE.admin.getApplicantSchoolInfo}`),
+      await api.get(`${API_ROUTE.admin.getApplicantSchoolInfo}?${constructQueryString(params)}`),
     // enabled: id !== undefined && id !== null,
     staleTime: 60 * 1000 * 5, // 5 minute,
     refetchOnWindowFocus: false,
@@ -207,6 +211,7 @@ export function useGetApplicantSchoolInfo() {
   });
   return {
     data: data?.data?.data,
+    previousSchool: data?.data?.previousSchool,
     isSuccess,
     isPending,
     isError,

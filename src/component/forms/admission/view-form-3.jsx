@@ -20,12 +20,11 @@ export const Form3View = () => {
   const [searchParams] = useSearchParams();
   const applicantID = searchParams.get("applicantID");
 
-  const { data: response, isLoading } = useGetApplicantSchoolInfo({userId: applicantID});
-  console.log("response: ", response)
+  const { data: response, previousSchool: schoolData, isLoading } = useGetApplicantSchoolInfo({userId: applicantID});
   if (isLoading) return <p>Loading...</p>;
 
   const data = response?.[0] || {};
-  const previousSchool = response?.previousSchool || [];
+  const previousSchool = schoolData || [];
 
   const fullWidthFields = [
     { label: "School Name", value: data.schoolName },
