@@ -21,7 +21,7 @@ import AdminTemplate from "../src/Templates/admin-template";
 import NewAdminTemplate from "../src/Templates/new-admin";
 import Applications from "../src/component/Dashbaord/tabs/applications";
 import ProtectedRouteAdmin from "../utils/protected-route-admin";
-import { Form1View } from "../src/component/forms/admission/view-form-1";
+import {Form1View} from "../src/component/forms/admission/view-form-1";
 import { Form2View } from "../src/component/forms/admission/view-form-2";
 import { Form3View } from "../src/component/forms/admission/view-form-3";
 import Form4View from "../src/component/forms/admission/view-form-4";
@@ -137,7 +137,7 @@ export const router = createBrowserRouter([
   },
 
   {
-    path: "/admin/applications/view-form-1",  // separate route
+    path: "/admin/applications/view-form-1",
     element: withSuspense(
       <ProtectedRouteAdmin allowedRoles={['admin']}>
         <NewAdminTemplate>
@@ -176,6 +176,7 @@ export const router = createBrowserRouter([
       </ProtectedRouteAdmin>
     )
   },
+
   {
     path: "/admin/login",
     element: withSuspense(

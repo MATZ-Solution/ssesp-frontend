@@ -37,8 +37,6 @@ const Applications = () => {
 
   if (applicantIsLoading) return <p>loading...</p>;
 
-  console.log("filter: ", filters)
-
   return (
     <div>
       <main className="flex-1  space-y-6">

@@ -63,7 +63,11 @@ function ApplicantsTable({ applications }) {
                                     <button
                                         onClick={() => {
                                             // setModal(true)
-                                            navigate(`/admin/applications/view-form-1?applicantID=${app.applicantID}`)
+                                            if(app.application_stage){
+                                                navigate(`/admin/applications/${app.application_stage}?applicantID=${app.applicantID}`)
+                                            }else{
+                                                navigate(`/admin/applications/view-form-1?applicantID=${app.applicantID}`)
+                                            }
                                             setApplicantID(app.applicantID)
                                         }}
                                         className=" cursor-pointer
