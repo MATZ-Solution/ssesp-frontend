@@ -144,7 +144,7 @@ export function useAddApplicantDocument() {
           "Content-Type": "multipart/form-data",
           Authorization: api.defaults.headers.common["Authorization"],
         },
-        timeout: 30000,
+        timeout: 120000,
       }),
     onSuccess: (data) => {
       dispatch(setFormStatus({ formStatus: 'test-preference-6' }))
