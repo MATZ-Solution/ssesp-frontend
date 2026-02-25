@@ -20,9 +20,6 @@ export const Form1View = () => {
 
   const handleSubmit = () => {
     console.log("verification: ", verification)
-    if (verification.status === '') {
-      return alert("Select Age is valid or not")
-    }
     verfiyAge(verification)
   }
 
@@ -116,18 +113,32 @@ export const Form1View = () => {
           </div>
 
           {/* Application Status and Remark */}
-          <div className="flex flex-col gap-1">
-            {data?.is_age_verified === 'true' && (
-              <p>Status: <span className="capitalize">{data?.is_age_verified === 'true' && 'Approved'}</span></p>
-            )}
-
-            {(data?.application_status === 'Rejected' && data?.is_age_verified === 'false') && (
-              <>
-                <p>Status: <span className="capitalize">{data?.is_age_verified === 'false' && 'Rejected'}</span></p>
-                <p>Reason: <span className="">{data?.application_remark}</span></p>
-              </>
-            )}
-          </div>
+          {data?.is_age_verified === 'true' && (
+            <div className="flex flex-col gap-2 p-3 rounded-xl  bg-white shadow-sm w-fit min-w-[200px]">
+              <p className="flex items-center gap-2 text-sm text-black font-medium">
+                Status:
+                <span className="capitalize inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-xs font-semibold bg-emerald-50 text-emerald-700 ring-1 ring-emerald-200">
+                  <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 inline-block" />
+                  {data?.is_age_verified === 'true' && 'Approved'}
+                </span>
+              </p>
+            </div>
+          )}
+          {(data?.application_status === 'rejected' && data?.is_age_verified === 'false') && (
+            <div className="flex flex-col gap-2 p-3 rounded-xl  bg-white shadow-sm w-fit min-w-[200px]">
+              <p className="flex items-center gap-2 text-sm text-gray-500 font-medium">
+                Status:
+                <span className="capitalize inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-xs font-semibold bg-rose-50 text-rose-700 ring-1 ring-rose-200">
+                  <span className="w-1.5 h-1.5 rounded-full bg-rose-500 inline-block" />
+                  {data?.is_age_verified === 'false' && 'rejected'}
+                </span>
+              </p>
+              <p className="flex flex-col gap-0.5 border-l-2 border-rose-300 pl-2.5 text-sm">
+                <span className="text-[10px] font-bold uppercase tracking-widest text-gray-400">Reason</span>
+                <span className="text-rose-600 leading-snug">{data?.application_remark}</span>
+              </p>
+            </div>
+          )}
 
           <div className="border-t border-gray-100" />
 
@@ -184,7 +195,7 @@ export const Form1View = () => {
           )}
 
           {/* Previous Button */}
-          {!(data?.is_age_verified === 'false' || data?.is_age_verified === 'true') && (
+          {!(data?.is_age_verified === 'false' || data?.is_age_verified === 'true' || !verification.status) && (
             <div className="flex gap-4">
               <Button
                 isLoading={isPending}
@@ -214,29 +225,31 @@ export const Form1View = () => {
       </div>
 
       {/* Photo Modal */}
-      {showPhotoModal && data?.fileUrl && (
-        <div
-          className="fixed inset-0 bg-black bg-opacity-80 flex items-center justify-center z-50 p-4 backdrop-blur-sm"
-          onClick={() => setShowPhotoModal(false)}
-        >
-          <div className="relative w-full max-w-xs sm:max-w-sm md:max-w-lg">
-            <button
-              onClick={() => setShowPhotoModal(false)}
-              className="absolute -top-4 -right-4 bg-white text-gray-800 rounded-full p-2 hover:bg-gray-100 shadow-lg z-10 transition-colors"
-            >
-              <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M6 18L18 6M6 6l12 12" />
-              </svg>
-            </button>
-            <img
-              src={data.fileUrl}
-              alt="Student photo enlarged"
-              className="w-full max-h-[85vh] object-contain rounded-2xl shadow-2xl"
-              onClick={(e) => e.stopPropagation()}
-            />
+      {
+        showPhotoModal && data?.fileUrl && (
+          <div
+            className="fixed inset-0 bg-black bg-opacity-80 flex items-center justify-center z-50 p-4 backdrop-blur-sm"
+            onClick={() => setShowPhotoModal(false)}
+          >
+            <div className="relative w-full max-w-xs sm:max-w-sm md:max-w-lg">
+              <button
+                onClick={() => setShowPhotoModal(false)}
+                className="absolute -top-4 -right-4 bg-white text-gray-800 rounded-full p-2 hover:bg-gray-100 shadow-lg z-10 transition-colors"
+              >
+                <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M6 18L18 6M6 6l12 12" />
+                </svg>
+              </button>
+              <img
+                src={data.fileUrl}
+                alt="Student photo enlarged"
+                className="w-full max-h-[85vh] object-contain rounded-2xl shadow-2xl"
+                onClick={(e) => e.stopPropagation()}
+              />
+            </div>
           </div>
-        </div>
-      )}
-    </div>
+        )
+      }
+    </div >
   );
 };

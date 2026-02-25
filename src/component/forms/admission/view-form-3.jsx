@@ -72,6 +72,13 @@ export const Form3View = () => {
             </div>
           </div>
 
+          <div className="inline-flex items-center px-3 py-1 rounded-full bg-blue-50 border border-blue-100">
+            <span className="text-blue-700 font-semibold text-sm">
+              🎓 Currently in {datas?.studyingInClass}
+            </span>
+          </div>
+
+
           {/* Empty State */}
           {previousSchool.length === 0 ? (
             <div className="flex flex-col items-center justify-center py-10 text-center">
@@ -164,18 +171,33 @@ export const Form3View = () => {
           <div className="border-t border-gray-100" />
 
           {/* Application Status and Remark */}
-          <div className="flex flex-col gap-1">
-            {datas?.is_school_verified === 'true' && (
-              <p>Status: <span className="capitalize">{datas?.is_school_verified === 'true' && 'Approved'}</span></p>
-            )}
+          {datas?.is_school_verified === 'true' && (
+            <div className="flex flex-col gap-2 p-3 rounded-xl bg-white shadow-sm w-fit min-w-[200px]">
+              <p className="flex items-center gap-2 text-sm text-black font-medium">
+                Status:
+                <span className="capitalize inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-xs font-semibold bg-emerald-50 text-emerald-700 ring-1 ring-emerald-200">
+                  <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 inline-block" />
+                  {datas?.is_school_verified === 'true' && 'Approved'}
+                </span>
+              </p>
+            </div>
+          )}
 
-            {(datas?.application_status === 'Rejected' && datas?.is_school_verified === 'false') && (
-              <>
-                <p>Status: <span className="capitalize">{datas?.is_school_verified === 'false' && 'Rejected'}</span></p>
-                <p>Reason: <span className="">{datas?.application_remark}</span></p>
-              </>
-            )}
-          </div>
+          {(datas?.application_status === 'rejected' && datas?.is_school_verified === 'false') && (
+            <div className="flex flex-col gap-2 p-3 rounded-xl bg-white shadow-sm w-fit min-w-[200px]">
+              <p className="flex items-center gap-2 text-sm text-gray-500 font-medium">
+                Status:
+                <span className="capitalize inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-xs font-semibold bg-rose-50 text-rose-700 ring-1 ring-rose-200">
+                  <span className="w-1.5 h-1.5 rounded-full bg-rose-500 inline-block" />
+                  {datas?.is_school_verified === 'false' && 'rejected'}
+                </span>
+              </p>
+              <p className="flex flex-col gap-0.5 border-l-2 border-rose-300 pl-2.5 text-sm">
+                <span className="text-[10px] font-bold uppercase tracking-widest text-gray-400">Reason</span>
+                <span className="text-rose-600 leading-snug">{datas?.application_remark}</span>
+              </p>
+            </div>
+          )}
 
           {/* Admin Decision — bottom */}
           {!(datas?.is_school_verified === 'false' || datas?.is_school_verified === 'true') && (
@@ -228,19 +250,20 @@ export const Form3View = () => {
               )}
             </div>
           )}
+
+          {!(datas?.is_school_verified === 'false' || datas?.is_school_verified === 'true' || !verification.status) && (
+            <div className="flex gap-4">
+              <Button
+                isLoading={isPending}
+                onClick={handleSubmit}
+                type="submit"
+                className="px-8 py-3 bg-gradient-to-r from-blue-600 to-blue-500 text-white font-bold rounded-lg shadow-lg hover:shadow-xl transform hover:-translate-y-0.5 transition-all duration-200"
+              >
+                Submit
+              </Button>
+            </div>
+          )}
         </div>
-        {!(datas?.is_school_verified === 'false' || datas?.is_school_verified === 'true') && (
-          <div className="flex gap-4">
-            <Button
-              isLoading={isPending}
-              onClick={handleSubmit}
-              type="submit"
-              className="px-8 py-3 bg-gradient-to-r from-blue-600 to-blue-500 text-white font-bold rounded-lg shadow-lg hover:shadow-xl transform hover:-translate-y-0.5 transition-all duration-200"
-            >
-              Submit
-            </Button>
-          </div>
-        )}
 
         {/* {(datas?.is_school_verified === 'false' || datas?.is_school_verified === 'true') && (
           <div className="flex gap-4">

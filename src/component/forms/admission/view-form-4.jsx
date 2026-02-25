@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import Button from "../../button";
-import { useGetApplicantDocument } from "../../../../api/client/admin";
+import { useAdminVerifyDocument, useGetApplicantDocument } from "../../../../api/client/admin";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import { Document, Page, pdfjs } from "react-pdf";
 import "react-pdf/dist/Page/AnnotationLayer.css";
@@ -128,7 +128,7 @@ const WrongReasonModal = ({ label, currentReason, onConfirm, onCancel }) => {
 
   return (
     <div
-      className="fixed inset-0 bg-black bg-opacity-60 flex items-center justify-center z-50 p-4"
+      className="fixed inset-0 bg-black/60 flex items-center justify-center z-50 p-4"
       onClick={onCancel}
     >
       <div
@@ -355,6 +355,11 @@ const Form5View = () => {
       label: "Parent/Guardian PRC",
       description: "Copy of parent or guardian's PRC",
     },
+    {
+      documentName: "Parents / Guardian Income Certficaition",
+      label: "Guardian Income Certificate",
+      description: "Copy of parent or guardian's Income Certificate",
+    },
   ];
 
   // Build documents list from API data
@@ -368,7 +373,7 @@ const Form5View = () => {
       description: config.description,
       preview: apiDoc?.fileUrl || null,
       initialStatus: apiDoc?.status || null,     // ← status from API
-      initialReason: apiDoc?.reason || null,     // ← reason from API (single string)
+      initialReason: apiDoc?.remark || null,     // ← reason from API (single string)
     };
   });
 
@@ -415,6 +420,8 @@ const Form5View = () => {
   const correctCount = uploadedDocs.filter((d) => checklist[getKey(d)]?.status === "correct").length;
   const wrongCount = uploadedDocs.filter((d) => checklist[getKey(d)]?.status === "wrong").length;
 
+  const { verfiyDocument, isSuccess, isPending, isError, error } = useAdminVerifyDocument(applicantID)
+
   const handleSubmit = () => {
     if (!allReviewed) return;
     const payload = uploadedDocs.map((doc) => ({
@@ -422,6 +429,7 @@ const Form5View = () => {
       status: checklist[getKey(doc)]?.status,
       reason: checklist[getKey(doc)]?.reason || null,
     }));
+    verfiyDocument({ verfication: payload })
     console.log("📤 Submit Payload:", payload);
     // TODO: your API call here e.g. updateDocumentReview(payload)
   };
@@ -441,11 +449,11 @@ const Form5View = () => {
       {/* Header */}
       <div className="bg-blue-50 border-l-4 border-blue-500 px-4 py-3 rounded-r-lg mb-6 flex items-center justify-between flex-wrap gap-2">
         <p className="text-sm text-blue-800 font-medium">Document Review</p>
-        <div className="flex items-center gap-2 text-xs font-semibold">
+        {/* <div className="flex items-center gap-2 text-xs font-semibold">
           <span className="bg-green-100 text-green-700 px-2 py-1 rounded-full">✓ {correctCount} Correct</span>
           <span className="bg-red-100 text-red-700 px-2 py-1 rounded-full">✗ {wrongCount} Wrong</span>
           <span className="bg-gray-100 text-gray-500 px-2 py-1 rounded-full">{reviewedCount}/{uploadedDocs.length} Reviewed</span>
-        </div>
+        </div> */}
       </div>
 
       {/* Document Cards */}

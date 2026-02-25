@@ -362,3 +362,32 @@ export function useAdminVerifyApplicantSchool(id) {
   });
   return { verfiyApplicantSchool, isSuccess, isPending, isError, error };
 }
+
+export function useAdminVerifyDocument(id) {
+  const navigate = useNavigate();
+  const dispatch = useDispatch()
+  const queryClient = useQueryClient();
+
+  const {
+    mutate: verfiyDocument,
+    isSuccess,
+    isPending,
+    isError,
+    error,
+  } = useMutation({
+    mutationFn: async (data) =>
+      await api.put(`${API_ROUTE.admin.adminVerifyDocument}/${id}`, data),
+    onSuccess: (data) => {
+      // navigate(`/admin/applications`);
+      toast.success("Verify Successfully.")
+      // queryClient.invalidateQueries({
+      //   queryKey: [API_ROUTE.applicant.getApplicantSchoolPreference],
+      // });
+    },
+    onError: (error) => {
+      console.log("error: ", error)
+      toast.error("Failed to add details.");
+    },
+  });
+  return { verfiyDocument, isSuccess, isPending, isError, error };
+}

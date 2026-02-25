@@ -41,6 +41,7 @@ const API_ROUTE = {
     adminVerifyGuardianSalary: "/api/admin/adminVerifyGuardianSalary",
     adminVerifyApplicantSchool: "/api/admin/adminVerifyApplicantSchool",
     adminVerifyDocument: "/api/admin/adminVerifyDocument",
+    
   }
 };
 
