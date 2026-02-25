@@ -67,7 +67,7 @@ export function useSignUp(options = {}) {
     isPending,
     isError,
     reset,
-    error: error?.response?.data?.message,
+    error: error?.response?.data?.message || error?.message,
     data,
   };
 }

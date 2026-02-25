@@ -49,8 +49,6 @@ const Applications = () => {
     });
   };
 
-  if (applicantIsLoading) return <p>Loading...</p>;
-
   return (
     <div>
       <main className="flex-1 space-y-6">

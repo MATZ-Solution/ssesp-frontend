@@ -38,6 +38,11 @@ const API_ROUTE = {
     getApplicantSchoolInfo: "/api/admin/getApplicantSchoolInfo",
     getApplicantSchoolPreference: "/api/admin/getApplicantSchoolPreference",
 
+    adminVerifyAge: "/api/admin/adminVerifyAge",
+    adminVerifyGuardianSalary: "/api/admin/adminVerifyGuardianSalary",
+    adminVerifyApplicantSchool: "/api/admin/adminVerifyApplicantSchool",
+    adminVerifyDocument: "/api/admin/adminVerifyDocument",
+    
   }
 };
 

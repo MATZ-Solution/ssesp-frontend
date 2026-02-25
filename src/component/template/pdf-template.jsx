@@ -87,6 +87,12 @@ const CandidatePDFDownloader = ({ data, previous_school, priority_school }) => {
         try {
           const date = new Date(dateString);
 
+          // const date = new Date(data.dob).toLocaleDateString("en-PK", {
+          //                 day: "2-digit",
+          //                 month: "long",
+          //                 year: "numeric",
+          //               })
+                      
           // Get day, month, year
           const day = String(date.getDate()).padStart(2, '0');
           const month = String(date.getMonth() + 1).padStart(2, '0'); // Months are 0-indexed
