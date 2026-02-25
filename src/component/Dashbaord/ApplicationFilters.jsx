@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { SlidersHorizontal, X } from "lucide-react";
+import { SlidersHorizontal } from "lucide-react";
 import { districts } from "../../../data/new-district";
 import FilterSelect from "../FilterSelect";
 import FilterChip from "../FilterChip";
@@ -7,6 +7,7 @@ import FilterChip from "../FilterChip";
 const GRADE_OPTIONS = ["Class 7", "Class 8"];
 const SCHOOL_TYPE_OPTIONS = ["Sindh Government School", "SEF School"];
 const GENDER_OPTIONS = ["Male", "Female"];
+const STATUS_OPTIONS = ["pending", "in_review", "completed", "rejected"];
 
 export function ApplicationFilters({ filters, onChange }) {
   const [open, setOpen] = useState(false);
@@ -18,7 +19,7 @@ export function ApplicationFilters({ filters, onChange }) {
   };
 
   const clearAll = () => {
-    onChange({ class: "", schoolType: "", gender: "", district: "" });
+    onChange({ class: "", schoolType: "", gender: "", district: "", status: "" });
   };
 
   const activeFilters = Object.entries(filters).filter(([, v]) => v);
@@ -70,9 +71,7 @@ export function ApplicationFilters({ filters, onChange }) {
             label="Class"
             value={filters.class}
             options={GRADE_OPTIONS}
-            onChange={(v) => {
-              handleChange("class", v)
-            }}
+            onChange={(v) => handleChange("class", v)}
           />
           <FilterSelect
             label="School Type"
@@ -91,6 +90,12 @@ export function ApplicationFilters({ filters, onChange }) {
             value={filters.district}
             options={districts}
             onChange={(v) => handleChange("district", v)}
+          />
+          <FilterSelect
+            label="Status"
+            value={filters.status}
+            options={STATUS_OPTIONS}
+            onChange={(v) => handleChange("status", v)}
           />
 
           {activeCount > 0 && (

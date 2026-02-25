@@ -258,3 +258,36 @@ export function useGetApplicantSchoolPreference() {
     isLoading,
   };
 }
+
+export function useExportApplicants() {
+  const { mutate: exportApplicants, isPending, isError, error } = useMutation({
+    mutationFn: (params = {}) => {
+      const query = new URLSearchParams(params).toString();
+      return api.get(`${API_ROUTE.admin.exportApplicants}?${query}`, {
+        responseType: "blob", // critical for binary/excel files
+      });
+    },
+    onSuccess: (response) => {
+      // Create a download link and trigger it
+      const url = window.URL.createObjectURL(new Blob([response.data]));
+      const link = document.createElement("a");
+      link.href = url;
+      link.setAttribute("download", "Applicants.xlsx");
+      document.body.appendChild(link);
+      link.click();
+      link.remove();
+      window.URL.revokeObjectURL(url);
+      toast.success("Export successful!");
+    },
+    onError: (err) => {
+      toast.error(err?.response?.data?.message || "Export failed");
+    },
+  });
+
+  return {
+    exportApplicants,
+    isPending,
+    isError,
+    error: error?.response?.data?.message,
+  };
+}

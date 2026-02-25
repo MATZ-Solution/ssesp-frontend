@@ -26,6 +26,7 @@ const API_ROUTE = {
   admin: {
     signIn: "/api/admin/signIn",
     signUp: "/api/admin/signUp",
+    exportApplicants: "/api/admin/export-applicants",
 
     getDashbaordData: "/api/admin/getDashbaordData",
     getDashbaordApplicantRecentData: "/api/admin/getDashbaordApplicantRecentData",
