@@ -7,7 +7,7 @@ import FilterChip from "../FilterChip";
 const GRADE_OPTIONS = ["Class 7", "Class 8"];
 const SCHOOL_TYPE_OPTIONS = ["Sindh Government School", "SEF School"];
 const GENDER_OPTIONS = ["Male", "Female"];
-const STATUS_OPTIONS = ["pending", "in_review", "completed", "rejected"];
+const STATUS_OPTIONS = ["pending", "in review", "completed", "rejected"];
 
 export function ApplicationFilters({ filters, onChange }) {
   const [open, setOpen] = useState(false);
