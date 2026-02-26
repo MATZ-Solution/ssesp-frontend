@@ -1,6 +1,6 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import Button from "../../button";
-import { useAdminVerifyDocument, useGetApplicantDocument } from "../../../../api/client/admin";
+import { useGetApplicantDocument } from "../../../../api/client/applicant";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import { Document, Page, pdfjs } from "react-pdf";
 import "react-pdf/dist/Page/AnnotationLayer.css";
@@ -27,7 +27,7 @@ const DocumentModal = ({ preview, label, onClose }) => {
 
   return (
     <div
-      className="fixed inset-0 bg-black bg-opacity-80 flex items-center justify-center z-50 p-4"
+      className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center z-50 p-4"
       onClick={onClose}
     >
       <div
@@ -42,7 +42,6 @@ const DocumentModal = ({ preview, label, onClose }) => {
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M6 18L18 6M6 6l12 12" />
           </svg>
         </button>
-
         {isFilePDF ? (
           <>
             <div className="bg-white rounded-lg shadow-2xl overflow-auto max-h-[85vh] w-full flex justify-center">
@@ -119,16 +118,13 @@ const WrongReasonModal = ({ label, currentReason, onConfirm, onCancel }) => {
 
   const handleConfirm = () => {
     if (!selected) return;
-    const finalReason =
-      selected === "Other" && otherText.trim()
-        ? otherText.trim()
-        : selected;
+    const finalReason = selected === "Other" && otherText.trim() ? otherText.trim() : selected;
     onConfirm(finalReason);
   };
 
   return (
     <div
-      className="fixed inset-0 bg-black/60 flex items-center justify-center z-50 p-4"
+      className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center z-50 p-4"
       onClick={onCancel}
     >
       <div
@@ -139,17 +135,13 @@ const WrongReasonModal = ({ label, currentReason, onConfirm, onCancel }) => {
           <p className="text-sm font-bold text-gray-800">Why is this document wrong?</p>
           <p className="text-xs text-gray-400 mt-0.5">{label}</p>
         </div>
-
         <div className="flex flex-col gap-2">
           {WRONG_REASONS.map((reason) => (
             <button
               key={reason}
               onClick={() => setSelected(reason)}
               className={`flex items-center gap-3 px-3 py-2.5 rounded-lg border text-sm text-left transition-colors
-                ${selected === reason
-                  ? "border-red-400 bg-red-50 text-red-700 font-medium"
-                  : "border-gray-200 text-gray-600 hover:bg-gray-50"
-                }`}
+                ${selected === reason ? "border-red-400 bg-red-50 text-red-700 font-medium" : "border-gray-200 text-gray-600 hover:bg-gray-50"}`}
             >
               <span className={`w-4 h-4 rounded-full border flex items-center justify-center shrink-0
                 ${selected === reason ? "border-red-500" : "border-gray-300"}`}>
@@ -158,7 +150,6 @@ const WrongReasonModal = ({ label, currentReason, onConfirm, onCancel }) => {
               {reason}
             </button>
           ))}
-
           {selected === "Other" && (
             <textarea
               value={otherText}
@@ -169,7 +160,6 @@ const WrongReasonModal = ({ label, currentReason, onConfirm, onCancel }) => {
             />
           )}
         </div>
-
         <div className="flex gap-2 pt-1">
           <button
             onClick={onCancel}
@@ -183,8 +173,7 @@ const WrongReasonModal = ({ label, currentReason, onConfirm, onCancel }) => {
             className={`flex-1 px-4 py-2 rounded-lg text-sm font-semibold transition
               ${selected && (selected !== "Other" || otherText.trim())
                 ? "bg-red-500 text-white hover:bg-red-600"
-                : "bg-gray-100 text-gray-400 cursor-not-allowed"
-              }`}
+                : "bg-gray-100 text-gray-400 cursor-not-allowed"}`}
           >
             Confirm
           </button>
@@ -194,11 +183,124 @@ const WrongReasonModal = ({ label, currentReason, onConfirm, onCancel }) => {
   );
 };
 
+// ─── Update Document Modal ─────────────────────────────────────────────────
+const UpdateDocumentModal = ({ label, fileKey, onConfirm, onCancel }) => {
+  const inputRef = useRef(null);
+  const [selectedFile, setSelectedFile] = useState(null);
+  const [preview, setPreview] = useState(null);
+
+  const handleFileChange = (e) => {
+    const file = e.target.files[0];
+    if (!file) return;
+    setSelectedFile(file);
+    if (file.type.startsWith("image/")) {
+      setPreview(URL.createObjectURL(file));
+    } else {
+      setPreview(null);
+    }
+  };
+
+  const handleConfirm = () => {
+    if (!selectedFile) return;
+    onConfirm({ file: selectedFile, fileKey });
+  };
+
+  return (
+    <div
+      className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center z-50 p-4"
+      onClick={onCancel}
+    >
+      <div
+        className="bg-white rounded-xl shadow-2xl w-full max-w-sm p-5 flex flex-col gap-4"
+        onClick={(e) => e.stopPropagation()}
+      >
+        <div>
+          <p className="text-sm font-bold text-gray-800">Replace Document</p>
+          <p className="text-xs text-gray-400 mt-0.5">{label}</p>
+        </div>
+
+        {/* Drop Zone */}
+        <div
+          onClick={() => inputRef.current?.click()}
+          className={`w-full h-36 rounded-lg border-2 border-dashed flex flex-col items-center justify-center cursor-pointer transition-colors
+            ${selectedFile ? "border-blue-400 bg-blue-50" : "border-gray-200 bg-gray-50 hover:border-blue-300 hover:bg-blue-50"}`}
+        >
+          {preview ? (
+            <img src={preview} alt="preview" className="h-full w-full object-contain rounded-lg p-1" />
+          ) : selectedFile ? (
+            <div className="flex flex-col items-center gap-1 text-center px-3">
+              <svg className="w-8 h-8 text-blue-400" fill="currentColor" viewBox="0 0 24 24">
+                <path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8l-6-6z" />
+              </svg>
+              <p className="text-xs text-blue-600 font-medium">{selectedFile.name}</p>
+            </div>
+          ) : (
+            <div className="flex flex-col items-center gap-1 text-center px-3">
+              <svg className="w-8 h-8 text-gray-300 mb-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.5"
+                  d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12" />
+              </svg>
+              <p className="text-xs text-gray-500 font-medium">Click to upload new document</p>
+              <p className="text-[10px] text-gray-400">PNG, JPG, PDF supported</p>
+            </div>
+          )}
+        </div>
+
+        <input
+          ref={inputRef}
+          type="file"
+          accept="image/*,.pdf"
+          className="hidden"
+          onChange={handleFileChange}
+        />
+
+        {/* File Key Info */}
+        {fileKey && (
+          <div className="bg-gray-50 rounded-lg px-3 py-2 flex items-center gap-2">
+            <svg className="w-3.5 h-3.5 text-gray-400 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2"
+                d="M15 7a2 2 0 012 2m4 0a6 6 0 01-7.743 5.743L11 17H9v2H7v2H4a1 1 0 01-1-1v-2.586a1 1 0 01.293-.707l5.964-5.964A6 6 0 1121 9z" />
+            </svg>
+            <p className="text-[10px] text-gray-400 font-mono truncate">Replacing: {fileKey}</p>
+          </div>
+        )}
+
+        <div className="flex gap-2 pt-1">
+          <button
+            onClick={onCancel}
+            className="flex-1 px-4 py-2 border border-gray-200 rounded-lg text-sm text-gray-600 hover:bg-gray-50 transition"
+          >
+            Cancel
+          </button>
+          <button
+            onClick={handleConfirm}
+            disabled={!selectedFile}
+            className={`flex-1 px-4 py-2 rounded-lg text-sm font-semibold transition
+              ${selectedFile ? "bg-blue-500 text-white hover:bg-blue-600" : "bg-gray-100 text-gray-400 cursor-not-allowed"}`}
+          >
+            Upload & Replace
+          </button>
+        </div>
+      </div>
+    </div>
+  );
+};
+
 // ─── Document Card ─────────────────────────────────────────────────────────
-const DocumentViewItem = ({ apiId, label, description, preview, status, reason, onCorrect, onWrong }) => {
+const DocumentViewItem = ({ apiId, label, description, preview, status, reason, fileKey, onCorrect, onWrong, onUpdate }) => {
   const [showPreviewModal, setShowPreviewModal] = useState(false);
   const [showWrongModal, setShowWrongModal] = useState(false);
-  const isFilePDF = isPDF(preview);
+  const [localPreview, setLocalPreview] = useState(preview); // ← local preview state
+  const inputRef = useRef(null);
+  const isFilePDF = isPDF(localPreview);
+
+  const handleFileChange = (e) => {
+    const file = e.target.files[0];
+    if (!file) return;
+    const objectUrl = URL.createObjectURL(file);
+    setLocalPreview(objectUrl);                  // ← replace preview in card instantly
+    onUpdate(apiId, { file, fileKey });
+  };
 
   return (
     <>
@@ -213,37 +315,52 @@ const DocumentViewItem = ({ apiId, label, description, preview, status, reason, 
 
         {/* Preview Box */}
         <div
-          onClick={() => preview && setShowPreviewModal(true)}
-          className={`w-full h-44 rounded-lg border-2 flex items-center justify-center overflow-hidden
-            ${preview
+          onClick={() => localPreview && setShowPreviewModal(true)}
+          className={`w-full h-44 rounded-lg border-2 flex items-center justify-center overflow-hidden relative
+            ${localPreview
               ? "border-green-200 bg-green-50 cursor-pointer hover:border-blue-400 transition-colors"
-              : "border-dashed border-gray-200 bg-gray-50"
-            }`}
+              : "border-dashed border-gray-200 bg-gray-50"}`}
         >
-          {preview ? (
-            isFilePDF ? (
-              <Document
-                file={preview}
-                loading={
-                  <div className="flex flex-col items-center gap-2">
-                    <div className="w-6 h-6 border-2 border-blue-400 border-t-transparent rounded-full animate-spin" />
-                    <p className="text-xs text-gray-400">Loading PDF...</p>
-                  </div>
-                }
-                error={
-                  <div className="flex flex-col items-center gap-1 text-center px-3">
-                    <svg className="w-8 h-8 text-red-400" fill="currentColor" viewBox="0 0 24 24">
-                      <path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8l-6-6z" />
-                    </svg>
-                    <p className="text-xs text-gray-500">PDF — Click to view</p>
-                  </div>
-                }
-              >
-                <Page pageNumber={1} height={168} renderTextLayer={false} renderAnnotationLayer={false} />
-              </Document>
-            ) : (
-              <img src={preview} alt={label} className="w-full h-full object-contain" />
-            )
+          {localPreview ? (
+            <>
+              {isFilePDF ? (
+                <Document
+                  file={localPreview}
+                  loading={
+                    <div className="flex flex-col items-center gap-2">
+                      <div className="w-6 h-6 border-2 border-blue-400 border-t-transparent rounded-full animate-spin" />
+                      <p className="text-xs text-gray-400">Loading PDF...</p>
+                    </div>
+                  }
+                  error={
+                    <div className="flex flex-col items-center gap-1 text-center px-3">
+                      <svg className="w-8 h-8 text-red-400" fill="currentColor" viewBox="0 0 24 24">
+                        <path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8l-6-6z" />
+                      </svg>
+                      <p className="text-xs text-gray-500">PDF — Click to view</p>
+                    </div>
+                  }
+                >
+                  <Page pageNumber={1} height={168} renderTextLayer={false} renderAnnotationLayer={false} />
+                </Document>
+              ) : (
+                <img src={localPreview} alt={label} className="w-full h-full object-contain" />
+              )}
+
+              {/* Replace overlay — shown only when status is wrong */}
+              {status === "wrong" && (
+                <div
+                  onClick={(e) => { e.stopPropagation(); inputRef.current?.click(); }}
+                  className="absolute inset-0 bg-black/50 flex flex-col items-center justify-center gap-1.5 opacity-0 hover:opacity-100 transition-opacity cursor-pointer rounded-lg"
+                >
+                  <svg className="w-7 h-7 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2"
+                      d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12" />
+                  </svg>
+                  <p className="text-white text-xs font-semibold">Click to replace</p>
+                </div>
+              )}
+            </>
           ) : (
             <div className="flex flex-col items-center text-center px-3">
               <svg className="w-10 h-10 text-gray-300 mb-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -254,6 +371,15 @@ const DocumentViewItem = ({ apiId, label, description, preview, status, reason, 
             </div>
           )}
         </div>
+
+        {/* Hidden file input */}
+        <input
+          ref={inputRef}
+          type="file"
+          accept="image/*,.pdf"
+          className="hidden"
+          onChange={handleFileChange}
+        />
 
         {/* Status Badge */}
         {status === "correct" && (
@@ -278,41 +404,23 @@ const DocumentViewItem = ({ apiId, label, description, preview, status, reason, 
           </div>
         )}
 
-        {/* Action Buttons */}
-        {preview && (
-          <div className="flex gap-2 mt-1">
-            <button
-              onClick={() => onCorrect(apiId)}
-              className={`flex-1 flex items-center justify-center gap-1.5 py-2 rounded-lg text-xs font-semibold border transition
-                ${status === "correct"
-                  ? "bg-green-500 border-green-500 text-white"
-                  : "border-green-400 text-green-600 hover:bg-green-50"
-                }`}
-            >
-              <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M5 13l4 4L19 7" />
-              </svg>
-              Correct
-            </button>
-            <button
-              onClick={() => setShowWrongModal(true)}
-              className={`flex-1 flex items-center justify-center gap-1.5 py-2 rounded-lg text-xs font-semibold border transition
-                ${status === "wrong"
-                  ? "bg-red-500 border-red-500 text-white"
-                  : "border-red-400 text-red-500 hover:bg-red-50"
-                }`}
-            >
-              <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M6 18L18 6M6 6l12 12" />
-              </svg>
-              {status === "wrong" ? "Edit Reason" : "Wrong"}
-            </button>
-          </div>
+        {/* Replace hint — shown when status is wrong */}
+        {status === "wrong" && (
+          <button
+            onClick={() => inputRef.current?.click()}
+            className="w-full flex items-center justify-center gap-1.5 py-2 rounded-lg text-xs font-semibold border border-dashed border-blue-300 text-blue-500 hover:bg-blue-50 transition"
+          >
+            <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2"
+                d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12" />
+            </svg>
+            Replace Document
+          </button>
         )}
       </div>
 
       {showPreviewModal && (
-        <DocumentModal preview={preview} label={label} onClose={() => setShowPreviewModal(false)} />
+        <DocumentModal preview={localPreview} label={label} onClose={() => setShowPreviewModal(false)} />
       )}
       {showWrongModal && (
         <WrongReasonModal
@@ -327,13 +435,12 @@ const DocumentViewItem = ({ apiId, label, description, preview, status, reason, 
 };
 
 // ─── Main Form5View ────────────────────────────────────────────────────────
-const Form5View = () => {
+const EditDocument = () => {
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
   const applicantID = searchParams.get("applicantID");
   const { data: documentInfo, isLoading } = useGetApplicantDocument({ userId: applicantID });
 
-  // Map document labels to API documentName values
   const DOCUMENT_CONFIG = [
     {
       documentName: "Birth Certificate",
@@ -362,27 +469,25 @@ const Form5View = () => {
     },
   ];
 
-  // Build documents list from API data
-  // Each document uses the `id` coming from the API response
   const documents = DOCUMENT_CONFIG.map((config) => {
     const apiDoc = documentInfo?.find((d) => d.documentName === config.documentName);
     return {
-      apiId: apiDoc?.id || null,         // ← ID from API
+      apiId: apiDoc?.id || null,
       documentName: config.documentName,
       label: config.label,
       description: config.description,
       preview: apiDoc?.fileUrl || null,
-      initialStatus: apiDoc?.status || null,     // ← status from API
-      initialReason: apiDoc?.remark || null,     // ← reason from API (single string)
+      fileKey: apiDoc?.fileKey || null,       // ← fileKey from API
+      initialStatus: apiDoc?.status || null,
+      initialReason: apiDoc?.remark || null,
     };
   });
 
-  // checklist keyed by apiId — falls back to documentName if apiId is null
   const getKey = (doc) => doc.apiId ?? doc.documentName;
 
   const [checklist, setChecklist] = useState({});
+  const [replacedFiles, setReplacedFiles] = useState({}); // ← stores replaced file + fileKey per doc
 
-  // Sync checklist when documentInfo loads
   useEffect(() => {
     if (!documentInfo) return;
     const initial = {};
@@ -398,12 +503,8 @@ const Form5View = () => {
   const handleCorrect = (key) => {
     setChecklist((prev) => ({
       ...prev,
-      [key]: {
-        status: prev[key]?.status === "correct" ? null : "correct",
-        reason: null,
-      },
+      [key]: { status: prev[key]?.status === "correct" ? null : "correct", reason: null },
     }));
-    console.log("✅ API ID:", key, "| Status: correct");
   };
 
   const handleWrong = (key, reason) => {
@@ -411,7 +512,15 @@ const Form5View = () => {
       ...prev,
       [key]: { status: "wrong", reason },
     }));
-    console.log("❌ API ID:", key, "| Status: wrong | Reason:", reason);
+  };
+
+  // Stores the replaced file and its fileKey
+  const handleUpdate = (key, { file, fileKey }) => {
+    setReplacedFiles((prev) => ({
+      ...prev,
+      [key]: { file, fileKey },
+    }));
+    console.log("📎 Replaced file for key:", key, "| fileKey:", fileKey, "| file:", file.name);
   };
 
   const uploadedDocs = documents.filter((d) => d.preview);
@@ -420,17 +529,29 @@ const Form5View = () => {
   const correctCount = uploadedDocs.filter((d) => checklist[getKey(d)]?.status === "correct").length;
   const wrongCount = uploadedDocs.filter((d) => checklist[getKey(d)]?.status === "wrong").length;
 
-  const { verfiyDocument, isSuccess, isPending, isError, error } = useAdminVerifyDocument(applicantID)
 
   const handleSubmit = () => {
     if (!allReviewed) return;
+
     const payload = uploadedDocs.map((doc) => ({
-      id: doc.apiId,                          // API ID
+      id: doc.apiId,
       status: checklist[getKey(doc)]?.status,
       reason: checklist[getKey(doc)]?.reason || null,
     }));
-    verfiyDocument({ verfication: payload })
-    // TODO: your API call here e.g. updateDocumentReview(payload)
+
+    // Build FormData to send files + payload together
+    const formData = new FormData();
+    formData.append("verfication", JSON.stringify(payload));
+
+    // Attach each replaced file with its fileKey
+    Object.entries(replacedFiles).forEach(([key, { file, fileKey }]) => {
+      formData.append(`file_${key}`, file);
+      formData.append(`fileKey_${key}`, fileKey);
+    });
+
+    console.log("📤 Submit Payload:", payload);
+    console.log("📎 Replaced Files:", replacedFiles);
+
   };
 
   if (isLoading) {
@@ -448,11 +569,6 @@ const Form5View = () => {
       {/* Header */}
       <div className="bg-blue-50 border-l-4 border-blue-500 px-4 py-3 rounded-r-lg mb-6 flex items-center justify-between flex-wrap gap-2">
         <p className="text-sm text-blue-800 font-medium">Document Review</p>
-        {/* <div className="flex items-center gap-2 text-xs font-semibold">
-          <span className="bg-green-100 text-green-700 px-2 py-1 rounded-full">✓ {correctCount} Correct</span>
-          <span className="bg-red-100 text-red-700 px-2 py-1 rounded-full">✗ {wrongCount} Wrong</span>
-          <span className="bg-gray-100 text-gray-500 px-2 py-1 rounded-full">{reviewedCount}/{uploadedDocs.length} Reviewed</span>
-        </div> */}
       </div>
 
       {/* Document Cards */}
@@ -468,22 +584,34 @@ const Form5View = () => {
               preview={doc.preview}
               status={checklist[key]?.status || null}
               reason={checklist[key]?.reason || null}
+              fileKey={doc.fileKey}
               onCorrect={handleCorrect}
               onWrong={handleWrong}
+              onUpdate={handleUpdate}
             />
           );
         })}
       </div>
 
+      {/* Replaced Files Summary */}
+      {Object.keys(replacedFiles).length > 0 && (
+        <div className="mt-4 bg-blue-50 border border-blue-200 rounded-lg px-4 py-3 flex flex-col gap-1">
+          <p className="text-xs font-bold text-blue-700 uppercase tracking-widest mb-1">Queued Replacements</p>
+          {Object.entries(replacedFiles).map(([key, { file, fileKey }]) => (
+            <div key={key} className="flex items-center gap-2 text-xs text-blue-600">
+              <svg className="w-3.5 h-3.5 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+              </svg>
+              <span className="font-mono truncate">{fileKey}</span>
+              <span className="text-blue-400">→</span>
+              <span className="truncate">{file.name}</span>
+            </div>
+          ))}
+        </div>
+      )}
+
       {/* Navigation */}
       <div className="mt-8 flex items-center justify-between flex-wrap gap-3">
-        <Button
-          onClick={() => navigate(`/admin/applications/view-form-3?applicantID=${applicantID}`)}
-          className="px-4 py-2 bg-blue-600 text-white font-semibold rounded-lg hover:bg-blue-700 transition"
-        >
-          ← Previous Step
-        </Button>
-
         <div className="flex items-center gap-3">
           {!allReviewed && uploadedDocs.length > 0 && (
             <p className="text-xs text-gray-400">
@@ -494,10 +622,7 @@ const Form5View = () => {
             onClick={handleSubmit}
             disabled={!allReviewed}
             className={`px-4 py-2 font-semibold rounded-lg transition
-              ${allReviewed
-                ? "bg-blue-600 text-white hover:bg-blue-700"
-                : "bg-gray-200 text-gray-400 cursor-not-allowed"
-              }`}
+              ${allReviewed ? "bg-blue-600 text-white hover:bg-blue-700" : "bg-gray-200 text-gray-400 cursor-not-allowed"}`}
           >
             Submit
           </Button>
@@ -507,4 +632,4 @@ const Form5View = () => {
   );
 };
 
-export default Form5View;
+export default EditDocument;

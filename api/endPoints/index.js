@@ -20,7 +20,10 @@ const API_ROUTE = {
     getApplicantAddressInfo: "/api/applicant/getApplicantAddressInfo",
     getApplicantSchoolInfo: "/api/applicant/getApplicantSchoolInfo",
     getApplicantSchoolPreference: "/api/applicant/getApplicantSchoolPreference",
-    getApplicantPDFinfo: "/api/applicant/getApplicantPDFinfo"
+    getApplicantPDFinfo: "/api/applicant/getApplicantPDFinfo",
+    getApplicantDocuments: "/api/applicant/getApplicantDocuments",
+    getIsApplicantVerified: "/api/applicant/getIsApplicantVerified",
+    
   },
 
   admin: {

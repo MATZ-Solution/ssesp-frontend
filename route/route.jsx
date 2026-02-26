@@ -21,10 +21,12 @@ import AdminTemplate from "../src/Templates/admin-template";
 import NewAdminTemplate from "../src/Templates/new-admin";
 import Applications from "../src/component/Dashbaord/tabs/applications";
 import ProtectedRouteAdmin from "../utils/protected-route-admin";
-import {Form1View} from "../src/component/forms/admission/view-form-1";
+import { Form1View } from "../src/component/forms/admission/view-form-1";
 import { Form2View } from "../src/component/forms/admission/view-form-2";
 import { Form3View } from "../src/component/forms/admission/view-form-3";
 import Form4View from "../src/component/forms/admission/view-form-4";
+import EditDocument from "../src/component/forms/admission/edit-form-4";
+import StatusTracker from "../src/component/test";
 
 export const router = createBrowserRouter([
   {
@@ -101,6 +103,17 @@ export const router = createBrowserRouter([
           <ApplicationSubmitted />
         </ProtectedRouteForm>
       </ProtectedRouteApplicant>
+    ),
+  },
+
+  {
+    path: "/form/edit-document",
+    element: withSuspense(
+      <EditDocument />
+      // <ProtectedRouteApplicant allowedRoles={['applicant']}>
+      //   <ProtectedRouteForm>
+      //   </ProtectedRouteForm>
+      // </ProtectedRouteApplicant>
     ),
   },
 
@@ -188,7 +201,7 @@ export const router = createBrowserRouter([
     element: withSuspense(<Signup />),
   },
   {
-    path: "/view-form",
-    element: withSuspense(<Form1View />),
+    path: "/test",
+    element: withSuspense(<StatusTracker />),
   },
 ]);

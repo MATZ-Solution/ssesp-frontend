@@ -40,7 +40,7 @@ api.interceptors.response.use(
 
     if (error.response?.status === 401) {
       const message = error.response?.data?.message; // Uncomment this line
-      window.location.href = "/";
+      // window.location.href = "/";
       // if (message === "Token expired") {
       //   store.dispatch(removeUser());
       //   window.location.href = "/";

@@ -299,3 +299,48 @@ export function useGetApplicantPDFinfo() {
     isLoading,
   };
 }
+
+export function useGetApplicantDocument(params = {}) {
+  const constructQueryString = (params) => {
+    const query = new URLSearchParams(params).toString();
+    return query ? `&${query}` : "";
+  };
+  const { data, isSuccess, isPending, isError, isLoading } = useQuery({
+    queryKey: [API_ROUTE.applicant.getApplicantDocuments],
+    queryFn: async () =>
+      await api.get(`${API_ROUTE.applicant.getApplicantDocuments}?${constructQueryString(params)}`),
+    // enabled: id !== undefined && id !== null,
+    // staleTime: 60 * 1000 * 5,
+    refetchOnWindowFocus: false,
+    retry: 1,
+  });
+  return {
+    data: data?.data?.data,
+    isSuccess,
+    isPending,
+    isError,
+    isLoading,
+  };
+}
+
+export function useGetIsApplicantVerified() {
+  const { data, isSuccess, isPending, isError, isLoading } = useQuery({
+    queryKey: [API_ROUTE.applicant.getIsApplicantVerified],
+    queryFn: async () =>
+      await api.get(`${API_ROUTE.applicant.getIsApplicantVerified}`),
+    // enabled: id !== undefined && id !== null,
+    staleTime: 60 * 1000 * 2, // 2 minute,
+    retry: 1,
+  });
+  return {
+    status: data?.data?.status,
+    message: data?.data?.message,
+    editDocument: data?.data?.editDocument,
+    isSuccess,
+    isPending,
+    isError,
+    isLoading,
+  };
+}
+
+
