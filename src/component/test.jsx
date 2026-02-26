@@ -1,7 +1,10 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import { useGetIsApplicantVerified } from "../../api/client/applicant";
+import { useNavigate } from "react-router-dom";
+import { useSelector } from 'react-redux';
 
 const statusConfig = {
-    pending: {
+    "pending": {
         label: "Pending",
         color: "#D97706",
         bg: "rgba(217,119,6,0.09)",
@@ -29,7 +32,7 @@ const statusConfig = {
             </svg>
         ),
     },
-    rejected: {
+    "rejected": {
         label: "Rejected",
         color: "#DC2626",
         bg: "rgba(220,38,38,0.08)",
@@ -44,7 +47,7 @@ const statusConfig = {
             </svg>
         ),
     },
-    completed: {
+    "completed": {
         label: "Completed",
         color: "#16A34A",
         bg: "rgba(22,163,74,0.1)",
@@ -71,6 +74,9 @@ const GLOW = "0 4px 20px rgba(34,197,94,0.3)";
 
 export default function StatusTracker() {
 
+
+    const navigate = useNavigate()
+    const user = useSelector(state => state.auth.user)
     const [currentStatus, setCurrentStatus] = useState("pending");
     const [remark, setRemark] = useState(
         "Your application looks promising! Our team is carefully reviewing your documents."
@@ -82,6 +88,21 @@ export default function StatusTracker() {
 
     const fillWidth =
         cfg.stepIndex === 0 ? "0%" : cfg.stepIndex === 1 ? "50%" : "100%";
+
+    const handleChangeDocument = () => {
+        if (editDocument) {
+            navigate(`/form/edit-document?applicantID=${user?.id}`)
+        }
+    }
+
+    const { message, status, editDocument, isError, isLoading } = useGetIsApplicantVerified();
+
+    useEffect(() => {
+        if (status) setCurrentStatus(status);
+        if (message) setRemark(message);
+    }, [status, message]);
+
+    if (isLoading) return <p>Loading...</p>
 
     return (
         <>
@@ -283,6 +304,13 @@ export default function StatusTracker() {
                                     </p>
                                 </div>
                                 <p className="text-[13.5px] text-gray-700 leading-relaxed">{remark}</p>
+                                {editDocument && (
+                                    <button
+                                        onClick={handleChangeDocument}
+                                    >
+                                        Edit Document
+                                    </button>
+                                )}
                             </div>
                         )}
                     </div>

@@ -329,7 +329,7 @@ export function useGetIsApplicantVerified() {
     queryFn: async () =>
       await api.get(`${API_ROUTE.applicant.getIsApplicantVerified}`),
     // enabled: id !== undefined && id !== null,
-    staleTime: 60 * 1000 * 2, // 2 minute,
+    // staleTime: 60 * 1000 * 2, // 2 minute,
     retry: 1,
   });
   return {

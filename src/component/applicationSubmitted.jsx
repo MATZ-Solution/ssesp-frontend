@@ -12,18 +12,6 @@ const ApplicationSubmitted = () => {
     const user = useSelector(state => state.auth.user)
 
     const { data, previous_school, priority_school, isSuccess, isError, isLoading } = useGetApplicantPDFinfo();
-    const { message, status, editDocument, isError: applicantIsErr, applicantIsLoading } = useGetIsApplicantVerified();
-
-    // console.log("message: ", message)
-    // console.log("status: ", status)
-    // console.log("editDocument: ", editDocument)
-
-    const handleChangeDocument = () => {
-        if (editDocument) {
-            navigate(`/form/edit-document?applicantID=${user?.id}`)
-        }
-    }
-
     const [activeTab, setActiveTab] = useState('status');
 
     const tabs = [
@@ -54,12 +42,6 @@ const ApplicationSubmitted = () => {
     return (
         <div className="max-w-6xl mx-auto py-6 px-4 sm:px-6 lg:px-8">
             <Navbar />
-
-            {editDocument && (
-                <button onClick={handleChangeDocument}>
-                    Edit Document
-                </button>
-            )}
 
             {/* ── Mobile Tab Bar (visible on small screens) ── */}
             <div className="mt-6 flex sm:hidden bg-white rounded-2xl shadow-lg overflow-hidden">
