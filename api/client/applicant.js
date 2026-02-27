@@ -160,6 +160,38 @@ export function useAddApplicantDocument() {
   return { addDocument, isSuccess, isPending, isError, error };
 }
 
+export function useEditApplicantDocument() {
+  const navigate = useNavigate();
+  const dispatch = useDispatch()
+  const queryClient = useQueryClient();
+  const {
+    mutate: editDocument,
+    isSuccess,
+    isPending,
+    isError,
+    error,
+  } = useMutation({
+    mutationFn: async (data) =>
+      await api.post(`${API_ROUTE.applicant.applicantEditDocument}`, data, {
+        headers: {
+          "Content-Type": "multipart/form-data",
+          Authorization: api.defaults.headers.common["Authorization"],
+        },
+        timeout: 120000,
+      }),
+    onSuccess: (data) => {
+      navigate("/form/complete");
+      queryClient.invalidateQueries({
+        queryKey: [API_ROUTE.applicant.getIsApplicantVerified],
+      });
+    },
+    onError: (error) => {
+      toast.error("Failed to edit document.");
+    },
+  });
+  return { editDocument, isSuccess, isPending, isError, error };
+}
+
 export function useAddApplicantSchoolPreference() {
   const navigate = useNavigate();
   const dispatch = useDispatch()

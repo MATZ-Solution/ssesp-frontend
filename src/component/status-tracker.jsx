@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { useGetIsApplicantVerified } from "../../api/client/applicant";
 import { useNavigate } from "react-router-dom";
 import { useSelector } from 'react-redux';
+import Button from "./button";
 
 const statusConfig = {
     "pending": {
@@ -121,7 +122,7 @@ export default function StatusTracker() {
       `}</style>
 
             {/* ── PAGE ROOT ── */}
-            <div className="relative flex flex-col gap-6">
+            <div className="w-full items-center justify-center relative flex flex-col gap-6">
 
                 {/* Radial glow overlays */}
                 <div className="pointer-events-none fixed inset-0"
@@ -208,8 +209,8 @@ export default function StatusTracker() {
                                     </svg>
                                 </div>
                                 <div>
-                                    <p className="text-[13px] font-bold text-red-900 mb-0.5">Application Not Approved</p>
-                                    <p className="text-[12px] text-red-400 leading-relaxed">
+                                    <p className="text-left text-[13px] font-bold text-red-900 mb-0.5">Application Not Approved</p>
+                                    <p className="text-left text-[12px] text-red-400 leading-relaxed">
                                         This application did not proceed further. See remarks below for details.
                                     </p>
                                 </div>
@@ -303,16 +304,21 @@ export default function StatusTracker() {
                                         Remark
                                     </p>
                                 </div>
-                                <p className="text-[13.5px] text-gray-700 leading-relaxed">{remark}</p>
-                                {editDocument && (
-                                    <button
-                                        onClick={handleChangeDocument}
-                                    >
-                                        Edit Document
-                                    </button>
-                                )}
+                                <p className="text-left text-[13.5px] text-gray-700 leading-relaxed">{remark}</p>
+
                             </div>
                         )}
+                        <div className="flex justify-center">
+                            {editDocument && (
+                                <Button
+                                    onClick={handleChangeDocument}
+                                    type="submit"
+                                    className="mt-4 w-full sm:w-auto px-6 sm:px-8 py-2 bg-gradient-to-r from-blue-600 to-blue-500 text-white font-bold rounded-lg shadow-lg hover:shadow-xl transform hover:-translate-y-0.5 transition-all duration-200 order-1 sm:order-2"
+                                >
+                                    Edit Document
+                                </Button>
+                            )}
+                        </div>
                     </div>
                 </div>
             </div>

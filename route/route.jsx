@@ -26,7 +26,7 @@ import { Form2View } from "../src/component/forms/admission/view-form-2";
 import { Form3View } from "../src/component/forms/admission/view-form-3";
 import Form4View from "../src/component/forms/admission/view-form-4";
 import EditDocument from "../src/component/forms/admission/edit-form-4";
-import StatusTracker from "../src/component/test";
+import StatusTracker from "../src/component/status-tracker";
 
 export const router = createBrowserRouter([
   {
@@ -199,9 +199,5 @@ export const router = createBrowserRouter([
   {
     path: "/signup",
     element: withSuspense(<Signup />),
-  },
-  {
-    path: "/test",
-    element: withSuspense(<StatusTracker />),
   },
 ]);

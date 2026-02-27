@@ -4,7 +4,7 @@ import CandidatePDFDownloader from './template/pdf-template';
 import { useGetApplicantPDFinfo, useGetIsApplicantVerified } from '../../api/client/applicant';
 import { useNavigate } from 'react-router-dom';
 import { useSelector } from 'react-redux';
-import StatusTracker from './test';
+import StatusTracker from './status-tracker';
 
 const ApplicationSubmitted = () => {
 
@@ -140,9 +140,9 @@ const ApplicationSubmitted = () => {
                                 </p>
 
                                 {/* Progress Steps */}
-                                <div className='flex justify-center'>
+                                {/* <div className='flex items-center justify-center'> */}
                                 <StatusTracker />
-                                </div>
+                                {/* </div> */}
                                 {/* <div className="bg-gradient-to-r from-green-50 to-emerald-50 border border-green-100 rounded-xl p-5 sm:p-6 text-left max-w-md mx-auto">
                                     <h3 className="font-semibold text-green-900 mb-4 text-center text-sm sm:text-base">
                                         Application Progress

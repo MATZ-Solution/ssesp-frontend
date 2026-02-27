@@ -1,17 +1,18 @@
 import React, { useState } from "react";
 import { DocumentCard } from "../../cards/document-card";
 import { MissingIncomeCard } from "../../cards/missing-income";
-import { useGetApplicantDocument } from "../../../../api/client/applicant";
+import { useEditApplicantDocument, useGetApplicantDocument } from "../../../../api/client/applicant";
 import { useSearchParams } from "react-router-dom";
+import Button from "../../button";
 
 const INCOME_DOC_NAME = "Parents / Guardian Income Certficaition";
 
 const DOCUMENT_CONFIG = [
-  { documentName: "Birth Certificate",  label: "Birth Certificate (B-Form)",  description: "Student's NADRA B-Form or Birth Certificate" },
-  { documentName: "Guardian Doimicile", label: "Parent/Guardian Domicile",     description: "Copy of parent or guardian's Domicile" },
-  { documentName: "Guardian CNIC",      label: "Parent/Guardian CNIC",         description: "Copy of parent or guardian's CNIC" },
-  { documentName: "Guardian PRC",       label: "Parent/Guardian PRC",          description: "Copy of parent or guardian's PRC" },
-  { documentName: INCOME_DOC_NAME,      label: "Guardian Income Certificate",  description: "Copy of parent or guardian's Income Certificate" },
+  { documentName: "Birth Certificate", label: "Birth Certificate (B-Form)", description: "Student's NADRA B-Form or Birth Certificate" },
+  { documentName: "Guardian Doimicile", label: "Parent/Guardian Domicile", description: "Copy of parent or guardian's Domicile" },
+  { documentName: "Guardian CNIC", label: "Parent/Guardian CNIC", description: "Copy of parent or guardian's CNIC" },
+  { documentName: "Guardian PRC", label: "Parent/Guardian PRC", description: "Copy of parent or guardian's PRC" },
+  { documentName: INCOME_DOC_NAME, label: "Guardian Income Certificate", description: "Copy of parent or guardian's Income Certificate" },
 ];
 
 const EditDocument = () => {
@@ -77,60 +78,35 @@ const EditDocument = () => {
     .map((config) => {
       const apiDoc = data?.find((d) => d.documentName === config.documentName);
       return {
-        apiId:        apiDoc?.id       || null,
+        apiId: apiDoc?.id || null,
         documentName: config.documentName,
-        label:        config.label,
-        description:  config.description,
-        preview:      apiDoc?.fileUrl  || null,
-        fileKey:      apiDoc?.filekey  || null,
-        status:       apiDoc?.status   || null,
-        remark:       apiDoc?.remark   || null,
+        label: config.label,
+        description: config.description,
+        preview: apiDoc?.fileUrl || null,
+        fileKey: apiDoc?.filekey || null,
+        status: apiDoc?.status || null,
+        remark: apiDoc?.remark || null,
       };
     });
 
-  const wrongDocs        = documents.filter((d) => d.status === "wrong");
+  const wrongDocs = documents.filter((d) => d.status === "wrong");
   const allWrongReplaced = wrongDocs.every((d) =>
     replacedFiles.some((r) => r.documentName === d.documentName && r.type === "replace")
   );
   const incomeReady = incomeDocExists || replacedFiles.some((r) => r.type === "new_income");
-  const canSubmit   = allWrongReplaced && incomeReady;
+  const canSubmit = allWrongReplaced && incomeReady;
 
   // ── Submit ─────────────────────────────────────────────────────────────────
+  const { editDocument, isSuccess, isPending, error } = useEditApplicantDocument()
   const handleSubmit = () => {
     if (!canSubmit) return;
-
     const formData = new FormData();
-
-    // New files — type + file only
-    replacedFiles.forEach((entry, idx) => {
-      formData.append(`files[${idx}][type]`, entry.type);
-      formData.append(`files[${idx}][file]`, entry.file);
+    replacedFiles.forEach(({ type, documentName, file }) => {
+      formData.append(documentName, file);
+      console.log(documentName, file)
     });
-
-    // Old S3 keys to delete — send as a separate array
-    previousFileKeys.forEach((entry, idx) => {
-      formData.append(`deleteKeys[${idx}]`, entry.fileKey);
-    });
-
-    // ── Console logs ──
-    console.log(
-      "📤 New files to upload:",
-      replacedFiles.map(({ type, documentName, file }) => ({
-        type,
-        documentName,
-        fileName: file.name,
-      }))
-    );
-
-    console.log(
-      "🗑️ Old S3 keys to delete from server:",
-      previousFileKeys
-    );
-
-    // TODO: pass formData to your API mutation
-    // e.g. await submitDocuments(formData);
-
-    alert("Submitted! Check console.");
+    formData.append("deleteFiles", JSON.stringify(previousFileKeys))
+    editDocument(formData)
   };
 
   // ── Loading / Error ────────────────────────────────────────────────────────
@@ -196,10 +172,10 @@ const EditDocument = () => {
                 apiId={apiDoc?.id || null}
                 label="Guardian Income Certificate"
                 description="Copy of parent or guardian's Income Certificate"
-                preview={apiDoc?.fileUrl  || null}
-                status={apiDoc?.status    || null}
-                remark={apiDoc?.remark    || null}
-                fileKey={apiDoc?.filekey  || null}
+                preview={apiDoc?.fileUrl || null}
+                status={apiDoc?.status || null}
+                remark={apiDoc?.remark || null}
+                fileKey={apiDoc?.filekey || null}
                 onReplace={(data) => handleReplace(INCOME_DOC_NAME, apiDoc?.id, data)}
               />
             );
@@ -221,9 +197,21 @@ const EditDocument = () => {
           {canSubmit && (
             <p className="text-xs text-green-600 font-medium">All done ✓</p>
           )}
+          {/* <Button
+            isLoading={isPending}
+            disabled={isLoading || !canSubmit}
+            onClick={handleSubmit}
+            type="submit"
+            className={` w-full sm:w-auto px-6 text-gray-400 sm:px-8 py-3 font-bold rounded-lg shadow-lg hover:shadow-xl transform hover:-translate-y-0.5 transition-all duration-200 order-1 sm:order-2
+              ${canSubmit ?
+              "bg-gradient-to-r from-blue-600 to-blue-500"
+              : "bg-gray-100 text-gray-400 cursor-not-allowed" }`}
+          >
+            Submit
+          </Button> */}
           <button
             onClick={handleSubmit}
-            disabled={!canSubmit}
+            disabled={!canSubmit || isLoading}
             className={`px-6 py-2.5 rounded-xl text-sm font-bold transition-all
               ${canSubmit
                 ? "bg-blue-600 text-white hover:bg-blue-700 shadow-sm"

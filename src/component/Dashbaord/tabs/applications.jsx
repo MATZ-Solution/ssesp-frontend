@@ -27,6 +27,7 @@ const Applications = () => {
     schoolType: filters.schoolType,
     gender: filters.gender,
     district: filters.district,
+    status: filters.status
   });
 
   const { exportApplicants, isPending: isExporting } = useExportApplicants();
@@ -48,6 +49,8 @@ const Applications = () => {
       district: filters.district,
     });
   };
+
+  if(applicantIsLoading) return <p>Loading...</p>
 
   return (
     <div>
