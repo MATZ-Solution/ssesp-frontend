@@ -183,7 +183,7 @@ export function useGetApplicantDocument(params = {}) {
     queryFn: async () =>
       await api.get(`${API_ROUTE.admin.getApplicantDocuments}?${constructQueryString(params)}`),
     // enabled: id !== undefined && id !== null,
-    staleTime: 60 * 1000 * 5,
+    // staleTime: 60 * 1000 * 5,
     refetchOnWindowFocus: false,
     retry: 1,
   });
