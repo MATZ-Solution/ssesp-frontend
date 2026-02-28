@@ -3,6 +3,9 @@ import Button from "../../button";
 import { useAdminVerifyDocument, useGetApplicantDocument } from "../../../../api/client/admin";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import { Document, Page, pdfjs } from "react-pdf";
+import BackButton from "../../back-button";
+import Error from "../../error";
+import ApplicantReviewHeader from "../../header/applicant-review-header";
 import "react-pdf/dist/Page/AnnotationLayer.css";
 import "react-pdf/dist/Page/TextLayer.css";
 
@@ -367,22 +370,20 @@ const Form5View = () => {
   const documents = DOCUMENT_CONFIG.map((config) => {
     const apiDoc = documentInfo?.find((d) => d.documentName === config.documentName);
     return {
-      apiId: apiDoc?.id || null,         // ← ID from API
+      apiId: apiDoc?.id || null,
       documentName: config.documentName,
       label: config.label,
       description: config.description,
       preview: apiDoc?.fileUrl || null,
-      initialStatus: apiDoc?.status || null,     // ← status from API
-      initialReason: apiDoc?.remark || null,     // ← reason from API (single string)
+      initialStatus: apiDoc?.status || null,
+      initialReason: apiDoc?.remark || null,
     };
   });
 
-  // checklist keyed by apiId — falls back to documentName if apiId is null
   const getKey = (doc) => doc.apiId ?? doc.documentName;
 
   const [checklist, setChecklist] = useState({});
 
-  // Sync checklist when documentInfo loads
   useEffect(() => {
     if (!documentInfo) return;
     const initial = {};
@@ -411,7 +412,6 @@ const Form5View = () => {
       ...prev,
       [key]: { status: "wrong", reason },
     }));
-    console.log("❌ API ID:", key, "| Status: wrong | Reason:", reason);
   };
 
   const uploadedDocs = documents.filter((d) => d.preview);
@@ -442,21 +442,17 @@ const Form5View = () => {
     );
   }
 
+  if (isError) return <Error />
+
   return (
     <div className="bg-white p-4 sm:p-6 md:p-8 w-full">
 
-      {/* Header */}
-      <div className="bg-blue-50 border-l-4 border-blue-500 px-4 py-3 rounded-r-lg mb-6 flex items-center justify-between flex-wrap gap-2">
-        <p className="text-sm text-blue-800 font-medium">Document Review</p>
-        {/* <div className="flex items-center gap-2 text-xs font-semibold">
-          <span className="bg-green-100 text-green-700 px-2 py-1 rounded-full">✓ {correctCount} Correct</span>
-          <span className="bg-red-100 text-red-700 px-2 py-1 rounded-full">✗ {wrongCount} Wrong</span>
-          <span className="bg-gray-100 text-gray-500 px-2 py-1 rounded-full">{reviewedCount}/{uploadedDocs.length} Reviewed</span>
-        </div> */}
-      </div>
-
+      <BackButton
+        onClick={() => navigate(`/admin/applications`)}
+      />
+      <ApplicantReviewHeader name="Document Review" />
       {/* Document Cards */}
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+      <div className="mt-4 grid grid-cols-1 md:grid-cols-2 gap-4">
         {documents.map((doc) => {
           const key = getKey(doc);
           return (

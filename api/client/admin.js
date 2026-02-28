@@ -88,8 +88,8 @@ export function useGetDashbaordApplicantRecentData(params = {}) {
     return query ? `&${query}` : "";
   };
   const { data, isSuccess, isPending, isError, isLoading } = useQuery({
-    queryKey: [API_ROUTE.admin.getDashbaordApplicantData, params],
-    queryFn: async () => await api.get(`${API_ROUTE.admin.getDashbaordApplicantData}?${constructQueryString(params)}`),
+    queryKey: [API_ROUTE.admin.getDashbaordApplicantRecentData, params],
+    queryFn: async () => await api.get(`${API_ROUTE.admin.getDashbaordApplicantRecentData}?${constructQueryString(params)}`),
     staleTime: 60 * 1000 * 5,
     retry: 1
   });

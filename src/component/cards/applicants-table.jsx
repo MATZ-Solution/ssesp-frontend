@@ -33,7 +33,7 @@ function ApplicantsTable({ applications }) {
             )}
 
             {/* ── DESKTOP TABLE (md and above) ── */}
-            <div className="hidden md:block overflow-x-auto">
+            <div className="hidden sm:block overflow-x-auto">
                 <table className="w-full text-sm">
                     <thead>
                         <tr className="bg-slate-50 text-slate-500 text-xs font-medium uppercase tracking-wider">
@@ -42,7 +42,8 @@ function ApplicantsTable({ applications }) {
                             <th className="text-left px-5 py-3">Grade</th>
                             <th className="text-left px-5 py-3">School Type</th>
                             <th className="text-left px-5 py-3">Status</th>
-                            <th className="px-5 py-3" />
+                            <th className=" px-5 py-3">Actions</th>
+                            {/* <th className="px-5 py-3" /> */}
                         </tr>
                     </thead>
                     <tbody>
@@ -73,7 +74,7 @@ function ApplicantsTable({ applications }) {
                                         onClick={() => handleView(app)}
                                         className="cursor-pointer inline-flex items-center gap-2 px-4 py-1.5 text-sm font-medium rounded-full bg-gradient-to-r from-teal-500 to-emerald-500 text-white shadow-md hover:shadow-lg hover:scale-105 active:scale-95 transition-all duration-200"
                                     >
-                                        👁 View
+                                        View
                                     </button>
                                 </td>
                             </tr>
@@ -83,7 +84,7 @@ function ApplicantsTable({ applications }) {
             </div>
 
             {/* ── MOBILE CARD LIST (below md) ── */}
-            <div className="md:hidden divide-y divide-slate-100">
+            <div className="sm:hidden divide-y divide-slate-100">
                 {applications?.map((app, i) => (
                     <div
                         key={i}

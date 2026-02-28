@@ -51,7 +51,7 @@ function RecentApplicationsTable({ applications }) {
                 <td className="px-5 py-3.5 text-slate-600">
                   {app.schoolCategory}
                 </td>
-                <td className="px-5 py-3.5 text-slate-600">{app.district}</td>
+                <td className="px-5 py-3.5 text-slate-600">{app.guardianDomicileDistrict}</td>
 
                 {/* <td className="px-5 py-3.5 text-slate-500 text-xs">
                   {app.created_at}

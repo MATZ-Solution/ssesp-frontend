@@ -3,6 +3,8 @@ import Button from "../../../component/button";
 import { useSearchParams, useNavigate } from "react-router-dom";
 import { useAdminVerifyApplicantSchool, useGetApplicantSchoolInfo } from "../../../../api/client/admin";
 import ApplicantReviewHeader from "../../header/applicant-review-header";
+import BackButton from "../../back-button";
+import Error from "../../error";
 
 const tableColumns = [
   { label: "Class", key: "class" },
@@ -51,10 +53,15 @@ export const Form3View = () => {
     );
   }
 
+  if (isError) return <Error />
+
   return (
     <div>
+      <BackButton
+        onClick={() => navigate(`/admin/applications`)}
+      />
       <ApplicantReviewHeader name="Previous School" />
-      <div className="mt-5 bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
+      <div className="mt-4 bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
         <div className="h-1.5 w-full bg-gradient-to-r from-indigo-500 via-violet-400 to-purple-500" />
 
         <div className="p-6 sm:p-8 flex flex-col gap-6">
@@ -199,7 +206,6 @@ export const Form3View = () => {
             </div>
           )}
 
-          {/* Admin Decision — bottom */}
           {!(datas?.is_school_verified === 'false' || datas?.is_school_verified === 'true') && (
             <div>
               <p className="text-xs font-semibold text-gray-500 uppercase tracking-widest mb-3">
@@ -251,7 +257,88 @@ export const Form3View = () => {
             </div>
           )}
 
-          {!(datas?.is_school_verified === 'false' || datas?.is_school_verified === 'true' || !verification.status) && (
+          <div className="flex items-center justify-between flex-wrap gap-3">
+            {(datas?.is_school_verified === 'false' || datas?.is_school_verified === 'true') && (
+              <Button
+                onClick={() => navigate(`/admin/applications/view-form-2?applicantID=${applicantID}`)}
+                className="px-8 py-3 bg-gradient-to-r from-blue-600 to-blue-500 text-white font-bold rounded-lg shadow-lg hover:shadow-xl transform hover:-translate-y-0.5 transition-all duration-200"
+              >
+                ← Previous Step
+              </Button>
+            )}
+            {!(datas?.is_school_verified === 'false' || datas?.is_school_verified === 'true') && (
+              <Button
+                isLoading={isPending}
+                onClick={handleSubmit}
+                type="submit"
+                className="px-8 py-3 bg-gradient-to-r from-blue-600 to-blue-500 text-white font-bold rounded-lg shadow-lg hover:shadow-xl transform hover:-translate-y-0.5 transition-all duration-200"
+              >
+                Submit
+              </Button>
+            )}
+            {(datas?.is_school_verified === 'false' || datas?.is_school_verified === 'true') && (
+              <Button
+                onClick={() => navigate(`/admin/applications/view-form-4?applicantID=${applicantID}`)}
+                className="px-8 py-3 bg-gradient-to-r from-blue-600 to-blue-500 text-white font-bold rounded-lg shadow-lg hover:shadow-xl transform hover:-translate-y-0.5 transition-all duration-200"
+              >
+                Next Step
+              </Button>
+            )}
+          </div>
+
+          {/* Admin Decision — bottom */}
+          {/* {!(datas?.is_school_verified === 'false' || datas?.is_school_verified === 'true') && (
+            <div>
+              <p className="text-xs font-semibold text-gray-500 uppercase tracking-widest mb-3">
+                Admin Decision — Previous School Records
+              </p>
+              <div className="flex gap-3">
+                <button
+                  type="button"
+                  onClick={() => updateVerification("true")}
+                  className={`flex-1 flex items-center justify-center gap-2 px-4 py-3 rounded-xl border-2 font-semibold text-sm transition-all duration-200 ${verification.status === "true"
+                    ? "bg-emerald-500 border-emerald-500 text-white shadow-lg scale-[1.02]"
+                    : "bg-white border-gray-200 text-gray-600 hover:border-emerald-300 hover:text-emerald-600 hover:bg-emerald-50"
+                    }`}
+                >
+                  <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M5 13l4 4L19 7" />
+                  </svg>
+                  Records are Correct
+                </button>
+                <button
+                  type="button"
+                  onClick={() => updateVerification("false", "School records are invalid")}
+                  className={`flex-1 flex items-center justify-center gap-2 px-4 py-3 rounded-xl border-2 font-semibold text-sm transition-all duration-200 ${verification.status === "false"
+                    ? "bg-red-500 border-red-500 text-white shadow-lg scale-[1.02]"
+                    : "bg-white border-gray-200 text-gray-600 hover:border-red-300 hover:text-red-500 hover:bg-red-50"
+                    }`}
+                >
+                  <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M6 18L18 6M6 6l12 12" />
+                  </svg>
+                  Records are Incorrect
+                </button>
+              </div>
+
+              {decided ? (
+                <div className={`mt-3 flex items-center gap-2 text-xs font-medium px-3 py-2 rounded-lg ${verification.status === "true" ? "bg-emerald-50 text-emerald-700" : "bg-red-50 text-red-600"}`}>
+                  <svg className="w-3.5 h-3.5 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
+                    <path fillRule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clipRule="evenodd" />
+                  </svg>
+                  {verification.status === "true"
+                    ? "You have marked the previous school records as correct."
+                    : "You have marked the previous school records as incorrect. This will be flagged for review."}
+                </div>
+              ) : (
+                <p className="mt-3 text-xs text-gray-400 text-center">
+                  Please make a decision before proceeding
+                </p>
+              )}
+            </div>
+          )} */}
+
+          {/* {!(datas?.is_school_verified === 'false' || datas?.is_school_verified === 'true' || !verification.status) && (
             <div className="flex gap-4">
               <Button
                 isLoading={isPending}
@@ -262,7 +349,7 @@ export const Form3View = () => {
                 Submit
               </Button>
             </div>
-          )}
+          )} */}
         </div>
 
         {/* {(datas?.is_school_verified === 'false' || datas?.is_school_verified === 'true') && (

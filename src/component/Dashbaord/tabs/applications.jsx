@@ -4,8 +4,11 @@ import { useNavigate } from "react-router-dom";
 import ApplicationFilters from "../ApplicationFilters";
 import ApplicantsTable from "../../cards/applicants-table";
 import { useExportApplicants, useGetDashbaordApplicantData } from "../../../../api/client/admin";
+import Error from "../../error";
+import Loader from "../../loader";
 
 const Applications = () => {
+
   const navigate = useNavigate();
   const [page, setPage] = useState(1);
 
@@ -20,6 +23,7 @@ const Applications = () => {
   const {
     data: applicantData,
     isLoading: applicantIsLoading,
+    isError: applicantIsErr,
     totalPages,
   } = useGetDashbaordApplicantData({
     page,
@@ -50,7 +54,8 @@ const Applications = () => {
     });
   };
 
-  if(applicantIsLoading) return <p>Loading...</p>
+  if (true) return <Loader />
+  if (applicantIsErr) return <Error />
 
   return (
     <div>
@@ -71,11 +76,10 @@ const Applications = () => {
           <button
             onClick={handleExport}
             disabled={isExporting}
-            className={`px-4 py-2 rounded-md text-white transition ${
-              isExporting
+            className={`px-4 py-2 rounded-md text-white transition ${isExporting
                 ? "bg-gray-400 cursor-not-allowed"
                 : "bg-green-600 hover:bg-green-700"
-            }`}
+              }`}
           >
             {isExporting ? "Exporting..." : "Export to Excel"}
           </button>
