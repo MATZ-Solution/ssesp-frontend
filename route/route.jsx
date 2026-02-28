@@ -26,6 +26,7 @@ import { Form2View } from "../src/component/forms/admission/view-form-2";
 import { Form3View } from "../src/component/forms/admission/view-form-3";
 import Form4View from "../src/component/forms/admission/view-form-4";
 import EditDocument from "../src/component/forms/admission/edit-form-4";
+import Loader from "../src/component/loader";
 import StatusTracker from "../src/component/status-tracker";
 import Testing from "../src/component/Dashbaord/tabs/testing";
 
@@ -117,10 +118,14 @@ export const router = createBrowserRouter([
       </ProtectedRouteApplicant>
     ),
   },
-
+ 
   {
     path: "/login",
     element: withSuspense(<Login5 />),
+  },
+   {
+    path: "/Loader",
+    element: withSuspense(<Loader />),
   },
 
   {
