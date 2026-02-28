@@ -19,7 +19,7 @@ import { useGetDashbaordData, useGetDashbaordApplicantRecentData } from "../../.
 export default function Dashboard() {
 
   const { data, isSuccess, isPending, isError, isLoading } = useGetDashbaordData()
-  const { data: applicantData, isLoading: applicantIsLoading } = useGetDashbaordApplicantRecentData()
+  const { data: applicantData, isLoading: applicantIsLoading, isError: applicationIsErr } = useGetDashbaordApplicantRecentData()
 
   return (
     <div
@@ -49,7 +49,7 @@ export default function Dashboard() {
                 up={true}
                 color="blue"
                 icon={CheckCircle2Icon}
-                // sub={`${approvalRate}% approval rate`}
+              // sub={`${approvalRate}% approval rate`}
               />
               <StatCard
                 label="Male Applications"
@@ -67,10 +67,11 @@ export default function Dashboard() {
                 up={true}
                 color="teal"
                 icon={UsersIcon}
-                // sub={`${enrollmentRate}% of approved`}
+              // sub={`${enrollmentRate}% of approved`}
               />
             </div>
           }
+          {isError && <p className="text-red-600">Something Went Wrong</p>}
 
           {/* ── Charts ── */}
           {/* <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
@@ -84,20 +85,7 @@ export default function Dashboard() {
               <RecentApplicationsTable applications={applicantData} />
             }
           </div>
-
-          {/* ── Bottom Row ── */}
-          {/* <div className="grid grid-cols-1 lg:grid-cols-5 gap-4">
-            <div className="lg:col-span-3">
-              <QuickActions />
-            </div>
-            <div className="lg:col-span-2">
-              <SessionOverview
-                approvalRate={approvalRate}
-                enrollmentRate={enrollmentRate}
-                pendingPercentage={pendingPct}
-              />
-            </div>
-          </div> */}
+          {applicationIsErr && <p className="text-red-600">Something Went Wrong</p>}
         </div>
       </main>
     </div>

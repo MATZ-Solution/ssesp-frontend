@@ -4,7 +4,7 @@ import CandidatePDFDownloader from './template/pdf-template';
 import { useGetApplicantPDFinfo, useGetIsApplicantVerified } from '../../api/client/applicant';
 import { useNavigate } from 'react-router-dom';
 import { useSelector } from 'react-redux';
-import StatusTracker from './test';
+import StatusTracker from './status-tracker';
 
 const ApplicationSubmitted = () => {
 
@@ -12,18 +12,6 @@ const ApplicationSubmitted = () => {
     const user = useSelector(state => state.auth.user)
 
     const { data, previous_school, priority_school, isSuccess, isError, isLoading } = useGetApplicantPDFinfo();
-    const { message, status, editDocument, isError: applicantIsErr, applicantIsLoading } = useGetIsApplicantVerified();
-
-    // console.log("message: ", message)
-    // console.log("status: ", status)
-    // console.log("editDocument: ", editDocument)
-
-    const handleChangeDocument = () => {
-        if (editDocument) {
-            navigate(`/form/edit-document?applicantID=${user?.id}`)
-        }
-    }
-
     const [activeTab, setActiveTab] = useState('status');
 
     const tabs = [
@@ -54,12 +42,6 @@ const ApplicationSubmitted = () => {
     return (
         <div className="max-w-6xl mx-auto py-6 px-4 sm:px-6 lg:px-8">
             <Navbar />
-
-            {editDocument && (
-                <button onClick={handleChangeDocument}>
-                    Edit Document
-                </button>
-            )}
 
             {/* ── Mobile Tab Bar (visible on small screens) ── */}
             <div className="mt-6 flex sm:hidden bg-white rounded-2xl shadow-lg overflow-hidden">
@@ -158,9 +140,9 @@ const ApplicationSubmitted = () => {
                                 </p>
 
                                 {/* Progress Steps */}
-                                <div className='flex justify-center'>
+                                {/* <div className='flex items-center justify-center'> */}
                                 <StatusTracker />
-                                </div>
+                                {/* </div> */}
                                 {/* <div className="bg-gradient-to-r from-green-50 to-emerald-50 border border-green-100 rounded-xl p-5 sm:p-6 text-left max-w-md mx-auto">
                                     <h3 className="font-semibold text-green-900 mb-4 text-center text-sm sm:text-base">
                                         Application Progress

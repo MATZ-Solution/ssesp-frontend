@@ -88,8 +88,8 @@ export function useGetDashbaordApplicantRecentData(params = {}) {
     return query ? `&${query}` : "";
   };
   const { data, isSuccess, isPending, isError, isLoading } = useQuery({
-    queryKey: [API_ROUTE.admin.getDashbaordApplicantData, params],
-    queryFn: async () => await api.get(`${API_ROUTE.admin.getDashbaordApplicantData}?${constructQueryString(params)}`),
+    queryKey: [API_ROUTE.admin.getDashbaordApplicantRecentData, params],
+    queryFn: async () => await api.get(`${API_ROUTE.admin.getDashbaordApplicantRecentData}?${constructQueryString(params)}`),
     staleTime: 60 * 1000 * 5,
     retry: 1
   });
@@ -112,8 +112,8 @@ export function useGetDashbaordApplicantData(params = {}) {
     queryKey: [API_ROUTE.admin.getDashbaordApplicantData, params],
     queryFn: async () => await api.get(`${API_ROUTE.admin.getDashbaordApplicantData}?${constructQueryString(params)}`),
     // staleTime: 60 * 1000 * 5,
-    // refetchOnWindowFocus: false,
-    // retry: 1
+    refetchOnWindowFocus: false,
+    retry: 1
   });
   return {
     data: data?.data?.data,
@@ -290,7 +290,8 @@ export function useExportApplicants() {
     isPending,
     isError,
     error: error?.response?.data?.message,
-  };}
+  };
+}
 // PUT
 
 export function useAdminVerifyAge(id) {
@@ -308,15 +309,20 @@ export function useAdminVerifyAge(id) {
     mutationFn: async (data) =>
       await api.put(`${API_ROUTE.admin.adminVerifyAge}/${id}`, data),
     onSuccess: (data, formData) => {
+      // if (formData.status === 'false') {
+      //   navigate(`/admin/applications`);
+      //   toast.success("Rejected Successfully.")
+      // } else {
+      //   navigate(`/admin/applications/view-form-2?applicantID=${id}`);
+      // }
+
+      // testing
       if (formData.status === 'false') {
-        navigate(`/admin/applications`);
+        navigate(`/admin/testing`);
         toast.success("Rejected Successfully.")
       } else {
-        navigate(`/admin/applications/view-form-2?applicantID=${id}`);
+        navigate(`/admin/testing/view-form-2?applicantID=${id}`);
       }
-      // queryClient.invalidateQueries({
-      //   queryKey: [API_ROUTE.applicant.getApplicantSchoolPreference],
-      // });
     },
     onError: (error) => {
       console.log("error: ", error)
@@ -341,16 +347,20 @@ export function useAdminVerifyGuardianSalary(id) {
     mutationFn: async (data) =>
       await api.put(`${API_ROUTE.admin.adminVerifyGuardianSalary}/${id}`, data),
     onSuccess: (data, formData) => {
-      // navigate(`/admin/applications/view-form-3?applicantID=${id}`);
+      // if (formData.status === 'false') {
+      //   navigate(`/admin/applications`);
+      //   toast.success("Rejected Successfully.")
+      // } else {
+      //   navigate(`/admin/applications/view-form-3?applicantID=${id}`);
+      // }
+
+      // testing
       if (formData.status === 'false') {
-        navigate(`/admin/applications`);
+        navigate(`/admin/testing`);
         toast.success("Rejected Successfully.")
       } else {
-        navigate(`/admin/applications/view-form-3?applicantID=${id}`);
+        navigate(`/admin/testing/view-form-3?applicantID=${id}`);
       }
-      // queryClient.invalidateQueries({
-      //   queryKey: [API_ROUTE.applicant.getApplicantSchoolPreference],
-      // });
     },
     onError: (error) => {
       console.log("error: ", error)
@@ -375,16 +385,21 @@ export function useAdminVerifyApplicantSchool(id) {
     mutationFn: async (data) =>
       await api.put(`${API_ROUTE.admin.adminVerifyApplicantSchool}/${id}`, data),
     onSuccess: (data, formData) => {
-      // navigate(`/admin/applications/view-form-4?applicantID=${id}`);
+      // if (formData.status === 'false') {
+      //   navigate(`/admin/applications`);
+      //   toast.success("Rejected Successfully.")
+      // } else {
+      //   navigate(`/admin/applications/view-form-4?applicantID=${id}`);
+      // }
+
+      // testing
       if (formData.status === 'false') {
-        navigate(`/admin/applications`);
+        navigate(`/admin/testing`);
         toast.success("Rejected Successfully.")
       } else {
-        navigate(`/admin/applications/view-form-4?applicantID=${id}`);
+        navigate(`/admin/testing/view-form-4?applicantID=${id}`);
       }
-      // queryClient.invalidateQueries({
-      //   queryKey: [API_ROUTE.applicant.getApplicantSchoolPreference],
-      // });
+     
     },
     onError: (error) => {
       console.log("error: ", error)
@@ -410,7 +425,7 @@ export function useAdminVerifyDocument(id) {
       await api.put(`${API_ROUTE.admin.adminVerifyDocument}/${id}`, data),
     onSuccess: (data) => {
       // navigate(`/admin/applications`);
-      toast.success("Verify Successfully.")
+      toast.success("Updated Successfully.")
       // queryClient.invalidateQueries({
       //   queryKey: [API_ROUTE.applicant.getApplicantSchoolPreference],
       // });
@@ -421,4 +436,27 @@ export function useAdminVerifyDocument(id) {
     },
   });
   return { verfiyDocument, isSuccess, isPending, isError, error };
+}
+
+// testing
+
+export function useGetDashbaordApplicantTestingData(params = {}) {
+  const constructQueryString = (params) => {
+    const query = new URLSearchParams(params).toString();
+    return query ? `&${query}` : "";
+  };
+  const { data, isSuccess, isPending, isError, isLoading } = useQuery({
+    queryKey: [API_ROUTE.admin.getDashbaordApplicantTestingData, params],
+    queryFn: async () => await api.get(`${API_ROUTE.admin.getDashbaordApplicantTestingData}?${constructQueryString(params)}`),
+    // staleTime: 60 * 1000 * 5,
+    refetchOnWindowFocus: false,
+    retry: 1
+  });
+  return {
+    data: data?.data?.data,
+    isSuccess,
+    isPending,
+    isError,
+    isLoading,
+  };
 }

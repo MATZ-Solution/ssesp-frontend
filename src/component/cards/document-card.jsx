@@ -1,41 +1,114 @@
-import { useRef, useState } from "react";
+import { useState, useRef, useEffect } from "react";
 
+// ✅ Amazon CDN URL — set VITE_CDN_URL in your .env file
+// e.g. VITE_CDN_URL=https://your-cdn.cloudfront.net
+// or   VITE_CDN_URL=https://your-bucket.s3.amazonaws.com
+const BASE_URL = import.meta.env.VITE_CDN_URL || "";
 
-const DocumentModal = ({ preview, label, onClose }) => (
-  <div
-    className="fixed inset-0 bg-black/70 backdrop-blur-sm flex items-center justify-center z-50 p-4"
-    onClick={onClose}
-  >
+// ─────────────────────────────────────────────
+// Document Modal
+// ─────────────────────────────────────────────
+const DocumentModal = ({ preview, label, onClose }) => {
+  const isPdf =
+    typeof preview === "string" &&
+    (preview.endsWith(".pdf") || preview.includes("application/pdf"));
+
+  return (
     <div
-      className="relative w-full max-w-2xl flex flex-col items-center"
-      onClick={(e) => e.stopPropagation()}
+      className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm p-4"
+      onClick={onClose}
     >
-      <button
-        onClick={onClose}
-        className="absolute -top-4 -right-4 bg-white text-gray-800 rounded-full p-2 hover:bg-gray-100 shadow-lg z-10"
+      <div
+        className="relative bg-white rounded-2xl overflow-hidden shadow-2xl max-w-2xl w-full max-h-[90vh] flex flex-col"
+        onClick={(e) => e.stopPropagation()}
       >
-        <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M6 18L18 6M6 6l12 12" />
-        </svg>
-      </button>
-      <img src={preview} alt={label} className="w-full max-h-[85vh] object-contain rounded-xl shadow-2xl" />
+        {/* Modal Header */}
+        <div className="flex items-center justify-between px-5 py-3.5 border-b border-gray-100">
+          <p className="text-sm font-bold text-gray-800">{label}</p>
+          <button
+            onClick={onClose}
+            className="w-8 h-8 rounded-full bg-gray-100 flex items-center justify-center hover:bg-gray-200 transition"
+          >
+            <svg className="w-4 h-4 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M6 18L18 6M6 6l12 12" />
+            </svg>
+          </button>
+        </div>
+
+        {/* Modal Content */}
+        <div className="flex-1 overflow-auto p-4 bg-gray-50 flex items-center justify-center">
+          {isPdf ? (
+            <iframe
+              src={preview}
+              title={label}
+              className="w-full h-[70vh] rounded-xl border border-gray-200"
+            />
+          ) : (
+            <img
+              src={preview}
+              alt={label}
+              className="max-w-full max-h-[70vh] object-contain rounded-xl"
+            />
+          )}
+        </div>
+      </div>
     </div>
-  </div>
-);
-export const DocumentCard = ({ apiId, label, description, preview, status, remark, fileKey, onReplace }) => {
-  const [localPreview, setLocalPreview] = useState(preview);
+  );
+};
+
+// ─────────────────────────────────────────────
+// Document Card
+// ─────────────────────────────────────────────
+export const DocumentCard = ({
+  apiId,
+  label,
+  description,
+  preview,       // raw value from API (relative path or full URL)
+  status,        // "correct" | "wrong" | null/undefined
+  remark,
+  fileKey,
+  onReplace,
+}) => {
+  const [localPreview, setLocalPreview] = useState(null);
   const [showModal, setShowModal] = useState(false);
   const [replaced, setReplaced] = useState(false);
+  const [imgError, setImgError] = useState(false);
   const replaceRef = useRef(null);
+
+  // ✅ Fix 1: Sync localPreview whenever `preview` prop changes (handles async API data)
+  useEffect(() => {
+    if (!preview) return;
+
+    // ✅ Fix 2: If it's already a blob URL (after replace), keep as-is
+    if (preview.startsWith("blob:")) {
+      setLocalPreview(preview);
+      return;
+    }
+
+    // ✅ Fix 3: If it's already a full URL, use directly; else prepend BASE_URL
+    const fullUrl = preview.startsWith("http")
+      ? preview
+      : `${BASE_URL}/${preview.replace(/^\//, "")}`;
+
+    setLocalPreview(fullUrl);
+    setImgError(false); // reset error when new preview arrives
+  }, [preview]);
 
   const handleReplace = (e) => {
     const file = e.target.files[0];
     if (!file) return;
-    setLocalPreview(URL.createObjectURL(file));
+    const blobUrl = URL.createObjectURL(file);
+    setLocalPreview(blobUrl);
     setReplaced(true);
-    onReplace({ id: apiId, file, fileKey });
+    setImgError(false);
+    onReplace?.({ id: apiId, file, fileKey });
   };
 
+  const isPdf =
+    typeof localPreview === "string" &&
+    (localPreview.endsWith(".pdf") || localPreview.includes("application/pdf"));
+
+  // ── Border color logic ──
   const borderColor =
     status === "correct"
       ? "border-green-400"
@@ -47,36 +120,72 @@ export const DocumentCard = ({ apiId, label, description, preview, status, remar
 
   return (
     <>
-      <div className={`bg-white border-2 rounded-2xl p-4 shadow-sm flex flex-col gap-3 transition-all ${borderColor}`}>
-
-        {/* Title */}
+      <div
+        className={`bg-white border-2 rounded-2xl p-4 shadow-sm flex flex-col gap-3 transition-all ${borderColor}`}
+      >
+        {/* ── Title ── */}
         <div>
           <p className="text-sm font-bold text-gray-800">{label}</p>
-          {description && <p className="text-xs text-gray-400 mt-0.5">{description}</p>}
+          {description && (
+            <p className="text-xs text-gray-400 mt-0.5">{description}</p>
+          )}
         </div>
 
-        {/* Image Preview */}
+        {/* ── Image / PDF Preview ── */}
         <div
-          onClick={() => localPreview && setShowModal(true)}
+          onClick={() => localPreview && !imgError && setShowModal(true)}
           className={`w-full h-44 rounded-xl border-2 flex items-center justify-center overflow-hidden
-            ${localPreview
+            ${localPreview && !imgError
               ? "border-gray-100 bg-gray-50 cursor-pointer hover:border-blue-300 transition-colors"
               : "border-dashed border-gray-200 bg-gray-50"
             }`}
         >
-          {localPreview ? (
-            <img src={localPreview} alt={label} className="w-full h-full object-contain" />
+          {localPreview && !imgError ? (
+            isPdf ? (
+              // ✅ Fix 4: PDFs render in iframe, not img tag
+              <iframe
+                src={localPreview}
+                title={label}
+                className="w-full h-full pointer-events-none"
+              />
+            ) : (
+              <img
+                src={localPreview}
+                alt={label}
+                className="w-full h-full object-contain"
+                // ✅ Fix 5: Handle broken image URLs gracefully
+                onError={() => setImgError(true)}
+              />
+            )
           ) : (
             <div className="flex flex-col items-center text-center px-3">
-              <svg className="w-10 h-10 text-gray-300 mb-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.5" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+              <svg
+                className="w-10 h-10 text-gray-300 mb-2"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth="1.5"
+                  d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"
+                />
               </svg>
-              <p className="text-xs text-gray-400">No document uploaded</p>
+              <p className="text-xs text-gray-400">
+                {imgError ? "Failed to load document" : "No document uploaded"}
+              </p>
+              {/* ✅ Show broken URL in dev mode to help debug */}
+              {imgError && localPreview && (
+                <p className="text-[9px] text-red-300 mt-1 break-all px-2">
+                  {localPreview}
+                </p>
+              )}
             </div>
           )}
         </div>
 
-        {/* CORRECT */}
+        {/* ── CORRECT ── */}
         {status === "correct" && (
           <div className="bg-green-50 border border-green-200 rounded-xl px-3 py-2.5 flex items-center gap-2.5">
             <div className="w-7 h-7 rounded-full bg-green-500 flex items-center justify-center shrink-0">
@@ -91,7 +200,7 @@ export const DocumentCard = ({ apiId, label, description, preview, status, remar
           </div>
         )}
 
-        {/* WRONG — not yet replaced */}
+        {/* ── WRONG — not yet replaced ── */}
         {status === "wrong" && !replaced && (
           <div className="flex flex-col gap-2">
             <div className="bg-red-50 border border-red-200 rounded-xl px-3 py-2.5 flex items-start gap-2.5">
@@ -102,7 +211,9 @@ export const DocumentCard = ({ apiId, label, description, preview, status, remar
               </div>
               <div>
                 <p className="text-xs font-bold text-red-600">Rejected</p>
-                {remark && <p className="text-[11px] text-red-500 mt-0.5">{remark}</p>}
+                {remark && (
+                  <p className="text-[11px] text-red-500 mt-0.5">{remark}</p>
+                )}
               </div>
             </div>
             <button
@@ -114,11 +225,17 @@ export const DocumentCard = ({ apiId, label, description, preview, status, remar
               </svg>
               Replace Document
             </button>
-            <input ref={replaceRef} type="file" accept="image/*,.pdf" className="hidden" onChange={handleReplace} />
+            <input
+              ref={replaceRef}
+              type="file"
+              accept="image/*,.pdf"
+              className="hidden"
+              onChange={handleReplace}
+            />
           </div>
         )}
 
-        {/* WRONG — replaced */}
+        {/* ── WRONG — replaced ── */}
         {status === "wrong" && replaced && (
           <div className="flex flex-col gap-2">
             <div className="bg-blue-50 border border-blue-200 rounded-xl px-3 py-2.5 flex items-center gap-2.5">
@@ -141,11 +258,17 @@ export const DocumentCard = ({ apiId, label, description, preview, status, remar
               </svg>
               Change Again
             </button>
-            <input ref={replaceRef} type="file" accept="image/*,.pdf" className="hidden" onChange={handleReplace} />
+            <input
+              ref={replaceRef}
+              type="file"
+              accept="image/*,.pdf"
+              className="hidden"
+              onChange={handleReplace}
+            />
           </div>
         )}
 
-        {/* PENDING */}
+        {/* ── PENDING (no status) ── */}
         {!status && (
           <div className="bg-gray-50 border border-gray-200 rounded-xl px-3 py-2.5 flex items-center gap-2.5">
             <div className="w-7 h-7 rounded-full bg-gray-200 flex items-center justify-center shrink-0">
@@ -161,8 +284,13 @@ export const DocumentCard = ({ apiId, label, description, preview, status, remar
         )}
       </div>
 
+      {/* ── Modal ── */}
       {showModal && (
-        <DocumentModal preview={localPreview} label={label} onClose={() => setShowModal(false)} />
+        <DocumentModal
+          preview={localPreview}
+          label={label}
+          onClose={() => setShowModal(false)}
+        />
       )}
     </>
   );

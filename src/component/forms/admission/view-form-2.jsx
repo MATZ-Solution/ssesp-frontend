@@ -3,6 +3,8 @@ import { useSearchParams, useNavigate } from "react-router-dom";
 import { useAdminVerifyGuardianSalary, useGetApplicantGuardianInfo } from "../../../../api/client/admin";
 import ApplicantReviewHeader from "../../header/applicant-review-header";
 import Button from "../../../component/button"
+import BackButton from "../../back-button";
+import Error from "../../error";
 
 const SALARY_LIMIT = 1200000; // 12 Lakh
 
@@ -51,10 +53,15 @@ export const Form2View = () => {
     );
   }
 
+  if(isError) return <Error />
+
   return (
     <div>
+      <BackButton
+        onClick={() => navigate(`/admin/testing`)}
+      />
       <ApplicantReviewHeader name='Guardian Income' />
-      <div className="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
+      <div className="mt-4 bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
         <div className="h-1.5 w-full bg-gradient-to-r from-amber-400 via-orange-400 to-rose-400" />
 
         <div className="p-6 sm:p-8 flex flex-col gap-6">
@@ -162,7 +169,7 @@ export const Form2View = () => {
             </div>
           )}
 
-          {/* Admin Decision */}
+
           {!(guardian?.is_gurdian_salary_verified === 'false' || guardian?.is_gurdian_salary_verified === 'true') && (
             <div>
               <p className="text-xs font-semibold text-gray-500 uppercase tracking-widest mb-3">
@@ -215,7 +222,91 @@ export const Form2View = () => {
             </div>
           )}
 
-          {!(guardian?.is_gurdian_salary_verified === 'false' || guardian?.is_gurdian_salary_verified === 'true' || !verification.status) && (
+          <div className="flex items-center justify-between flex-wrap gap-3">
+            {(guardian?.is_gurdian_salary_verified === 'false' || guardian?.is_gurdian_salary_verified === 'true') && (
+
+              <Button
+                onClick={() => navigate(`/admin/applications/view-form-1?applicantID=${applicantID}`)}
+                className="px-8 py-3 bg-gradient-to-r from-blue-600 to-blue-500 text-white font-bold rounded-lg shadow-lg hover:shadow-xl transform hover:-translate-y-0.5 transition-all duration-200"
+              >
+                ← Previous Step
+              </Button>
+            )}
+            {!(guardian?.is_gurdian_salary_verified === 'false' || guardian?.is_gurdian_salary_verified === 'true ' || !verification.status) && (
+              <Button
+                isLoading={isPending}
+                onClick={handleSubmit}
+                type="submit"
+                className="px-8 py-3 bg-gradient-to-r from-blue-600 to-blue-500 text-white font-bold rounded-lg shadow-lg hover:shadow-xl transform hover:-translate-y-0.5 transition-all duration-200"
+              >
+                Submit
+              </Button>
+            )}
+
+            {(guardian?.is_gurdian_salary_verified === 'false' || guardian?.is_gurdian_salary_verified === 'true') && (
+              <Button
+                onClick={() => navigate(`/admin/applications/view-form-3?applicantID=${applicantID}`)}
+                className="px-8 py-3 bg-gradient-to-r from-blue-600 to-blue-500 text-white font-bold rounded-lg shadow-lg hover:shadow-xl transform hover:-translate-y-0.5 transition-all duration-200"
+              >
+                Next Step
+              </Button>
+            )}
+          </div>
+
+          {/* Admin Decision */}
+          {/* {!(guardian?.is_gurdian_salary_verified === 'false' || guardian?.is_gurdian_salary_verified === 'true') && (
+            <div>
+              <p className="text-xs font-semibold text-gray-500 uppercase tracking-widest mb-3">
+                Admin Decision — Guardian Salary
+              </p>
+              <div className="flex gap-3">
+                <button
+                  type="button"
+                  onClick={() => updateVerification("true")}
+                  className={`flex-1 flex items-center justify-center gap-2 px-4 py-3 rounded-xl border-2 font-semibold text-sm transition-all duration-200 ${verification.status === "true"
+                    ? "bg-emerald-500 border-emerald-500 text-white shadow-lg scale-[1.02]"
+                    : "bg-white border-gray-200 text-gray-600 hover:border-emerald-300 hover:text-emerald-600 hover:bg-emerald-50"
+                    }`}
+                >
+                  <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M5 13l4 4L19 7" />
+                  </svg>
+                  Salary is Correct
+                </button>
+                <button
+                  type="button"
+                  onClick={() => updateVerification("false", "Salary is out of range")}
+                  className={`flex-1 flex items-center justify-center gap-2 px-4 py-3 rounded-xl border-2 font-semibold text-sm transition-all duration-200 ${verification.status === "false"
+                    ? "bg-red-500 border-red-500 text-white shadow-lg scale-[1.02]"
+                    : "bg-white border-gray-200 text-gray-600 hover:border-red-300 hover:text-red-500 hover:bg-red-50"
+                    }`}
+                >
+                  <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M6 18L18 6M6 6l12 12" />
+                  </svg>
+                  Salary is Not Correct
+                </button>
+              </div>
+
+              {decided ? (
+                <div className={`mt-3 flex items-center gap-2 text-xs font-medium px-3 py-2 rounded-lg ${verification.status === "true" ? "bg-emerald-50 text-emerald-700" : "bg-red-50 text-red-600"
+                  }`}>
+                  <svg className="w-3.5 h-3.5 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
+                    <path fillRule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clipRule="evenodd" />
+                  </svg>
+                  {verification.status === "true"
+                    ? "You have marked the guardian's salary as correct."
+                    : "You have marked the guardian's salary as not correct. This will be flagged for review."}
+                </div>
+              ) : (
+                <p className="mt-3 text-xs text-gray-400 text-center">
+                  Please make a decision before proceeding
+                </p>
+              )}
+            </div>
+          )} */}
+
+          {/* {!(guardian?.is_gurdian_salary_verified === 'false' || guardian?.is_gurdian_salary_verified === 'true' || !verification.status) && (
             <div className="flex gap-4">
               <Button
                 isLoading={isPending}
@@ -226,7 +317,7 @@ export const Form2View = () => {
                 Submit
               </Button>
             </div>
-          )}
+          )} */}
         </div>
       </div>
 

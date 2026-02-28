@@ -1,7 +1,11 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import { useGetIsApplicantVerified } from "../../api/client/applicant";
+import { useNavigate } from "react-router-dom";
+import { useSelector } from 'react-redux';
+import Button from "./button";
 
 const statusConfig = {
-    pending: {
+    "pending": {
         label: "Pending",
         color: "#D97706",
         bg: "rgba(217,119,6,0.09)",
@@ -29,7 +33,7 @@ const statusConfig = {
             </svg>
         ),
     },
-    rejected: {
+    "rejected": {
         label: "Rejected",
         color: "#DC2626",
         bg: "rgba(220,38,38,0.08)",
@@ -44,7 +48,7 @@ const statusConfig = {
             </svg>
         ),
     },
-    completed: {
+    "completed": {
         label: "Completed",
         color: "#16A34A",
         bg: "rgba(22,163,74,0.1)",
@@ -71,6 +75,9 @@ const GLOW = "0 4px 20px rgba(34,197,94,0.3)";
 
 export default function StatusTracker() {
 
+
+    const navigate = useNavigate()
+    const user = useSelector(state => state.auth.user)
     const [currentStatus, setCurrentStatus] = useState("pending");
     const [remark, setRemark] = useState(
         "Your application looks promising! Our team is carefully reviewing your documents."
@@ -82,6 +89,21 @@ export default function StatusTracker() {
 
     const fillWidth =
         cfg.stepIndex === 0 ? "0%" : cfg.stepIndex === 1 ? "50%" : "100%";
+
+    const handleChangeDocument = () => {
+        if (editDocument) {
+            navigate(`/form/edit-document?applicantID=${user?.id}`)
+        }
+    }
+
+    const { message, status, editDocument, isError, isLoading } = useGetIsApplicantVerified();
+
+    useEffect(() => {
+        if (status) setCurrentStatus(status);
+        if (message) setRemark(message);
+    }, [status, message]);
+
+    if (isLoading) return <p>Loading...</p>
 
     return (
         <>
@@ -100,7 +122,7 @@ export default function StatusTracker() {
       `}</style>
 
             {/* ── PAGE ROOT ── */}
-            <div className="relative flex flex-col gap-6">
+            <div className="w-full items-center justify-center relative flex flex-col gap-6">
 
                 {/* Radial glow overlays */}
                 <div className="pointer-events-none fixed inset-0"
@@ -187,8 +209,8 @@ export default function StatusTracker() {
                                     </svg>
                                 </div>
                                 <div>
-                                    <p className="text-[13px] font-bold text-red-900 mb-0.5">Application Not Approved</p>
-                                    <p className="text-[12px] text-red-400 leading-relaxed">
+                                    <p className="text-left text-[13px] font-bold text-red-900 mb-0.5">Application Not Approved</p>
+                                    <p className="text-left text-[12px] text-red-400 leading-relaxed">
                                         This application did not proceed further. See remarks below for details.
                                     </p>
                                 </div>
@@ -282,9 +304,21 @@ export default function StatusTracker() {
                                         Remark
                                     </p>
                                 </div>
-                                <p className="text-[13.5px] text-gray-700 leading-relaxed">{remark}</p>
+                                <p className="text-left text-[13.5px] text-gray-700 leading-relaxed">{remark}</p>
+
                             </div>
                         )}
+                        <div className="flex justify-center">
+                            {editDocument && (
+                                <Button
+                                    onClick={handleChangeDocument}
+                                    type="submit"
+                                    className="mt-4 w-full sm:w-auto px-6 sm:px-8 py-2 bg-gradient-to-r from-blue-600 to-blue-500 text-white font-bold rounded-lg shadow-lg hover:shadow-xl transform hover:-translate-y-0.5 transition-all duration-200 order-1 sm:order-2"
+                                >
+                                    Edit Document
+                                </Button>
+                            )}
+                        </div>
                     </div>
                 </div>
             </div>
