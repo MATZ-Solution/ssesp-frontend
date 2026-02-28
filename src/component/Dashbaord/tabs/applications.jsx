@@ -54,7 +54,7 @@ const Applications = () => {
     });
   };
 
-  if (true) return <Loader />
+  if (applicantIsLoading) return <Loader />
   if (applicantIsErr) return <Error />
 
   return (
