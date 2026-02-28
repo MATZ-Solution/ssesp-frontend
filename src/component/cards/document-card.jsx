@@ -1,17 +1,30 @@
 import { useState, useRef, useEffect } from "react";
+import { Document, Page, pdfjs } from "react-pdf";
+import "react-pdf/dist/Page/AnnotationLayer.css";
+import "react-pdf/dist/Page/TextLayer.css";
 
-// ✅ Amazon CDN URL — set VITE_CDN_URL in your .env file
-// e.g. VITE_CDN_URL=https://your-cdn.cloudfront.net
-// or   VITE_CDN_URL=https://your-bucket.s3.amazonaws.com
+pdfjs.GlobalWorkerOptions.workerSrc = new URL(
+  "pdfjs-dist/build/pdf.worker.min.mjs",
+  import.meta.url
+).toString();
+
 const BASE_URL = import.meta.env.VITE_CDN_URL || "";
+
+const isPDF = (url) => {
+  if (!url) return false;
+  return (
+    url.toLowerCase().includes(".pdf") ||
+    url.toLowerCase().includes("application/pdf")
+  );
+};
 
 // ─────────────────────────────────────────────
 // Document Modal
 // ─────────────────────────────────────────────
 const DocumentModal = ({ preview, label, onClose }) => {
-  const isPdf =
-    typeof preview === "string" &&
-    (preview.endsWith(".pdf") || preview.includes("application/pdf"));
+  const [numPages, setNumPages] = useState(null);
+  const [pageNumber, setPageNumber] = useState(1);
+  const isFilePDF = isPDF(preview);
 
   return (
     <div
@@ -36,13 +49,53 @@ const DocumentModal = ({ preview, label, onClose }) => {
         </div>
 
         {/* Modal Content */}
-        <div className="flex-1 overflow-auto p-4 bg-gray-50 flex items-center justify-center">
-          {isPdf ? (
-            <iframe
-              src={preview}
-              title={label}
-              className="w-full h-[70vh] rounded-xl border border-gray-200"
-            />
+        <div className="flex-1 overflow-auto p-4 bg-gray-50 flex flex-col items-center justify-center">
+          {isFilePDF ? (
+            <>
+              <div className="bg-white rounded-lg shadow-2xl overflow-auto max-h-[75vh] w-full flex justify-center">
+                <Document
+                  file={preview}
+                  onLoadSuccess={({ numPages }) => setNumPages(numPages)}
+                  loading={
+                    <div className="flex items-center justify-center h-40">
+                      <div className="w-8 h-8 border-4 border-blue-500 border-t-transparent rounded-full animate-spin" />
+                    </div>
+                  }
+                >
+                  <Page
+                    pageNumber={pageNumber}
+                    width={Math.min(window.innerWidth * 0.85, 800)}
+                    renderTextLayer={false}
+                    renderAnnotationLayer={false}
+                  />
+                </Document>
+              </div>
+              {numPages > 1 && (
+                <div className="mt-3 flex items-center gap-4 bg-white rounded-full px-4 py-2 shadow-lg">
+                  <button
+                    onClick={() => setPageNumber((p) => Math.max(1, p - 1))}
+                    disabled={pageNumber <= 1}
+                    className="text-gray-600 hover:text-blue-600 disabled:opacity-30"
+                  >
+                    <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15 19l-7-7 7-7" />
+                    </svg>
+                  </button>
+                  <span className="text-sm font-medium text-gray-700">
+                    Page {pageNumber} of {numPages}
+                  </span>
+                  <button
+                    onClick={() => setPageNumber((p) => Math.min(numPages, p + 1))}
+                    disabled={pageNumber >= numPages}
+                    className="text-gray-600 hover:text-blue-600 disabled:opacity-30"
+                  >
+                    <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 5l7 7-7 7" />
+                    </svg>
+                  </button>
+                </div>
+              )}
+            </>
           ) : (
             <img
               src={preview}
@@ -63,8 +116,8 @@ export const DocumentCard = ({
   apiId,
   label,
   description,
-  preview,       // raw value from API (relative path or full URL)
-  status,        // "correct" | "wrong" | null/undefined
+  preview,
+  status,
   remark,
   fileKey,
   onReplace,
@@ -75,23 +128,18 @@ export const DocumentCard = ({
   const [imgError, setImgError] = useState(false);
   const replaceRef = useRef(null);
 
-  // ✅ Fix 1: Sync localPreview whenever `preview` prop changes (handles async API data)
+  // Sync localPreview whenever preview prop changes
   useEffect(() => {
     if (!preview) return;
-
-    // ✅ Fix 2: If it's already a blob URL (after replace), keep as-is
     if (preview.startsWith("blob:")) {
       setLocalPreview(preview);
       return;
     }
-
-    // ✅ Fix 3: If it's already a full URL, use directly; else prepend BASE_URL
     const fullUrl = preview.startsWith("http")
       ? preview
       : `${BASE_URL}/${preview.replace(/^\//, "")}`;
-
     setLocalPreview(fullUrl);
-    setImgError(false); // reset error when new preview arrives
+    setImgError(false);
   }, [preview]);
 
   const handleReplace = (e) => {
@@ -104,11 +152,9 @@ export const DocumentCard = ({
     onReplace?.({ id: apiId, file, fileKey });
   };
 
-  const isPdf =
-    typeof localPreview === "string" &&
-    (localPreview.endsWith(".pdf") || localPreview.includes("application/pdf"));
+  const isFilePDF = isPDF(localPreview);
 
-  // ── Border color logic ──
+  // Border color logic
   const borderColor =
     status === "correct"
       ? "border-green-400"
@@ -120,10 +166,9 @@ export const DocumentCard = ({
 
   return (
     <>
-      <div
-        className={`bg-white border-2 rounded-2xl p-4 shadow-sm flex flex-col gap-3 transition-all ${borderColor}`}
-      >
-        {/* ── Title ── */}
+      <div className={`bg-white border-2 rounded-2xl p-4 shadow-sm flex flex-col gap-3 transition-all ${borderColor}`}>
+
+        {/* Title */}
         <div>
           <p className="text-sm font-bold text-gray-800">{label}</p>
           {description && (
@@ -131,7 +176,7 @@ export const DocumentCard = ({
           )}
         </div>
 
-        {/* ── Image / PDF Preview ── */}
+        {/* Image / PDF Preview */}
         <div
           onClick={() => localPreview && !imgError && setShowModal(true)}
           className={`w-full h-44 rounded-xl border-2 flex items-center justify-center overflow-hidden
@@ -141,51 +186,57 @@ export const DocumentCard = ({
             }`}
         >
           {localPreview && !imgError ? (
-            isPdf ? (
-              // ✅ Fix 4: PDFs render in iframe, not img tag
-              <iframe
-                src={localPreview}
-                title={label}
-                className="w-full h-full pointer-events-none"
-              />
+            isFilePDF ? (
+              // ✅ react-pdf — no download triggered, same as Form5View
+              <Document
+                file={localPreview}
+                loading={
+                  <div className="flex flex-col items-center gap-2">
+                    <div className="w-6 h-6 border-2 border-blue-400 border-t-transparent rounded-full animate-spin" />
+                    <p className="text-xs text-gray-400">Loading PDF...</p>
+                  </div>
+                }
+                error={
+                  <div className="flex flex-col items-center gap-1 text-center px-3">
+                    <svg className="w-8 h-8 text-red-400" fill="currentColor" viewBox="0 0 24 24">
+                      <path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8l-6-6z" />
+                    </svg>
+                    <p className="text-xs text-gray-500">PDF — Click to view</p>
+                  </div>
+                }
+              >
+                <Page
+                  pageNumber={1}
+                  height={168}
+                  renderTextLayer={false}
+                  renderAnnotationLayer={false}
+                />
+              </Document>
             ) : (
               <img
                 src={localPreview}
                 alt={label}
                 className="w-full h-full object-contain"
-                // ✅ Fix 5: Handle broken image URLs gracefully
                 onError={() => setImgError(true)}
               />
             )
           ) : (
             <div className="flex flex-col items-center text-center px-3">
-              <svg
-                className="w-10 h-10 text-gray-300 mb-2"
-                fill="none"
-                stroke="currentColor"
-                viewBox="0 0 24 24"
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth="1.5"
-                  d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"
-                />
+              <svg className="w-10 h-10 text-gray-300 mb-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.5"
+                  d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
               </svg>
               <p className="text-xs text-gray-400">
                 {imgError ? "Failed to load document" : "No document uploaded"}
               </p>
-              {/* ✅ Show broken URL in dev mode to help debug */}
               {imgError && localPreview && (
-                <p className="text-[9px] text-red-300 mt-1 break-all px-2">
-                  {localPreview}
-                </p>
+                <p className="text-[9px] text-red-300 mt-1 break-all px-2">{localPreview}</p>
               )}
             </div>
           )}
         </div>
 
-        {/* ── CORRECT ── */}
+        {/* CORRECT */}
         {status === "correct" && (
           <div className="bg-green-50 border border-green-200 rounded-xl px-3 py-2.5 flex items-center gap-2.5">
             <div className="w-7 h-7 rounded-full bg-green-500 flex items-center justify-center shrink-0">
@@ -200,7 +251,7 @@ export const DocumentCard = ({
           </div>
         )}
 
-        {/* ── WRONG — not yet replaced ── */}
+        {/* WRONG — not yet replaced */}
         {status === "wrong" && !replaced && (
           <div className="flex flex-col gap-2">
             <div className="bg-red-50 border border-red-200 rounded-xl px-3 py-2.5 flex items-start gap-2.5">
@@ -211,9 +262,7 @@ export const DocumentCard = ({
               </div>
               <div>
                 <p className="text-xs font-bold text-red-600">Rejected</p>
-                {remark && (
-                  <p className="text-[11px] text-red-500 mt-0.5">{remark}</p>
-                )}
+                {remark && <p className="text-[11px] text-red-500 mt-0.5">{remark}</p>}
               </div>
             </div>
             <button
@@ -225,17 +274,11 @@ export const DocumentCard = ({
               </svg>
               Replace Document
             </button>
-            <input
-              ref={replaceRef}
-              type="file"
-              accept="image/*,.pdf"
-              className="hidden"
-              onChange={handleReplace}
-            />
+            <input ref={replaceRef} type="file" accept="image/*,.pdf" className="hidden" onChange={handleReplace} />
           </div>
         )}
 
-        {/* ── WRONG — replaced ── */}
+        {/* WRONG — replaced */}
         {status === "wrong" && replaced && (
           <div className="flex flex-col gap-2">
             <div className="bg-blue-50 border border-blue-200 rounded-xl px-3 py-2.5 flex items-center gap-2.5">
@@ -258,17 +301,11 @@ export const DocumentCard = ({
               </svg>
               Change Again
             </button>
-            <input
-              ref={replaceRef}
-              type="file"
-              accept="image/*,.pdf"
-              className="hidden"
-              onChange={handleReplace}
-            />
+            <input ref={replaceRef} type="file" accept="image/*,.pdf" className="hidden" onChange={handleReplace} />
           </div>
         )}
 
-        {/* ── PENDING (no status) ── */}
+        {/* PENDING */}
         {!status && (
           <div className="bg-gray-50 border border-gray-200 rounded-xl px-3 py-2.5 flex items-center gap-2.5">
             <div className="w-7 h-7 rounded-full bg-gray-200 flex items-center justify-center shrink-0">
@@ -284,7 +321,7 @@ export const DocumentCard = ({
         )}
       </div>
 
-      {/* ── Modal ── */}
+      {/* Modal */}
       {showModal && (
         <DocumentModal
           preview={localPreview}

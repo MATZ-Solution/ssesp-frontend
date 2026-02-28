@@ -460,3 +460,28 @@ export function useGetDashbaordApplicantTestingData(params = {}) {
     isLoading,
   };
 }
+
+export function useResetDashbaordApplicantTesting() {
+  const queryClient = useQueryClient(); 
+  const {
+    mutate: resetDocument,
+    isSuccess,
+    isPending,
+    isError,
+    error,
+  } = useMutation({
+    mutationFn: async (id) =>
+      await api.put(`${API_ROUTE.admin.resetDashbaordApplicantTesting}/${id}`),
+    onSuccess: (data) => {
+      toast.success("Updated Successfully.")
+      queryClient.invalidateQueries({
+        queryKey: [API_ROUTE.admin.getDashbaordApplicantTestingData],
+      });
+    },
+    onError: (error) => {
+      console.log("error: ", error)
+      toast.error("Failed to add details.");
+    },
+  });
+  return { resetDocument, isSuccess, isPending, isError, error };
+}

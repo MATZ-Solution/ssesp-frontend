@@ -110,11 +110,11 @@ export const router = createBrowserRouter([
   {
     path: "/form/edit-document",
     element: withSuspense(
-      <EditDocument />
-      // <ProtectedRouteApplicant allowedRoles={['applicant']}>
-      //   <ProtectedRouteForm>
-      //   </ProtectedRouteForm>
-      // </ProtectedRouteApplicant>
+      <ProtectedRouteApplicant allowedRoles={['applicant']}>
+        <ProtectedRouteForm>
+          <EditDocument />
+        </ProtectedRouteForm>
+      </ProtectedRouteApplicant>
     ),
   },
 
@@ -149,8 +149,6 @@ export const router = createBrowserRouter([
       </ProtectedRouteAdmin>
     )
   },
-
-
 
   {
     path: "/admin/applications/view-form-1",
@@ -199,10 +197,10 @@ export const router = createBrowserRouter([
       <AdminLogin />
     ),
   },
-  {
-    path: "/signup",
-    element: withSuspense(<Signup />),
-  },
+  // {
+  //   path: "/signup",
+  //   element: withSuspense(<Signup />),
+  // },
 
   // testing
   {

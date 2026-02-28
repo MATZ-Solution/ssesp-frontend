@@ -49,6 +49,7 @@ const API_ROUTE = {
 
     // testing
     getDashbaordApplicantTestingData: "/api/admin/getDashbaordApplicantTestingData",
+    resetDashbaordApplicantTesting: "/api/admin/resetDashbaordApplicantTesting",
   }
 };
 

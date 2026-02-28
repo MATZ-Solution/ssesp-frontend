@@ -44,8 +44,6 @@ const loginSchema = yup.object().shape({
       .required('Applicant ID is required')
       .min(6, 'Applicant ID must be at least 6 characters'),
   });
-
-
   
   const {
     register,
@@ -257,14 +255,14 @@ Welcome to the Scholarship Portal               </h2>
                 )}
 
                 {/* Forgot number */}
-                <div className="flex justify-end">
+                {/* <div className="flex justify-end">
                   <Link
                     to="/signup"
                     className="text-sm underline text-white hover:text-emerald-400 transition-colors duration-300"
                   >
                     Sign Up
                   </Link>
-                </div>
+                </div> */}
 
                 {/* Login Button */}
                 <Button isLoading={isPending} type="submit"

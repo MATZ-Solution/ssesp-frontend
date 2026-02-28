@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { useResetDashbaordApplicantTesting } from "../../../api/client/admin";
 
 const statusStyles = {
     completed: "bg-emerald-50 text-emerald-700 ring-1 ring-emerald-200",
@@ -24,6 +25,11 @@ function TestingTable({ applications }) {
         }
         setApplicantID(app.applicantID);
     };
+
+    const { resetDocument, isSuccess, isPending, isError, error } = useResetDashbaordApplicantTesting()
+    const handleReset = (id) => {
+        resetDocument(Number(id))
+    }
 
     return (
         <div className="bg-white rounded-2xl shadow-sm border border-slate-100 overflow-hidden mb-5">
@@ -69,12 +75,19 @@ function TestingTable({ applications }) {
                                         {app.application_status}
                                     </span>
                                 </td>
-                                <td className="px-5 py-3.5 text-right">
+                                <td className="flex gap-3 px-5 py-3.5 text-right">
                                     <button
                                         onClick={() => handleView(app)}
                                         className="cursor-pointer inline-flex items-center gap-2 px-4 py-1.5 text-sm font-medium rounded-full bg-gradient-to-r from-teal-500 to-emerald-500 text-white shadow-md hover:shadow-lg hover:scale-105 active:scale-95 transition-all duration-200"
                                     >
                                         View
+                                    </button>
+                                    <button
+                                        disabled={isPending}
+                                        onClick={() => handleReset(app.applicantID)}
+                                        className="cursor-pointer inline-flex items-center gap-2 px-4 py-1.5 text-sm font-medium rounded-full bg-gradient-to-r from-teal-500 to-emerald-500 text-white shadow-md hover:shadow-lg hover:scale-105 active:scale-95 transition-all duration-200"
+                                    >
+                                        Reset
                                     </button>
                                 </td>
                             </tr>
