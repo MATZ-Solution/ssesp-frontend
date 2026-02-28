@@ -27,6 +27,7 @@ import { Form3View } from "../src/component/forms/admission/view-form-3";
 import Form4View from "../src/component/forms/admission/view-form-4";
 import EditDocument from "../src/component/forms/admission/edit-form-4";
 import StatusTracker from "../src/component/test";
+import Loader from "../src/component/loader";
 
 export const router = createBrowserRouter([
   {
@@ -116,10 +117,14 @@ export const router = createBrowserRouter([
       // </ProtectedRouteApplicant>
     ),
   },
-
+ 
   {
     path: "/login",
     element: withSuspense(<Login5 />),
+  },
+   {
+    path: "/Loader",
+    element: withSuspense(<Loader />),
   },
 
   {
