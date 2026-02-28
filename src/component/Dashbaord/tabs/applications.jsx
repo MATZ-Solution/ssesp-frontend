@@ -3,28 +3,38 @@ import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import ApplicationFilters from "../ApplicationFilters";
 import ApplicantsTable from "../../cards/applicants-table";
-import { useGetDashbaordApplicantData } from "../../../../api/client/admin";
-import { districts } from "../../../../data/new-district";
+import { useExportApplicants, useGetDashbaordApplicantData } from "../../../../api/client/admin";
+import Error from "../../error";
+import Loader from "../../loader";
 
 const Applications = () => {
 
   const navigate = useNavigate();
   const [page, setPage] = useState(1);
+
   const [filters, setFilters] = useState({
     class: "",
     schoolType: "",
     gender: "",
-    district: ""
+    district: "",
+    status: "",
   });
 
-  const { data: applicantData, isLoading: applicantIsLoading, totalPages } =
-    useGetDashbaordApplicantData({
-      page,
-      class: filters.class,
-      schoolType: filters.schoolType,
-      gender: filters.gender,
-      district: filters.district
-    });
+  const {
+    data: applicantData,
+    isLoading: applicantIsLoading,
+    isError: applicantIsErr,
+    totalPages,
+  } = useGetDashbaordApplicantData({
+    page,
+    class: filters.class,
+    schoolType: filters.schoolType,
+    gender: filters.gender,
+    district: filters.district,
+    status: filters.status
+  });
+
+  const { exportApplicants, isPending: isExporting } = useExportApplicants();
 
   useEffect(() => {
     navigate("?page=1", { replace: true });
@@ -35,14 +45,23 @@ const Applications = () => {
     setPage(1);
   };
 
-  if (applicantIsLoading) return <p>loading...</p>;
+  const handleExport = () => {
+    exportApplicants({
+      class: filters.class,
+      schoolType: filters.schoolType,
+      gender: filters.gender,
+      district: filters.district,
+    });
+  };
 
-  console.log("filter: ", filters)
+  if (applicantIsLoading) return <Loader />
+  if (applicantIsErr) return <Error />
 
   return (
     <div>
-      <main className="flex-1  space-y-6">
-        {/* Welcome */}
+      <main className="flex-1 space-y-6">
+
+        {/* Header Section */}
         <div className="flex items-start justify-between gap-4">
           <div>
             <h2 className="text-xl font-bold text-slate-800">
@@ -52,25 +71,41 @@ const Applications = () => {
               Here's what's happening with applications today.
             </p>
           </div>
+
+          {/* Export Button */}
+          <button
+            onClick={handleExport}
+            disabled={isExporting}
+            className={`px-4 py-2 rounded-md text-white transition ${isExporting
+                ? "bg-gray-400 cursor-not-allowed"
+                : "bg-green-600 hover:bg-green-700"
+              }`}
+          >
+            {isExporting ? "Exporting..." : "Export to Excel"}
+          </button>
         </div>
 
         {/* Filters */}
-        <ApplicationFilters filters={filters} onChange={handleFilterChange} />
+        <ApplicationFilters
+          filters={filters}
+          onChange={handleFilterChange}
+        />
 
         {/* Table */}
-        {applicantData?.length === 0 ?
-          <p>No Data Found.</p> :
-          (<ApplicantsTable applications={applicantData} />)}
+        {applicantData?.length === 0 ? (
+          <p>No Data Found.</p>
+        ) : (
+          <ApplicantsTable applications={applicantData} />
+        )}
 
-        {/* <ViewFormModal isOpen={true} title='Student Information'/> */}
-
-        {applicantData?.length > 0 &&
+        {/* Pagination */}
+        {applicantData?.length > 0 && (
           <Pagination
             currentPage={page}
             totalPages={totalPages}
             onPageChange={(newPage) => setPage(newPage)}
           />
-        }
+        )}
       </main>
     </div>
   );

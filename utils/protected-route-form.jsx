@@ -22,14 +22,14 @@ const ProtectedRouteForm = ({ children }) => {
   }
 
   // ✅ CHECK IF COMPLETED FIRST - before splitting
-  if (currentStepPath === "completed") {
-    // If user is on /form/complete, allow it
-    if (formPath === "complete") {
-      return children;
-    }
-    // Otherwise redirect to complete page
-    return <Navigate to="/form/complete" replace />;
-  }
+  // if (currentStepPath === "completed") {
+  //   // If user is on /form/complete, allow it
+  //   if (formPath === "complete") {
+  //     return children;
+  //   }
+  //   // Otherwise redirect to complete page
+  //   return <Navigate to="/form/complete" replace />;
+  // }
 
   // ✅ Only split if NOT completed
   const currentStepName = currentStepPath.split("-");

@@ -14,9 +14,8 @@ import { useDispatch } from "react-redux";
 const menuItems = [
   { title: "Dashboard", icon: LayoutDashboard, path: "/admin/dashboard" },
   { title: "Applications", icon: FileText, path: "/admin/applications" },
+  { title: "Testing", icon: FileText, path: "/admin/testing" },
 ];
-
-
 
 const Sidebar = () => {
 

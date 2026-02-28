@@ -220,13 +220,14 @@ export const step2Schema = yup.object().shape({
     .min(2, "Profession must be at least 2 characters")
     .max(100, "Profession must not exceed 100 characters"),
 
-  guardianannualIncome: yup
-    .number()
-    .typeError("Annual income must be a number")
-    .required("Annual income is required")
-    .positive("Annual income must be a positive number")
-    .integer("Annual income must be a whole number")
-    .min(0, "Annual income cannot be negative"),
+guardianannualIncome: yup
+  .number()
+  .typeError("Annual income must be a number")
+  .required("Annual income is required")
+  .positive("Annual income must be a positive number")
+  .integer("Annual income must be a whole number")
+  .min(0, "Annual income cannot be negative")
+  .max(1200000, "Annual income must not exceed 1,200,000 PKR"),
 
   relation: yup.string().optional(),
 

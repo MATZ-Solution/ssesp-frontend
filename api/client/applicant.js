@@ -160,6 +160,38 @@ export function useAddApplicantDocument() {
   return { addDocument, isSuccess, isPending, isError, error };
 }
 
+export function useEditApplicantDocument() {
+  const navigate = useNavigate();
+  const dispatch = useDispatch()
+  const queryClient = useQueryClient();
+  const {
+    mutate: editDocument,
+    isSuccess,
+    isPending,
+    isError,
+    error,
+  } = useMutation({
+    mutationFn: async (data) =>
+      await api.post(`${API_ROUTE.applicant.applicantEditDocument}`, data, {
+        headers: {
+          "Content-Type": "multipart/form-data",
+          Authorization: api.defaults.headers.common["Authorization"],
+        },
+        timeout: 120000,
+      }),
+    onSuccess: (data) => {
+      navigate("/form/complete");
+      queryClient.invalidateQueries({
+        queryKey: [API_ROUTE.applicant.getIsApplicantVerified],
+      });
+    },
+    onError: (error) => {
+      toast.error("Failed to edit document.");
+    },
+  });
+  return { editDocument, isSuccess, isPending, isError, error };
+}
+
 export function useAddApplicantSchoolPreference() {
   const navigate = useNavigate();
   const dispatch = useDispatch()
@@ -299,3 +331,48 @@ export function useGetApplicantPDFinfo() {
     isLoading,
   };
 }
+
+export function useGetApplicantDocument(params = {}) {
+  const constructQueryString = (params) => {
+    const query = new URLSearchParams(params).toString();
+    return query ? `&${query}` : "";
+  };
+  const { data, isSuccess, isPending, isError, isLoading } = useQuery({
+    queryKey: [API_ROUTE.applicant.getApplicantDocuments],
+    queryFn: async () =>
+      await api.get(`${API_ROUTE.applicant.getApplicantDocuments}?${constructQueryString(params)}`),
+    // enabled: id !== undefined && id !== null,
+    // staleTime: 60 * 1000 * 5,
+    refetchOnWindowFocus: false,
+    retry: 1,
+  });
+  return {
+    data: data?.data?.data,
+    isSuccess,
+    isPending,
+    isError,
+    isLoading,
+  };
+}
+
+export function useGetIsApplicantVerified() {
+  const { data, isSuccess, isPending, isError, isLoading } = useQuery({
+    queryKey: [API_ROUTE.applicant.getIsApplicantVerified],
+    queryFn: async () =>
+      await api.get(`${API_ROUTE.applicant.getIsApplicantVerified}`),
+    // enabled: id !== undefined && id !== null,
+    // staleTime: 60 * 1000 * 2, // 2 minute, 
+    retry: 1,
+  });
+  return {
+    status: data?.data?.status,
+    message: data?.data?.message,
+    editDocument: data?.data?.editDocument,
+    isSuccess,
+    isPending,
+    isError,
+    isLoading,
+  };
+}
+
+

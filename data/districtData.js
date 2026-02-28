@@ -41,7 +41,7 @@ export const divisionData = [
       { district: "KHI-Malir" },
       { district: "KHI-South" },
       { district: "KHI-West" },
-      { district: "Taluka Gadap & Shah Mureed of Dist Malir" }
+      // { district: "Taluka Gadap & Shah Mureed of Dist Malir" }
     ]
   },
   {

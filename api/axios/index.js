@@ -10,7 +10,7 @@ const api = axios.create({
   headers: {
     "Content-Type": "application/json",
   },
-  timeout: 60000, // optional timeouts
+  timeout: 60000, // optional timeout
 });
 
 // Optional: Add interceptors for auth, logging, errors
@@ -31,6 +31,12 @@ api.interceptors.response.use(
   (response) => response,
   (error) => {
     console.log("Response error: ", error);
+
+    if (error.code === 'ECONNABORTED') {
+      error.message = 'Request timed out. Please try again.';
+    } else if (!error.response) {
+      error.message = 'Network error. Please check your connection.';
+    }
 
     if (error.response?.status === 401) {
       const message = error.response?.data?.message; // Uncomment this line

@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { useResetDashbaordApplicantTesting } from "../../../api/client/admin";
 
 const statusStyles = {
     completed: "bg-emerald-50 text-emerald-700 ring-1 ring-emerald-200",
@@ -8,7 +9,7 @@ const statusStyles = {
     "in review": "bg-violet-50 text-violet-700 ring-1 ring-violet-200"
 };
 
-function ApplicantsTable({ applications }) {
+function TestingTable({ applications }) {
 
     const navigate = useNavigate();
     const [isOpenModal, setModal] = useState(false);
@@ -18,12 +19,17 @@ function ApplicantsTable({ applications }) {
     // Extracted so both desktop and mobile use identical logic
     const handleView = (app) => {
         if (app.application_stage) {
-            navigate(`/admin/applications/${app.application_stage}?applicantID=${app.applicantID}`);
+            navigate(`/admin/testing/${app.application_stage}?applicantID=${app.applicantID}`);
         } else {
-            navigate(`/admin/applications/view-form-1?applicantID=${app.applicantID}`);
+            navigate(`/admin/testing/view-form-1?applicantID=${app.applicantID}`);
         }
         setApplicantID(app.applicantID);
     };
+
+    const { resetDocument, isSuccess, isPending, isError, error } = useResetDashbaordApplicantTesting()
+    const handleReset = (id) => {
+        resetDocument(Number(id))
+    }
 
     return (
         <div className="bg-white rounded-2xl shadow-sm border border-slate-100 overflow-hidden mb-5">
@@ -42,7 +48,8 @@ function ApplicantsTable({ applications }) {
                             <th className="text-left px-5 py-3">Grade</th>
                             <th className="text-left px-5 py-3">School Type</th>
                             <th className="text-left px-5 py-3">Status</th>
-                            {/* <th className=" px-5 py-3">Actions</th> */}
+                            <th className=" px-5 py-3">Actions</th>
+                            {/* <th className="px-5 py-3" /> */}
                         </tr>
                     </thead>
                     <tbody>
@@ -68,14 +75,21 @@ function ApplicantsTable({ applications }) {
                                         {app.application_status}
                                     </span>
                                 </td>
-                                {/* <td className="px-5 py-3.5 text-right">
+                                <td className="flex gap-3 px-5 py-3.5 text-right">
                                     <button
                                         onClick={() => handleView(app)}
                                         className="cursor-pointer inline-flex items-center gap-2 px-4 py-1.5 text-sm font-medium rounded-full bg-gradient-to-r from-teal-500 to-emerald-500 text-white shadow-md hover:shadow-lg hover:scale-105 active:scale-95 transition-all duration-200"
                                     >
                                         View
                                     </button>
-                                </td> */}
+                                    <button
+                                        disabled={isPending}
+                                        onClick={() => handleReset(app.applicantID)}
+                                        className="cursor-pointer inline-flex items-center gap-2 px-4 py-1.5 text-sm font-medium rounded-full bg-gradient-to-r from-teal-500 to-emerald-500 text-white shadow-md hover:shadow-lg hover:scale-105 active:scale-95 transition-all duration-200"
+                                    >
+                                        Reset
+                                    </button>
+                                </td>
                             </tr>
                         ))}
                     </tbody>
@@ -120,12 +134,12 @@ function ApplicantsTable({ applications }) {
                         </div>
 
                         {/* Row 3: View button full width on mobile */}
-                        {/* <button
+                        <button
                             onClick={() => handleView(app)}
                             className="cursor-pointer w-full inline-flex items-center justify-center gap-2 px-4 py-2 text-sm font-medium rounded-xl bg-gradient-to-r from-teal-500 to-emerald-500 text-white shadow-sm hover:shadow-md hover:scale-[1.02] active:scale-95 transition-all duration-200"
                         >
-                            View Application
-                        </button> */}
+                            👁 View Application
+                        </button>
                     </div>
                 ))}
             </div>
@@ -143,4 +157,4 @@ function ApplicantsTable({ applications }) {
     );
 }
 
-export default ApplicantsTable;
+export default TestingTable;
