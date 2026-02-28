@@ -48,7 +48,7 @@ export const Form1View = () => {
   return (
     <div>
       <BackButton
-        onClick={() => navigate(`/admin/applications`)}
+        onClick={() => navigate(`/admin/testing`)}
       />
       <ApplicantReviewHeader name='age' />
       <div className="mt-4 bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
@@ -149,7 +149,7 @@ export const Form1View = () => {
           )}
 
           <div className="border-t border-gray-100" />
-          {!(data?.is_age_verified === 'false' || data?.is_age_verified === 'true') && (
+          {!(data?.is_age_verified === 'false' || data?.is_age_verified === 'true' ) && (
             <div>
               <p className="text-xs font-semibold text-gray-500 uppercase tracking-widest mb-3">
                 Admin Decision — Age
@@ -201,7 +201,7 @@ export const Form1View = () => {
           )}
 
           <div className="flex items-center justify-between flex-wrap gap-3">
-            {!(data?.is_age_verified === 'false' || data?.is_age_verified === 'true') && (
+            {!(data?.is_age_verified === 'false' || data?.is_age_verified === 'true' || !verification.status) && (
               <Button
                 isLoading={isPending}
                 onClick={handleSubmit}

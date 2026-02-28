@@ -58,7 +58,7 @@ export const Form2View = () => {
   return (
     <div>
       <BackButton
-        onClick={() => navigate(`/admin/applications`)}
+        onClick={() => navigate(`/admin/testing`)}
       />
       <ApplicantReviewHeader name='Guardian Income' />
       <div className="mt-4 bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
@@ -232,7 +232,7 @@ export const Form2View = () => {
                 ← Previous Step
               </Button>
             )}
-            {!(guardian?.is_gurdian_salary_verified === 'false' || guardian?.is_gurdian_salary_verified === 'true') && (
+            {!(guardian?.is_gurdian_salary_verified === 'false' || guardian?.is_gurdian_salary_verified === 'true ' || !verification.status) && (
               <Button
                 isLoading={isPending}
                 onClick={handleSubmit}

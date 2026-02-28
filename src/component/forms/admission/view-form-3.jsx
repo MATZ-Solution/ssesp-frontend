@@ -30,7 +30,6 @@ export const Form3View = () => {
     setVerification((prev) => ({ ...prev, status: newStatus, reason: newReason }));
 
   const handleSubmit = () => {
-    console.log("verification: ", verification)
     if (verification.status === '') {
       return alert("Select Age is valid or not")
     }
@@ -58,7 +57,7 @@ export const Form3View = () => {
   return (
     <div>
       <BackButton
-        onClick={() => navigate(`/admin/applications`)}
+        onClick={() => navigate(`/admin/testing`)}
       />
       <ApplicantReviewHeader name="Previous School" />
       <div className="mt-4 bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
@@ -266,7 +265,7 @@ export const Form3View = () => {
                 ← Previous Step
               </Button>
             )}
-            {!(datas?.is_school_verified === 'false' || datas?.is_school_verified === 'true') && (
+            {!(datas?.is_school_verified === 'false' || datas?.is_school_verified === 'true' || !verification.status) && (
               <Button
                 isLoading={isPending}
                 onClick={handleSubmit}

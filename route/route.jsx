@@ -27,6 +27,7 @@ import { Form3View } from "../src/component/forms/admission/view-form-3";
 import Form4View from "../src/component/forms/admission/view-form-4";
 import EditDocument from "../src/component/forms/admission/edit-form-4";
 import StatusTracker from "../src/component/status-tracker";
+import Testing from "../src/component/Dashbaord/tabs/testing";
 
 export const router = createBrowserRouter([
   {
@@ -149,6 +150,8 @@ export const router = createBrowserRouter([
     )
   },
 
+
+
   {
     path: "/admin/applications/view-form-1",
     element: withSuspense(
@@ -199,5 +202,58 @@ export const router = createBrowserRouter([
   {
     path: "/signup",
     element: withSuspense(<Signup />),
+  },
+
+  // testing
+  {
+    path: "/admin/testing",
+    element: withSuspense(
+      <ProtectedRouteAdmin allowedRoles={['admin']}>
+        <NewAdminTemplate>
+          <Testing />
+        </NewAdminTemplate>
+      </ProtectedRouteAdmin>
+    )
+  },
+
+  {
+    path: "/admin/testing/view-form-1",
+    element: withSuspense(
+      <ProtectedRouteAdmin allowedRoles={['admin']}>
+        <NewAdminTemplate>
+          <Form1View />
+        </NewAdminTemplate>
+      </ProtectedRouteAdmin>
+    )
+  },
+  {
+    path: "/admin/testing/view-form-2",
+    element: withSuspense(
+      <ProtectedRouteAdmin allowedRoles={['admin']}>
+        <NewAdminTemplate>
+          <Form2View />
+        </NewAdminTemplate>
+      </ProtectedRouteAdmin>
+    )
+  },
+  {
+    path: "/admin/testing/view-form-3",
+    element: withSuspense(
+      <ProtectedRouteAdmin allowedRoles={['admin']}>
+        <NewAdminTemplate>
+          <Form3View />
+        </NewAdminTemplate>
+      </ProtectedRouteAdmin>
+    )
+  },
+  {
+    path: "/admin/testing/view-form-4",
+    element: withSuspense(
+      <ProtectedRouteAdmin allowedRoles={['admin']}>
+        <NewAdminTemplate>
+          <Form4View />
+        </NewAdminTemplate>
+      </ProtectedRouteAdmin>
+    )
   },
 ]);
