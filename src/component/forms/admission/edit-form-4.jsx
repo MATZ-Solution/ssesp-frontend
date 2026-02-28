@@ -4,6 +4,7 @@ import { MissingIncomeCard } from "../../cards/missing-income";
 import { useEditApplicantDocument, useGetApplicantDocument } from "../../../../api/client/applicant";
 import { useSearchParams } from "react-router-dom";
 import Button from "../../button";
+import { Loader2 } from "lucide-react";
 
 const INCOME_DOC_NAME = "Parents / Guardian Income Certficaition";
 
@@ -197,28 +198,24 @@ const EditDocument = () => {
           {canSubmit && (
             <p className="text-xs text-green-600 font-medium">All done ✓</p>
           )}
-          {/* <Button
-            isLoading={isPending}
-            disabled={isLoading || !canSubmit}
-            onClick={handleSubmit}
-            type="submit"
-            className={` w-full sm:w-auto px-6 text-gray-400 sm:px-8 py-3 font-bold rounded-lg shadow-lg hover:shadow-xl transform hover:-translate-y-0.5 transition-all duration-200 order-1 sm:order-2
-              ${canSubmit ?
-              "bg-gradient-to-r from-blue-600 to-blue-500"
-              : "bg-gray-100 text-gray-400 cursor-not-allowed" }`}
-          >
-            Submit
-          </Button> */}
+
           <button
             onClick={handleSubmit}
-            disabled={!canSubmit || isLoading}
-            className={`px-6 py-2.5 rounded-xl text-sm font-bold transition-all
-              ${canSubmit
+            disabled={!canSubmit || isPending}
+            className={`cursor-pointer px-6 py-2.5 rounded-xl text-sm font-bold transition-all flex items-center gap-2
+            ${canSubmit
                 ? "bg-blue-600 text-white hover:bg-blue-700 shadow-sm"
                 : "bg-gray-100 text-gray-400 cursor-not-allowed"
               }`}
           >
-            Submit
+            {isPending ? (
+              <>
+                <Loader2 className="w-4 h-4 animate-spin" />
+                Loading...
+              </>
+            ) : (
+              "Submit"
+            )}
           </button>
         </div>
 
